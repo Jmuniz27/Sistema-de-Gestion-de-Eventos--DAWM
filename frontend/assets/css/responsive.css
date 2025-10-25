@@ -1,0 +1,388 @@
+/**
+ * ============================================
+ * SISTEMA DE GESTIÓN DE EVENTOS - ESPOL
+ * Estilos Responsivos (Media Queries)
+ * ============================================
+ *
+ * Este archivo contiene los media queries para hacer el diseño responsivo
+ * en diferentes dispositivos: móviles, tablets y desktop.
+ *
+ * Breakpoints:
+ * - xs: < 576px (móviles)
+ * - sm: >= 576px (móviles grandes)
+ * - md: >= 768px (tablets)
+ * - lg: >= 992px (desktop)
+ * - xl: >= 1200px (desktop grande)
+ * - xxl: >= 1400px (desktop extra grande)
+ *
+ * Materia: SOFG1006 - Desarrollo de Aplicaciones Web y Móviles
+ * Institución: Escuela Superior Politécnica del Litoral (ESPOL)
+ */
+
+/* ============================================
+   MÓVILES (< 576px)
+   ============================================ */
+@media (max-width: 575.98px) {
+    /* Hero Section */
+    .hero-section {
+        min-height: auto;
+        padding: 2rem 0;
+    }
+
+    .hero-section h1 {
+        font-size: 1.75rem;
+    }
+
+    .hero-section .lead {
+        font-size: 1rem;
+    }
+
+    /* Module Cards */
+    .module-icon {
+        font-size: 2rem;
+    }
+
+    /* Tables */
+    .table-container {
+        overflow-x: auto;
+        padding: var(--spacing-md);
+    }
+
+    .table {
+        font-size: 0.875rem;
+    }
+
+    .table thead {
+        font-size: 0.75rem;
+    }
+
+    /* Forms */
+    .form-container {
+        padding: var(--spacing-lg);
+    }
+
+    /* Buttons */
+    .btn-group {
+        flex-direction: column;
+    }
+
+    .btn-group .btn {
+        width: 100%;
+        margin-bottom: var(--spacing-sm);
+    }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .action-buttons .btn {
+        width: 100%;
+        margin-bottom: var(--spacing-xs);
+        margin-right: 0;
+    }
+
+    /* Search Bar */
+    .search-bar .input-group {
+        max-width: 100%;
+    }
+
+    /* Export Buttons */
+    .export-buttons {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .export-buttons .btn {
+        width: 100%;
+        margin-right: 0;
+    }
+
+    /* Navbar */
+    .navbar-brand {
+        font-size: 1rem;
+    }
+
+    /* Footer */
+    footer .row {
+        text-align: center;
+    }
+
+    footer .col-md-6 {
+        margin-bottom: var(--spacing-md);
+    }
+
+    footer .text-md-end {
+        text-align: center !important;
+    }
+
+    /* Pagination */
+    .pagination {
+        font-size: 0.875rem;
+    }
+
+    .page-link {
+        padding: 0.25rem 0.5rem;
+    }
+}
+
+/* ============================================
+   MÓVILES GRANDES (>= 576px)
+   ============================================ */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .hero-section h1 {
+        font-size: 2rem;
+    }
+
+    .form-container {
+        padding: var(--spacing-xl);
+    }
+}
+
+/* ============================================
+   TABLETS (>= 768px)
+   ============================================ */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    /* Module Cards */
+    .module-card .card-body {
+        padding: var(--spacing-lg);
+    }
+
+    /* Tables */
+    .table {
+        font-size: 0.9rem;
+    }
+
+    /* Forms */
+    .form-row {
+        display: flex;
+        gap: var(--spacing-md);
+    }
+
+    .form-row .col {
+        flex: 1;
+    }
+}
+
+/* ============================================
+   DESKTOP (>= 992px)
+   ============================================ */
+@media (min-width: 992px) {
+    /* Container */
+    .container {
+        max-width: 960px;
+    }
+
+    /* Hero Section */
+    .hero-section {
+        min-height: 500px;
+    }
+
+    /* Tables */
+    .table-responsive {
+        overflow-x: visible;
+    }
+
+    /* Forms */
+    .form-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    /* Cards */
+    .card-deck {
+        display: flex;
+        gap: var(--spacing-lg);
+    }
+
+    .card-deck .card {
+        flex: 1;
+    }
+}
+
+/* ============================================
+   DESKTOP GRANDE (>= 1200px)
+   ============================================ */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+
+    /* Hero Section */
+    .hero-section h1 {
+        font-size: 3.5rem;
+    }
+
+    /* Module Cards */
+    .module-icon {
+        font-size: 4rem;
+    }
+}
+
+/* ============================================
+   DESKTOP EXTRA GRANDE (>= 1400px)
+   ============================================ */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+}
+
+/* ============================================
+   ORIENTACIÓN: LANDSCAPE (HORIZONTAL)
+   ============================================ */
+@media (orientation: landscape) and (max-height: 600px) {
+    .hero-section {
+        min-height: auto;
+        padding: 1rem 0;
+    }
+
+    .module-icon {
+        font-size: 2.5rem;
+    }
+}
+
+/* ============================================
+   MODO IMPRESIÓN
+   ============================================ */
+@media print {
+    /* Ocultar elementos no necesarios */
+    nav,
+    footer,
+    .btn,
+    .action-buttons,
+    .export-buttons,
+    .search-bar {
+        display: none !important;
+    }
+
+    /* Optimizar para impresión */
+    body {
+        background: white;
+        color: black;
+    }
+
+    .table-container {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+
+    .card {
+        box-shadow: none;
+        border: 1px solid #000;
+    }
+
+    /* Forzar saltos de página */
+    .page-break {
+        page-break-after: always;
+    }
+
+    /* Links */
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+}
+
+/* ============================================
+   PREFERENCIAS DE USUARIO
+   ============================================ */
+
+/* Modo de alto contraste */
+@media (prefers-contrast: high) {
+    :root {
+        --border-width: 2px;
+    }
+
+    .btn {
+        border-width: var(--border-width);
+    }
+
+    .card {
+        border: var(--border-width) solid var(--text-dark);
+    }
+}
+
+/* Reducir movimiento para usuarios con preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+
+    .module-card:hover {
+        transform: none;
+    }
+
+    .btn:hover {
+        transform: none;
+    }
+}
+
+/* Modo oscuro (si el usuario lo prefiere) */
+@media (prefers-color-scheme: dark) {
+    /* Nota: Implementación básica. Se puede expandir según necesidades */
+    :root {
+        --bg-light: #1a1a1a;
+        --bg-white: #2d2d2d;
+        --text-dark: #e0e0e0;
+        --text-muted: #a0a0a0;
+    }
+
+    body {
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+    }
+
+    .card,
+    .table-container,
+    .form-container {
+        background-color: var(--bg-white);
+        color: var(--text-dark);
+    }
+
+    .table {
+        color: var(--text-dark);
+    }
+
+    .table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+    }
+}
+
+/* ============================================
+   UTILIDADES RESPONSIVAS
+   ============================================ */
+
+/* Ocultar/mostrar elementos según tamaño */
+.hide-mobile {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .hide-mobile {
+        display: block;
+    }
+
+    .hide-desktop {
+        display: none;
+    }
+}
+
+/* Texto responsivo */
+.responsive-text {
+    font-size: clamp(0.875rem, 2vw, 1rem);
+}
+
+.responsive-heading {
+    font-size: clamp(1.5rem, 4vw, 3rem);
+}
+
+/* Espaciado responsivo */
+.responsive-padding {
+    padding: clamp(1rem, 3vw, 3rem);
+}
+
+.responsive-margin {
+    margin: clamp(1rem, 3vw, 3rem);
+}
