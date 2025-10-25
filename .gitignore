@@ -1,0 +1,160 @@
+# ============================================
+# Sistema de Gestión de Eventos - ESPOL
+# .gitignore
+# ============================================
+
+# ============================================
+# Dependencias
+# ============================================
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# ============================================
+# Variables de Entorno (¡IMPORTANTE!)
+# ============================================
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+
+# ============================================
+# Archivos de Log
+# ============================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+logs/
+
+# ============================================
+# Archivos del Sistema Operativo
+# ============================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ============================================
+# IDEs y Editores
+# ============================================
+# Visual Studio Code
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json.example
+
+# JetBrains (WebStorm, IntelliJ, etc.)
+.idea/
+*.swp
+*.swo
+*.swn
+.idea_modules/
+*.iml
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-rt-v][a-z]
+[._]ss[a-gi-z]
+[._]sw[a-p]
+
+# ============================================
+# Build y Distribución
+# ============================================
+dist/
+build/
+out/
+.cache/
+.parcel-cache/
+.next/
+.nuxt/
+
+# ============================================
+# Testing
+# ============================================
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+
+# ============================================
+# Archivos Temporales
+# ============================================
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# ============================================
+# Uploads y Archivos Generados
+# ============================================
+uploads/
+temp-uploads/
+generated-reports/
+*.pdf
+*.xlsx
+*.csv
+# Excepciones: mantener archivos de ejemplo
+!docs/**/*.pdf
+!docs/**/*.xlsx
+
+# ============================================
+# Certificados y Claves
+# ============================================
+*.pem
+*.key
+*.cert
+*.crt
+ssl/
+certificates/
+
+# ============================================
+# Azure
+# ============================================
+.azure/
+*.publishsettings
+
+# ============================================
+# Base de Datos Local
+# ============================================
+*.db
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+
+# ============================================
+# Backup Files
+# ============================================
+*.bak
+*.backup
+*.old
+*.orig
+
+# ============================================
+# Archivos de Configuración Local
+# ============================================
+config.local.js
+config.local.json
