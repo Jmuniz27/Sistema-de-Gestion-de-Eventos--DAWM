@@ -2,6 +2,8 @@
 
 Sistema web integral para la gestión de eventos desarrollado como proyecto académico para la materia **SOFG1006 - Desarrollo de Aplicaciones Web y Móviles** de la Escuela Superior Politécnica del Litoral (ESPOL).
 
+---
+
 ## Información del Proyecto
 
 - **Materia**: SOFG1006 - Desarrollo de Aplicaciones Web y Móviles
@@ -9,9 +11,13 @@ Sistema web integral para la gestión de eventos desarrollado como proyecto acad
 - **Fecha de Entrega**: 10 de noviembre de 2025 - 08:00 a.m.
 - **Institución**: Escuela Superior Politécnica del Litoral (ESPOL)
 
+---
+
 ## Descripción
 
 Sistema modular que permite gestionar integralmente eventos, desde la creación y categorización hasta la venta de boletos, facturación y notificaciones. El sistema está diseñado para ser escalable, seguro y fácil de usar.
+
+---
 
 ## Tecnologías Utilizadas
 
@@ -19,55 +25,59 @@ Sistema modular que permite gestionar integralmente eventos, desde la creación 
 - **HTML5**: Estructura semántica
 - **CSS3**: Estilos y diseño responsivo
 - **JavaScript ES6+**: Lógica del cliente
-- **Bootstrap 5**: Framework CSS para diseño responsivo
+- **Vite**: Build tool y dev server
 
 ### Backend
-- **Node.js**: Entorno de ejecución
-- **Express.js**: Framework web para API REST
-- **mssql**: Conector para Azure SQL Database
-- **cors**: Manejo de CORS
-- **dotenv**: Gestión de variables de entorno
-- **express-validator**: Validación de datos
-
-### Base de Datos
-- **Azure SQL Database**: Base de datos relacional en la nube
+- **Supabase**: Backend as a Service (BaaS)
+  - PostgreSQL database
+  - Authentication
+  - Row Level Security (RLS)
+  - Real-time subscriptions
+  - Storage
 
 ### Hosting y Despliegue
-- **Azure App Service**: Hosting de backend y frontend
+- **Vercel**: Hosting del frontend
+- **Supabase Cloud**: Hosting de backend y BD
 - **Git/GitHub**: Control de versiones
 
-### Utilidades de Exportación
-- **PDFKit**: Generación de reportes en PDF
-- **ExcelJS**: Exportación a Excel
-- **json2csv**: Exportación a CSV
+---
 
 ## Estructura del Proyecto
 
-```
-sistema-gestion-eventos/
+\`\`\`
+Sistema-de-Gestion-de-Eventos--DAWM/
 │
-├── .gitignore                     # Archivos ignorados por Git
-├── README.md                      # Este archivo
-├── package.json                   # Dependencias del proyecto
-├── .env.example                   # Ejemplo de variables de entorno
+├── .gitignore                      # Archivos ignorados por Git
+├── .env.example                    # Template de variables de entorno
+├── package.json                    # Dependencias del proyecto
+├── vite.config.js                  # Configuración de Vite
+├── vercel.json                     # Configuración de Vercel
 │
-├── docs/                          # Documentación del proyecto
-│   ├── database/                  # Scripts y documentación de BD
-│   │   ├── diagrama-er.png
-│   │   ├── script-creacion.sql
-│   │   ├── script-datos-ejemplo.sql
-│   │   └── justificaciones.md
-│   ├── reuniones/                 # Actas de reuniones
-│   ├── capturas/                  # Capturas de pantalla
-│   └── videos/                    # Enlaces a videos demostrativos
+├── README.md                       # Este archivo
+├── CONTRIBUTING.md                 # Guía de contribución
+├── SETUP.md                        # Guía de configuración
+├── CHANGELOG.md                    # Registro de cambios
 │
-├── frontend/                      # Código del Frontend
-│   ├── index.html                 # Página principal
-│   ├── assets/
-│   │   ├── css/                   # Estilos CSS
-│   │   ├── js/                    # JavaScript del cliente
-│   │   └── img/                   # Imágenes y recursos
-│   ├── pages/                     # Páginas HTML por módulo
+├── src/                            # Código fuente del frontend
+│   ├── index.html                  # Landing page principal
+│   ├── styles/                     # Estilos CSS
+│   │   ├── main.css
+│   │   ├── variables.css
+│   │   ├── components.css
+│   │   └── responsive.css
+│   ├── scripts/                    # JavaScript del cliente
+│   │   ├── supabase-client.js      # ← CLIENTE SUPABASE (AQUÍ SE USAN LAS KEYS)
+│   │   ├── auth.js
+│   │   ├── utils.js
+│   │   └── modules/                # JS por módulo
+│   │       ├── general.js
+│   │       ├── clientes.js
+│   │       ├── eventos.js
+│   │       ├── boletos.js
+│   │       ├── facturacion.js
+│   │       ├── notificaciones.js
+│   │       └── autenticacion.js
+│   ├── pages/                      # Páginas HTML por módulo
 │   │   ├── modulo-general/
 │   │   ├── clientes/
 │   │   ├── eventos/
@@ -75,32 +85,45 @@ sistema-gestion-eventos/
 │   │   ├── facturacion/
 │   │   ├── notificaciones/
 │   │   └── autenticacion/
-│   └── components/                # Componentes reutilizables
+│   └── components/                 # Componentes reutilizables
 │
-├── backend/                       # Código del Backend (API REST)
-│   ├── server.js                  # Punto de entrada del servidor
-│   ├── config/
-│   │   └── database.js            # Configuración de conexión a BD
-│   ├── routes/                    # Definición de rutas
-│   ├── controllers/               # Lógica de negocio
-│   ├── models/                    # Modelos de datos
-│   ├── middleware/                # Middleware personalizado
-│   └── utils/                     # Utilidades y helpers
+├── assets/                         # Recursos estáticos
+│   ├── images/
+│   ├── fonts/
+│   └── exports/
 │
-└── tests/                         # Pruebas (opcional)
-```
+├── database/                       # Scripts y documentación de BD
+│   ├── schema.sql                  # ← EJECUTAR ESTE EN SUPABASE
+│   ├── seed.sql
+│   ├── functions.sql
+│   ├── policies.sql
+│   └── DATABASE.md
+│
+└── docs/                           # Documentación del proyecto
+    ├── api/
+    ├── reuniones/
+    ├── capturas/
+    ├── videos/
+    └── guides/
+\`\`\`
+
+---
 
 ## Módulos del Sistema
 
-El sistema está dividido en los siguientes módulos funcionales:
+El sistema está dividido en **7 módulos funcionales**:
 
-1. **Módulo General**: Datos generales del sistema (operadoras, proveedores, documentos, provincias, ciudades, estados, métodos de pago, IVA)
-2. **Clientes**: Gestión de clientes y sus direcciones
-3. **Eventos**: Gestión de eventos, categorías y tipos de ingreso
-4. **Boletos y Entradas**: Gestión de boletos, tipos y entradas asignadas
-5. **Facturación**: Generación y gestión de facturas
-6. **Notificaciones**: Envío de notificaciones por email y push
-7. **Autenticación y Roles**: Control de acceso, usuarios, roles y permisos
+| Módulo | Responsable(s) | Tablas Principales |
+|--------|---------------|-------------------|
+| **Módulo General** | MUNIZAGA, DIAZ, FIERRO | GeneroSexo, Operadora, Provincias, Ciudades, MetodoPago, IVA |
+| **Clientes** | SORIANO LEON | Clientes, DireccionesCliente, TipoCliente |
+| **Eventos** | BARZOLA DE LA O | Eventos, CategoriasEvento, TipoIngreso |
+| **Boletos y Entradas** | BARRENO HERRERA | Boletos, TiposBoleto, EntradasAsignadas |
+| **Facturación** | MAZA PUNNE | Factura, Detalle_factura |
+| **Notificaciones** | ARMIJOS ROMERO | Notificaciones, Destinatarios, Plantillas |
+| **Autenticación y Roles** | TUMBACO SANTANA | USUARIOS, ROLES, LOGIN, Permisos |
+
+---
 
 ## Requisitos Previos
 
@@ -108,138 +131,127 @@ Antes de instalar y ejecutar el proyecto, asegúrate de tener:
 
 - **Node.js** v18 o superior
 - **npm** v9 o superior
-- **Azure SQL Database** configurado
 - **Git** instalado
 - **Navegador web** moderno (Chrome, Firefox, Edge)
+- **Cuenta en Supabase** (gratuita)
+- **Cuenta en Vercel** (gratuita, opcional para deploy)
+
+---
 
 ## Instalación
 
 ### 1. Clonar el Repositorio
 
-```bash
+\`\`\`bash
 git clone <url-del-repositorio>
 cd Sistema-de-Gestion-de-Eventos--DAWM
-```
+\`\`\`
 
 ### 2. Instalar Dependencias
 
-```bash
+\`\`\`bash
 npm install
-```
+\`\`\`
 
-### 3. Configurar Variables de Entorno
+### 3. Configurar Supabase
 
-Copia el archivo `.env.example` a `.env` y configura las variables:
+#### 3.1 Crear Proyecto en Supabase
 
-```bash
+1. Ve a [https://supabase.com](https://supabase.com)
+2. Crea una cuenta (si no tienes)
+3. Clic en "New Project"
+4. Completa los datos:
+   - **Name**: sistema-gestion-eventos
+   - **Database Password**: (guarda esta contraseña)
+   - **Region**: Selecciona la más cercana
+5. Espera a que se cree el proyecto (~2 minutos)
+
+#### 3.2 Ejecutar Scripts SQL
+
+1. En Supabase Dashboard → **SQL Editor**
+2. Clic en "New Query"
+3. Copia y pega el contenido de \`database/schema.sql\`
+4. Clic en "Run"
+5. (Opcional) Ejecuta \`database/seed.sql\` para datos de ejemplo
+6. (Opcional) Ejecuta \`database/functions.sql\` y \`database/policies.sql\`
+
+#### 3.3 Obtener Credenciales
+
+1. En Supabase Dashboard → **Settings** → **API**
+2. Busca y copia:
+   - **Project URL**: \`https://tu-proyecto.supabase.co\`
+   - **anon public key**: \`eyJhbGc...\` (key larga)
+
+### 4. Configurar Variables de Entorno
+
+#### 4.1 Crear archivo .env
+
+\`\`\`bash
 cp .env.example .env
-```
+\`\`\`
 
-Edita el archivo `.env` con tus credenciales de Azure SQL Database:
+#### 4.2 Editar .env con tus credenciales
 
-```env
-DB_SERVER=tu-servidor.database.windows.net
-DB_DATABASE=eventos_db
-DB_USER=tu_usuario
-DB_PASSWORD=tu_password
-DB_PORT=1433
+Abre \`.env\` y pega tus credenciales de Supabase:
 
-PORT=3000
-NODE_ENV=development
-```
-
-### 4. Configurar la Base de Datos
-
-Ejecuta los scripts SQL en Azure SQL Database:
-
-1. Abre **Azure Portal** y accede a tu base de datos
-2. Ve a **Query editor**
-3. Ejecuta el script `docs/database/script-creacion.sql`
-4. (Opcional) Ejecuta el script `docs/database/script-datos-ejemplo.sql` para datos de prueba
+\`\`\`env
+VITE_SUPABASE_URL=https://tu-proyecto.supabase.co
+VITE_SUPABASE_ANON_KEY=tu-clave-anonima-aqui
+\`\`\`
 
 ### 5. Ejecutar el Proyecto
 
-#### Modo Desarrollo (con reinicio automático)
+#### Modo Desarrollo
 
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
-#### Modo Producción
+El servidor estará disponible en: \`http://localhost:3000\`
 
-```bash
-npm start
-```
+#### Modo Producción (Build)
 
-El servidor estará disponible en: `http://localhost:3000`
+\`\`\`bash
+npm run build
+npm run preview
+\`\`\`
 
-## Uso de la API
+---
 
-La API REST está disponible en la ruta base `/api/v1/`
+## Despliegue en Vercel
 
-### Endpoints Principales
+### Opción 1: Desde la Web
 
-#### Clientes
+1. Ve a [https://vercel.com](https://vercel.com)
+2. Clic en "Import Project"
+3. Conecta tu repositorio de GitHub
+4. Configura las variables de entorno:
+   - \`VITE_SUPABASE_URL\`
+   - \`VITE_SUPABASE_ANON_KEY\`
+5. Clic en "Deploy"
 
-```
-GET    /api/v1/clientes           - Listar todos los clientes
-GET    /api/v1/clientes/:id       - Obtener un cliente específico
-POST   /api/v1/clientes           - Crear un nuevo cliente
-PUT    /api/v1/clientes/:id       - Actualizar un cliente
-DELETE /api/v1/clientes/:id       - Eliminar un cliente
-GET    /api/v1/clientes/export/:format - Exportar datos (pdf, excel, csv, json, txt)
-```
+### Opción 2: Desde CLI
 
-#### Eventos
+\`\`\`bash
+npm install -g vercel
+vercel login
+vercel
+\`\`\`
 
-```
-GET    /api/v1/eventos            - Listar todos los eventos
-GET    /api/v1/eventos/:id        - Obtener un evento específico
-POST   /api/v1/eventos            - Crear un nuevo evento
-PUT    /api/v1/eventos/:id        - Actualizar un evento
-DELETE /api/v1/eventos/:id        - Eliminar un evento
-```
+**Importante**: Configura las variables de entorno en Vercel Dashboard → Project → Settings → Environment Variables
 
-#### Boletos
-
-```
-GET    /api/v1/boletos            - Listar todos los boletos
-GET    /api/v1/boletos/:id        - Obtener un boleto específico
-POST   /api/v1/boletos            - Crear un nuevo boleto
-PUT    /api/v1/boletos/:id        - Actualizar un boleto
-DELETE /api/v1/boletos/:id        - Eliminar un boleto
-```
-
-### Ejemplo de Petición
-
-```javascript
-// Crear un nuevo cliente
-const response = await fetch('http://localhost:3000/api/v1/clientes', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    Cli_Nombre: 'Juan',
-    Cli_Apellido: 'Pérez',
-    Cli_Email: 'juan.perez@ejemplo.com',
-    Cli_Celular: '0987654321',
-    id_TipoCliente_Fk: 1
-  })
-});
-
-const data = await response.json();
-console.log(data);
-```
+---
 
 ## Convenciones de Código
 
 ### Nomenclatura de Base de Datos
 
-- **Tablas**: PascalCase (ej: `Clientes`, `Eventos`)
-- **Claves Primarias**: `id_NombreTabla` (ej: `id_Clientes`)
-- **Claves Foráneas**: `id_NombreTabla_Fk` (ej: `id_Clientes_Fk`)
-- **Columnas**: Prefijo del módulo + PascalCase (ej: `Cli_Nombre`, `Evt_Fecha`)
+- **Tablas**: PascalCase (ej: \`Clientes\`, \`Eventos\`)
+- **Claves Primarias**: \`id_NombreTabla\` (ej: \`id_Clientes\`)
+- **Claves Foráneas**: \`id_NombreTabla_Fk\` (ej: \`id_Clientes_Fk\`)
+- **Columnas**: Prefijo del módulo + PascalCase (ej: \`Cli_Nombre\`, \`Evt_Fecha\`)
+
+**Ver más**: [database/DATABASE.md](database/DATABASE.md)
 
 ### JavaScript
 
@@ -254,73 +266,58 @@ console.log(data);
 - IDs: solo cuando sea absolutamente necesario
 - HTML5 semántico
 
+**Ver más**: [CONTRIBUTING.md](CONTRIBUTING.md)
+
+---
+
 ## Funcionalidades Implementadas
 
-- ✅ CRUD completo para cada módulo
-- ✅ Validaciones en frontend y backend
-- ✅ Exportación de datos (PDF, Excel, CSV, JSON, TXT)
-- ✅ Diseño responsivo
-- ✅ API REST bien estructurada
-- ✅ Manejo de errores robusto
-- ✅ Conexión segura a Azure SQL Database
-- ✅ Reportes integrados entre módulos
+- ⬜ CRUD completo para cada módulo
+- ⬜ Validaciones en frontend y backend
+- ⬜ Exportación de datos (PDF, Excel, CSV, JSON, TXT)
+- ⬜ Diseño responsivo
+- ⬜ Autenticación con Supabase Auth
+- ⬜ Control de acceso por roles (RLS)
+- ⬜ Reportes integrados entre módulos
 
-## Despliegue en Azure
-
-### Azure SQL Database
-
-1. Crea una base de datos en Azure Portal
-2. Configura las reglas de firewall
-3. Ejecuta los scripts SQL
-4. Guarda las credenciales de conexión
-
-### Azure App Service
-
-1. Crea un App Service en Azure Portal
-2. Configura las variables de entorno en **Configuration** > **Application settings**
-3. Despliega el código:
-
-```bash
-# Usando Git
-git remote add azure <url-de-azure>
-git push azure main
-```
-
-O usa GitHub Actions para despliegue automático.
-
-## Testing
-
-Para ejecutar las pruebas (cuando estén implementadas):
-
-```bash
-npm test
-```
-
-## Equipo de Desarrollo
-
-- **[Nombre 1]** - Módulo General y Clientes
-- **[Nombre 2]** - Módulo de Eventos y Boletos
-- **[Nombre 3]** - Facturación y Notificaciones
-- **[Nombre 4]** - Autenticación y Roles
+---
 
 ## Documentación Adicional
 
-- **Diagrama Entidad-Relación**: [docs/database/diagrama-er.png](docs/database/diagrama-er.png)
-- **Scripts SQL**: [docs/database/](docs/database/)
-- **Actas de Reuniones**: [docs/reuniones/](docs/reuniones/)
-- **Capturas de Pantalla**: [docs/capturas/](docs/capturas/)
-- **Videos Demostrativos**: [docs/videos/enlaces-youtube.md](docs/videos/enlaces-youtube.md)
+- **Configuración Completa**: [SETUP.md](SETUP.md)
+- **Guía de Contribución**: [CONTRIBUTING.md](CONTRIBUTING.md)
+- **Base de Datos**: [database/DATABASE.md](database/DATABASE.md)
+- **Historial de Cambios**: [CHANGELOG.md](CHANGELOG.md)
+
+---
+
+## Equipo de Desarrollo
+
+- **MUNIZAGA TORRES JUAN ANDRES** - Módulo General
+- **DIAZ LOOR GEOVANNY JAHIR** - Módulo General
+- **ADRIAN FIERRO JOSE ANDRES** - Módulo General
+- **SORIANO LEON ALEXANDER XAVIER** - Clientes
+- **BARZOLA DE LA O STEVEN ARIEL** - Eventos
+- **BARRENO HERRERA ANDIE MATTHIUS** - Boletos y Entradas
+- **MAZA PUNNE ISSAC ALEXANDER** - Facturación
+- **ARMIJOS ROMERO ERICK DANILO** - Notificaciones
+- **TUMBACO SANTANA GABRIEL ALEJANDRO** - Autenticación y Roles
+
+---
 
 ## Licencia
 
 Este proyecto es un trabajo académico desarrollado para ESPOL. Ver el archivo [LICENSE](LICENSE) para más detalles.
 
+---
+
 ## Contacto y Soporte
 
-Para dudas o problemas, contactar a través de:
+Para dudas o problemas:
 - Issues en GitHub
 - Correo institucional ESPOL
+- Revisar documentación en [docs/](docs/)
 
 ---
 
-**Desarrollado con ❤️ por estudiantes de ESPOL - SOFG1006**
+**Desarrollado por estudiantes de ESPOL - SOFG1006**
