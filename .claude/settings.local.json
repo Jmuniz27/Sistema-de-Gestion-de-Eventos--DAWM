@@ -2,7 +2,10 @@
   "permissions": {
     "allow": [
       "Bash(tree:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: Implementar estructura completa del Sistema de Gestión de Eventos\n\n- Configurar backend con Express y Azure SQL Database\n- Implementar módulo completo de Clientes (CRUD + exportación)\n- Crear frontend responsivo con Bootstrap 5\n- Agregar scripts SQL para todas las tablas del sistema\n- Incluir middleware de validación y manejo de errores\n- Implementar sistema de exportación (PDF, Excel, CSV, JSON, TXT)\n- Agregar documentación completa y templates\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

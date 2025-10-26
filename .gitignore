@@ -1,6 +1,6 @@
 # ============================================
 # Sistema de Gestión de Eventos - ESPOL
-# .gitignore
+# .gitignore para Supabase + Vercel + Vite
 # ============================================
 
 # ============================================
@@ -19,6 +19,15 @@ pnpm-lock.yaml
 .env.development
 .env.production
 .env.test
+
+# ============================================
+# Build y Distribución
+# ============================================
+dist/
+build/
+.cache/
+.vercel/
+*.local
 
 # ============================================
 # Archivos de Log
@@ -60,12 +69,11 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 !.vscode/settings.json.example
 
-# JetBrains (WebStorm, IntelliJ, etc.)
+# JetBrains
 .idea/
 *.swp
 *.swo
 *.swn
-.idea_modules/
 *.iml
 *.iws
 
@@ -81,25 +89,6 @@ $RECYCLE.BIN/
 [._]sw[a-p]
 
 # ============================================
-# Build y Distribución
-# ============================================
-dist/
-build/
-out/
-.cache/
-.parcel-cache/
-.next/
-.nuxt/
-
-# ============================================
-# Testing
-# ============================================
-coverage/
-.nyc_output/
-*.lcov
-.jest/
-
-# ============================================
 # Archivos Temporales
 # ============================================
 *.tmp
@@ -108,53 +97,22 @@ coverage/
 .temp/
 
 # ============================================
-# Uploads y Archivos Generados
+# Archivos Exportados
 # ============================================
-uploads/
-temp-uploads/
-generated-reports/
-*.pdf
-*.xlsx
-*.csv
-# Excepciones: mantener archivos de ejemplo
-!docs/**/*.pdf
-!docs/**/*.xlsx
+assets/exports/*
+!assets/exports/.gitkeep
 
 # ============================================
-# Certificados y Claves
+# Testing
 # ============================================
-*.pem
-*.key
-*.cert
-*.crt
-ssl/
-certificates/
+coverage/
+.nyc_output/
+*.lcov
 
 # ============================================
-# Azure
-# ============================================
-.azure/
-*.publishsettings
-
-# ============================================
-# Base de Datos Local
-# ============================================
-*.db
-*.sqlite
-*.sqlite3
-*.mdf
-*.ldf
-
-# ============================================
-# Backup Files
+# Archivos de Backup
 # ============================================
 *.bak
 *.backup
 *.old
 *.orig
-
-# ============================================
-# Archivos de Configuración Local
-# ============================================
-config.local.js
-config.local.json

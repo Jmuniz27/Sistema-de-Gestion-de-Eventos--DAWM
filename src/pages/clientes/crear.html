@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Cliente - Sistema de Gestión de Eventos</title>
+
+    <!--
+      Archivo: src/pages/clientes/crear.html
+      Propósito: Formulario para crear nuevos clientes
+
+      Campos del formulario:
+      - Cli_Nombre* (obligatorio)
+      - Cli_Apellido* (obligatorio)
+      - Cli_Email* (obligatorio, validar formato)
+      - Cli_Celular* (obligatorio, validar formato)
+      - id_TipoCliente_Fk* (select, obligatorio)
+      - Direcciones (opcional, poder agregar múltiples)
+
+      Validaciones:
+      - Email único en la BD
+      - Formato de email válido
+      - Formato de celular válido (10 dígitos)
+      - Campos obligatorios no vacíos
+
+      Flujo:
+      1. Usuario llena formulario
+      2. Valida en frontend
+      3. Envía a Supabase
+      4. Si éxito → redirige a index.html
+      5. Si error → muestra mensaje
+
+      Dependencias:
+      - ../../scripts/modules/clientes.js (función crearCliente)
+      - ../../scripts/utils.js (validaciones)
+    -->
+
+    <link rel="stylesheet" href="../../styles/main.css">
+</head>
+<body>
+    <!-- TODO: Cargar navbar -->
+
+    <!-- TODO: Agregar formulario de creación de cliente -->
+
+    <!-- TODO: Sección para agregar múltiples direcciones (dinámico) -->
+
+    <!-- TODO: Botones: Guardar, Cancelar -->
+
+    <script type="module" src="../../scripts/supabase-client.js"></script>
+    <script type="module" src="../../scripts/modules/clientes.js"></script>
+</body>
+</html>

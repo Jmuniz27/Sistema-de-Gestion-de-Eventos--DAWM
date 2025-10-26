@@ -1,0 +1,36 @@
+/**
+ * Archivo: src/styles/responsive.css
+ * Propósito: Media queries para diseño responsivo
+ *
+ * Breakpoints recomendados:
+ * - Mobile: 320px - 767px
+ * - Tablet: 768px - 1023px
+ * - Desktop: 1024px - 1439px
+ * - Large Desktop: 1440px+
+ *
+ * Enfoque: Mobile-first
+ * - Estilos base para móvil
+ * - Media queries para pantallas más grandes
+ *
+ * Ajustes por hacer:
+ * - Navbar responsive (hamburger menu en móvil)
+ * - Tablas scrollable en móvil
+ * - Grids que se apilan en móvil
+ * - Tamaños de fuente adaptativos
+ * - Espaciados reducidos en móvil
+ */
+
+/* TODO: Media query para tablets */
+@media (min-width: 768px) {
+  /* Ajustes para tablet */
+}
+
+/* TODO: Media query para desktop */
+@media (min-width: 1024px) {
+  /* Ajustes para desktop */
+}
+
+/* TODO: Media query para pantallas grandes */
+@media (min-width: 1440px) {
+  /* Ajustes para pantallas grandes */
+}
