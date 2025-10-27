@@ -30,9 +30,9 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- Tabla: GeneroSexo
 CREATE TABLE IF NOT EXISTS GeneroSexo (
     id_GeneroSexo SERIAL PRIMARY KEY,
-    Gen_Nombre VARCHAR(20) NOT NULL UNIQUE,
+    Gen_Nombre VARCHAR(30) NOT NULL UNIQUE,
     Gen_Descripcion VARCHAR(100),
-    Gen_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Gen_Estado IN ('Activo', 'Inactivo')),
+    Gen_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Gen_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     Gen_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS Operadora (
     id_Operadora SERIAL PRIMARY KEY,
     Ope_Nombre VARCHAR(50) NOT NULL UNIQUE,
     Ope_Codigo VARCHAR(10),
-    Ope_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Ope_Estado IN ('Activo', 'Inactivo')),
+    Ope_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Ope_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     Ope_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -52,7 +52,7 @@ CREATE TABLE IF NOT EXISTS EstadoCivil (
     id_EstadoCivil SERIAL PRIMARY KEY,
     Est_Nombre VARCHAR(30) NOT NULL UNIQUE,
     Est_Descripcion VARCHAR(100),
-    Est_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Est_Estado IN ('Activo', 'Inactivo')),
+    Est_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Est_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     Est_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS Proveedores (
     Prov_Telefono VARCHAR(15),
     Prov_Email VARCHAR(100),
     Prov_TipoServicio VARCHAR(100),
-    Prov_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Prov_Estado IN ('Activo', 'Inactivo')),
+    Prov_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Prov_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     Prov_FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS TipoDocumento (
     TDoc_Nombre VARCHAR(50) NOT NULL UNIQUE,
     TDoc_Codigo VARCHAR(10),
     TDoc_Descripcion VARCHAR(150),
-    TDoc_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (TDoc_Estado IN ('Activo', 'Inactivo')),
+    TDoc_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (TDoc_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     TDoc_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS UnidadMedida (
     UMed_Nombre VARCHAR(50) NOT NULL,
     UMed_Simbolo VARCHAR(10) NOT NULL UNIQUE,
     UMed_Tipo VARCHAR(50),
-    UMed_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (UMed_Estado IN ('Activo', 'Inactivo')),
+    UMed_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (UMed_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     UMed_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS Provincias (
     Prov_Nombre VARCHAR(100) NOT NULL UNIQUE,
     Prov_Codigo VARCHAR(10),
     Prov_Pais VARCHAR(50) DEFAULT 'Ecuador',
-    Prov_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Prov_Estado IN ('Activo', 'Inactivo')),
+    Prov_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Prov_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     Prov_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -110,7 +110,7 @@ CREATE TABLE IF NOT EXISTS Ciudades (
     Ciu_Nombre VARCHAR(100) NOT NULL,
     Ciu_Codigo VARCHAR(10),
     id_Provincias_Fk INT NOT NULL REFERENCES Provincias(id_Provincias) ON DELETE RESTRICT ON UPDATE CASCADE,
-    Ciu_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Ciu_Estado IN ('Activo', 'Inactivo')),
+    Ciu_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Ciu_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     Ciu_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(Ciu_Nombre, id_Provincias_Fk)
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS EstadosGenerales (
     EstG_Descripcion VARCHAR(150),
     EstG_Tipo VARCHAR(50),
     EstG_Color VARCHAR(20),
-    EstG_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (EstG_Estado IN ('Activo', 'Inactivo')),
+    EstG_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (EstG_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     EstG_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS MetodoPago (
     MPago_Nombre VARCHAR(50) NOT NULL UNIQUE,
     MPago_Descripcion VARCHAR(150),
     MPago_RequiereReferencia BOOLEAN DEFAULT FALSE,
-    MPago_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (MPago_Estado IN ('Activo', 'Inactivo')),
+    MPago_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (MPago_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     MPago_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -145,7 +145,7 @@ CREATE TABLE IF NOT EXISTS IVA (
     IVA_Porcentaje DECIMAL(5,2) NOT NULL CHECK (IVA_Porcentaje >= 0 AND IVA_Porcentaje <= 100),
     IVA_FechaAplicacion DATE NOT NULL,
     IVA_FechaFin DATE,
-    IVA_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (IVA_Estado IN ('Activo', 'Inactivo')),
+    IVA_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (IVA_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'general',
     IVA_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(IVA_FechaAplicacion)
@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS TipoCliente (
     id_TipoCliente SERIAL PRIMARY KEY,
     TCli_Nombre VARCHAR(50) NOT NULL UNIQUE,
     TCli_Descripcion VARCHAR(150),
-    TCli_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (TCli_Estado IN ('Activo', 'Inactivo')),
+    TCli_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (TCli_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'clientes',
     TCli_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -181,7 +181,7 @@ CREATE TABLE IF NOT EXISTS Clientes (
     id_EstadoCivil_Fk INT REFERENCES EstadoCivil(id_EstadoCivil) ON DELETE SET NULL ON UPDATE CASCADE,
     id_TipoCliente_Fk INT NOT NULL REFERENCES TipoCliente(id_TipoCliente) ON DELETE RESTRICT ON UPDATE CASCADE,
     id_Operadora_Fk INT REFERENCES Operadora(id_Operadora) ON DELETE SET NULL ON UPDATE CASCADE,
-    Cli_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Cli_Estado IN ('Activo', 'Inactivo', 'Suspendido')),
+    Cli_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Cli_Estado IN ('Activo', 'Inactivo', 'Suspendido')),
     id_modulo VARCHAR(50) DEFAULT 'clientes',
     Cli_FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Cli_FechaUltimaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS DireccionesCliente (
     id_Provincias_Fk INT REFERENCES Provincias(id_Provincias) ON DELETE RESTRICT ON UPDATE CASCADE,
     DirCli_TipoDireccion VARCHAR(50) DEFAULT 'Principal' CHECK (DirCli_TipoDireccion IN ('Principal', 'Secundaria', 'Facturacion', 'Envio')),
     DirCli_EsPrincipal BOOLEAN DEFAULT FALSE,
-    DirCli_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (DirCli_Estado IN ('Activo', 'Inactivo')),
+    DirCli_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (DirCli_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'clientes',
     DirCli_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS CategoriasEvento (
     CatEvt_Descripcion TEXT,
     CatEvt_Color VARCHAR(20),
     CatEvt_Icono VARCHAR(50),
-    CatEvt_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (CatEvt_Estado IN ('Activo', 'Inactivo')),
+    CatEvt_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (CatEvt_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'eventos',
     CatEvt_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -227,7 +227,7 @@ CREATE TABLE IF NOT EXISTS TipoIngreso (
     TIng_Nombre VARCHAR(50) NOT NULL UNIQUE,
     TIng_Descripcion VARCHAR(150),
     TIng_RequiereBoleto BOOLEAN DEFAULT TRUE,
-    TIng_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (TIng_Estado IN ('Activo', 'Inactivo')),
+    TIng_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (TIng_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'eventos',
     TIng_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -280,7 +280,7 @@ CREATE TABLE IF NOT EXISTS TiposBoleto (
     TBol_Descripcion VARCHAR(150),
     TBol_Prioridad INT DEFAULT 0,
     TBol_PermisoAcceso VARCHAR(100),
-    TBol_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (TBol_Estado IN ('Activo', 'Inactivo')),
+    TBol_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (TBol_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'boletos',
     TBol_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -373,7 +373,7 @@ CREATE TABLE IF NOT EXISTS Plantillas (
     Pla_Contenido TEXT NOT NULL,
     Pla_Tipo VARCHAR(20) CHECK (Pla_Tipo IN ('Email', 'Push', 'SMS')),
     Pla_Variables TEXT,
-    Pla_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Pla_Estado IN ('Activo', 'Inactivo')),
+    Pla_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Pla_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'notificaciones',
     Pla_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Pla_FechaUltimaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -421,7 +421,7 @@ CREATE TABLE IF NOT EXISTS ROLES (
     Rol_Nombre VARCHAR(50) UNIQUE NOT NULL,
     Rol_Descripcion TEXT,
     Rol_Nivel INT DEFAULT 0,
-    Rol_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Rol_Estado IN ('Activo', 'Inactivo')),
+    Rol_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Rol_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'autenticacion',
     Rol_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -436,7 +436,7 @@ CREATE TABLE IF NOT EXISTS USUARIOS (
     Usr_Avatar VARCHAR(500),
     id_ROLES_Fk INT REFERENCES ROLES(id_ROLES) ON DELETE SET NULL ON UPDATE CASCADE,
     Usr_UltimoAcceso TIMESTAMP,
-    Usr_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Usr_Estado IN ('Activo', 'Inactivo', 'Bloqueado')),
+    Usr_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Usr_Estado IN ('Activo', 'Inactivo', 'Bloqueado')),
     id_modulo VARCHAR(50) DEFAULT 'autenticacion',
     Usr_FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Usr_FechaUltimaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -455,7 +455,7 @@ CREATE TABLE IF NOT EXISTS LOGIN (
     Log_FechaUltimoCambioPassword TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Log_TokenRecuperacion VARCHAR(255),
     Log_FechaExpiracionToken TIMESTAMP,
-    Log_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Log_Estado IN ('Activo', 'Bloqueado', 'Suspendido')),
+    Log_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Log_Estado IN ('Activo', 'Bloqueado', 'Suspendido')),
     id_modulo VARCHAR(50) DEFAULT 'autenticacion',
     Log_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -471,7 +471,7 @@ CREATE TABLE IF NOT EXISTS Permisos (
     Per_Actualizacion BOOLEAN DEFAULT FALSE,
     Per_Eliminacion BOOLEAN DEFAULT FALSE,
     Per_Exportacion BOOLEAN DEFAULT FALSE,
-    Per_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Per_Estado IN ('Activo', 'Inactivo')),
+    Per_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (Per_Estado IN ('Activo', 'Inactivo')),
     id_modulo VARCHAR(50) DEFAULT 'autenticacion',
     Per_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(id_ROLES_Fk, Per_Modulo, Per_Pantalla)
