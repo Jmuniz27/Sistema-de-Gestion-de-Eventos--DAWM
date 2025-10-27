@@ -29,87 +29,125 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- Tabla: GeneroSexo
 CREATE TABLE IF NOT EXISTS GeneroSexo (
-    id_GeneroSexo INT PRIMARY KEY AUTO_INCREMENT,
-    Gen_Nombre ENUM('M', 'F') NOT NULL
+    id_GeneroSexo SERIAL PRIMARY KEY,
+    Gen_Nombre VARCHAR(20) NOT NULL UNIQUE,
+    Gen_Descripcion VARCHAR(100),
+    Gen_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Gen_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    Gen_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla: Operadora
 CREATE TABLE IF NOT EXISTS Operadora (
-    id_Operadora INT PRIMARY KEY AUTO_INCREMENT,
-    Ope_Nombre VARCHAR(50) NOT NULL
+    id_Operadora SERIAL PRIMARY KEY,
+    Ope_Nombre VARCHAR(50) NOT NULL UNIQUE,
+    Ope_Codigo VARCHAR(10),
+    Ope_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Ope_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    Ope_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla: EstadoCivil
 CREATE TABLE IF NOT EXISTS EstadoCivil (
-    id_EstadoCivil INT PRIMARY KEY AUTO_INCREMENT,
-    EstCiv_Nombre ENUM('Soltero', 'Casado', 'Divorciado', 'Viudo') NOT NULL
+    id_EstadoCivil SERIAL PRIMARY KEY,
+    Est_Nombre VARCHAR(30) NOT NULL UNIQUE,
+    Est_Descripcion VARCHAR(100),
+    Est_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Est_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    Est_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 -- Tabla: Proveedores
 CREATE TABLE IF NOT EXISTS Proveedores (
-    id_Proveedores_PK INT PRIMARY KEY AUTO_INCREMENT,
+    id_Proveedores SERIAL PRIMARY KEY,
     Prov_Nombre VARCHAR(150) NOT NULL,
     Prov_RUC VARCHAR(13) UNIQUE,
     Prov_Direccion VARCHAR(250),
     Prov_Telefono VARCHAR(15),
     Prov_Email VARCHAR(100),
     Prov_TipoServicio VARCHAR(100),
+    Prov_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Prov_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    Prov_FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 -- Tabla: TipoDocumento
 CREATE TABLE IF NOT EXISTS TipoDocumento (
-    id_TipoDocumento INT PRIMARY KEY AUTO_INCREMENT,
-    TipDoc_Nombre ENUM('Cédula', 'RUC', 'Pasaporte') NOT NULL
+    id_TipoDocumento SERIAL PRIMARY KEY,
+    TDoc_Nombre VARCHAR(50) NOT NULL UNIQUE,
+    TDoc_Codigo VARCHAR(10),
+    TDoc_Descripcion VARCHAR(150),
+    TDoc_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (TDoc_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    TDoc_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
-
 
 -- Tabla: UnidadMedida
 CREATE TABLE IF NOT EXISTS UnidadMedida (
-    id_UnidadMedida_PK INT PRIMARY KEY AUTO_INCREMENT,
+    id_UnidadMedida SERIAL PRIMARY KEY,
     UMed_Nombre VARCHAR(50) NOT NULL,
     UMed_Simbolo VARCHAR(10) NOT NULL UNIQUE,
+    UMed_Tipo VARCHAR(50),
+    UMed_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (UMed_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    UMed_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 -- Tabla: Provincias
 CREATE TABLE IF NOT EXISTS Provincias (
-    id_Provincias INT PRIMARY KEY AUTO_INCREMENT,
-    Prov_Nombre VARCHAR(100) NOT NULL
+    id_Provincias SERIAL PRIMARY KEY,
+    Prov_Nombre VARCHAR(100) NOT NULL UNIQUE,
+    Prov_Codigo VARCHAR(10),
+    Prov_Pais VARCHAR(50) DEFAULT 'Ecuador',
+    Prov_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Prov_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    Prov_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla: Ciudades
 CREATE TABLE IF NOT EXISTS Ciudades (
-    id_Ciudades INT PRIMARY KEY AUTO_INCREMENT,
-    id_Provincias_Fk INT NOT NULL,
+    id_Ciudades SERIAL PRIMARY KEY,
     Ciu_Nombre VARCHAR(100) NOT NULL,
-    FOREIGN KEY (id_Provincias_Fk) REFERENCES Provincias(id_Provincias)ON DELETE CASCADE ON UPDATE CASCADE
+    Ciu_Codigo VARCHAR(10),
+    id_Provincias_Fk INT NOT NULL REFERENCES Provincias(id_Provincias) ON DELETE RESTRICT ON UPDATE CASCADE,
+    Ciu_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Ciu_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    Ciu_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(Ciu_Nombre, id_Provincias_Fk)
 );
 
 -- Tabla: EstadosGenerales
 CREATE TABLE IF NOT EXISTS EstadosGenerales (
-    id_EstadosGenerales INT PRIMARY KEY AUTO_INCREMENT,
+    id_EstadosGenerales SERIAL PRIMARY KEY,
     EstG_Nombre VARCHAR(50) NOT NULL UNIQUE,
     EstG_Descripcion VARCHAR(150),
-   
+    EstG_Tipo VARCHAR(50),
+    EstG_Color VARCHAR(20),
+    EstG_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (EstG_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    EstG_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 -- Tabla: MetodoPago
 CREATE TABLE IF NOT EXISTS MetodoPago (
-    id_MetodoPago INT PRIMARY KEY AUTO_INCREMENT,
+    id_MetodoPago SERIAL PRIMARY KEY,
     MPago_Nombre VARCHAR(50) NOT NULL UNIQUE,
+    MPago_Descripcion VARCHAR(150),
+    MPago_RequiereReferencia BOOLEAN DEFAULT FALSE,
+    MPago_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (MPago_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    MPago_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 -- Tabla: IVA
 CREATE TABLE IF NOT EXISTS IVA (
-    id_IVA INT PRIMARY KEY AUTO_INCREMENT,
+    id_IVA SERIAL PRIMARY KEY,
     IVA_Porcentaje DECIMAL(5,2) NOT NULL CHECK (IVA_Porcentaje >= 0 AND IVA_Porcentaje <= 100),
     IVA_FechaAplicacion DATE NOT NULL,
     IVA_FechaFin DATE,
+    IVA_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (IVA_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'general',
+    IVA_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(IVA_FechaAplicacion)
 );
 
@@ -120,41 +158,50 @@ CREATE TABLE IF NOT EXISTS IVA (
 
 -- Tabla: TipoCliente
 CREATE TABLE IF NOT EXISTS TipoCliente (
-    id_TipoCliente INT PRIMARY KEY AUTO_INCREMENT,
-    TipCli_Nombre ENUM('Persona Natural', 'Empresa') NOT NULL,
+    id_TipoCliente SERIAL PRIMARY KEY,
+    TCli_Nombre VARCHAR(50) NOT NULL UNIQUE,
+    TCli_Descripcion VARCHAR(150),
+    TCli_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (TCli_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'clientes',
+    TCli_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 -- Tabla: Clientes
 CREATE TABLE IF NOT EXISTS Clientes (
-    id_Clientes INT PRIMARY KEY AUTO_INCREMENT,
-    id_TipoCliente_Fk INT NOT NULL,       -- Persona Natural / Empresa
-    id_TipoDocumento_Fk INT NOT NULL,     -- Cédula / RUC / Pasaporte
-    id_GeneroSexo_Fk INT,                 -- M / F
-    id_EstadoCivil_Fk INT,                -- Soltero / Casado / etc.
-    id_Operadora_Fk INT,                  -- Claro / Movistar / etc.
+    id_Clientes SERIAL PRIMARY KEY,
     Cli_Nombre VARCHAR(100) NOT NULL,
     Cli_Apellido VARCHAR(100) NOT NULL,
-    Cli_Identificacion VARCHAR(20) NOT NULL,
-    Cli_Email VARCHAR(100) UNIQUE NOT NULL,
-    Cli_Celular VARCHAR(15),
-    FOREIGN KEY (id_TipoCliente_Fk) REFERENCES TipoCliente(id_TipoCliente) ON DELETE RESTRICT ON UPDATE CASCADE,
-    FOREIGN KEY (id_TipoDocumento_Fk) REFERENCES TipoDocumento(id_TipoDocumento) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_GeneroSexo_Fk) REFERENCES GeneroSexo(id_GeneroSexo) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_EstadoCivil_Fk) REFERENCES EstadoCivil(id_EstadoCivil) ON DELETE SET NULL ON UPDATE CASCADE,
-    FOREIGN KEY (id_Operadora_Fk) REFERENCES Operadora(id_Operadora) ON DELETE SET NULL ON UPDATE CASCADE
+    Cli_Email VARCHAR(150) UNIQUE NOT NULL,
+    Cli_Celular VARCHAR(15) NOT NULL,
+    Cli_Telefono VARCHAR(15),
+    Cli_FechaNacimiento DATE,
+    Cli_Identificacion VARCHAR(20),
+    id_TipoDocumento_Fk INT REFERENCES TipoDocumento(id_TipoDocumento) ON DELETE SET NULL ON UPDATE CASCADE,
+    id_GeneroSexo_Fk INT REFERENCES GeneroSexo(id_GeneroSexo) ON DELETE SET NULL ON UPDATE CASCADE,
+    id_EstadoCivil_Fk INT REFERENCES EstadoCivil(id_EstadoCivil) ON DELETE SET NULL ON UPDATE CASCADE,
+    id_TipoCliente_Fk INT NOT NULL REFERENCES TipoCliente(id_TipoCliente) ON DELETE RESTRICT ON UPDATE CASCADE,
+    id_Operadora_Fk INT REFERENCES Operadora(id_Operadora) ON DELETE SET NULL ON UPDATE CASCADE,
+    Cli_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Cli_Estado IN ('Activo', 'Inactivo', 'Suspendido')),
+    id_modulo VARCHAR(50) DEFAULT 'clientes',
+    Cli_FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Cli_FechaUltimaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla: DireccionesCliente
 CREATE TABLE IF NOT EXISTS DireccionesCliente (
-    id_DireccionesCliente INT PRIMARY KEY AUTO_INCREMENT,
-    id_Clientes_Fk INT NOT NULL,
-    id_Ciudades_Fk INT NOT NULL,
-    DirCli_Direccion VARCHAR(150) NOT NULL,
-    DirCli_Referencia VARCHAR(100),
+    id_DireccionesCliente SERIAL PRIMARY KEY,
+    id_Clientes_Fk INT NOT NULL REFERENCES Clientes(id_Clientes) ON DELETE CASCADE ON UPDATE CASCADE,
+    DirCli_Calle VARCHAR(200) NOT NULL,
+    DirCli_Numero VARCHAR(20),
+    DirCli_Referencia VARCHAR(250),
     DirCli_CodigoPostal VARCHAR(10),
-    FOREIGN KEY (id_Clientes_Fk) REFERENCES Clientes(id_Clientes) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (id_Ciudades_Fk) REFERENCES Ciudades(id_Ciudades) ON DELETE RESTRICT ON UPDATE CASCADE
+    id_Ciudades_Fk INT REFERENCES Ciudades(id_Ciudades) ON DELETE RESTRICT ON UPDATE CASCADE,
+    id_Provincias_Fk INT REFERENCES Provincias(id_Provincias) ON DELETE RESTRICT ON UPDATE CASCADE,
+    DirCli_TipoDireccion VARCHAR(50) DEFAULT 'Principal' CHECK (DirCli_TipoDireccion IN ('Principal', 'Secundaria', 'Facturacion', 'Envio')),
+    DirCli_EsPrincipal BOOLEAN DEFAULT FALSE,
+    DirCli_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (DirCli_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'clientes',
+    DirCli_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ============================================
@@ -228,43 +275,48 @@ CREATE TABLE IF NOT EXISTS Detalle_Eventos (
 
 -- Tabla: TiposBoleto
 CREATE TABLE IF NOT EXISTS TiposBoleto (
-    id_tiposBoleto VARCHAR PRIMARY KEY,
-    TipB_nombre VARCHAR(20)
+    id_TiposBoleto SERIAL PRIMARY KEY,
+    TBol_Nombre VARCHAR(50) NOT NULL UNIQUE,
+    TBol_Descripcion VARCHAR(150),
+    TBol_Prioridad INT DEFAULT 0,
+    TBol_PermisoAcceso VARCHAR(100),
+    TBol_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (TBol_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'boletos',
+    TBol_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla: Boletos
-CREATE TABLE IF NOT EXISTS Boleto (
-    id_codigo INT PRIMARY KEY,
-    id_Evento_FK INT NOT NULL,
-    id_TiposBoleto_FK INT NOT NULL,
-    id_EstadoBoleto_FK INT NOT NULL,
-    id_Proveedor_PK INT NOT NULL,
-    bol_precio INT,
-    bol_fila INT,
-    bol_asiento INT,
-    bol_seccion INT,
-    FOREIGN KEY (id_Evento_FK) REFERENCES Evento(ID_Evento),
-    FOREIGN KEY (id_TiposBoleto_FK) REFERENCES TiposBoleto(id_tiposBoleto),
-    FOREIGN KEY (id_EstadoBoleto_FK) REFERENCES EstadosBoleto(id_estadoBoleto),
-    FOREIGN KEY (id_Proveedor_PK) REFERENCES Proveedor(id_Proveedores_PK)
+CREATE TABLE IF NOT EXISTS Boletos (
+    id_Boletos SERIAL PRIMARY KEY,
+    Bol_Codigo VARCHAR(50) UNIQUE NOT NULL,
+    Bol_CodigoQR TEXT,
+    Bol_Precio DECIMAL(10,2) NOT NULL CHECK (Bol_Precio >= 0),
+    Bol_PrecioOriginal DECIMAL(10,2),
+    Bol_Descuento DECIMAL(10,2) DEFAULT 0,
+    id_Eventos_Fk INT NOT NULL REFERENCES Eventos(id_Eventos) ON DELETE RESTRICT ON UPDATE CASCADE,
+    id_TiposBoleto_Fk INT NOT NULL REFERENCES TiposBoleto(id_TiposBoleto) ON DELETE RESTRICT ON UPDATE CASCADE,
+    Bol_NumeroAsiento VARCHAR(20),
+    Bol_SeccionZona VARCHAR(50),
+    Bol_FechaVencimiento TIMESTAMP,
+    Bol_Estado VARCHAR(50) DEFAULT 'Disponible' CHECK (Bol_Estado IN ('Disponible', 'Vendido', 'Reservado', 'Cancelado', 'Usado')),
+    id_modulo VARCHAR(50) DEFAULT 'boletos',
+    Bol_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Bol_FechaVenta TIMESTAMP,
+    Bol_FechaUso TIMESTAMP
 );
 
 -- Tabla: EntradasAsignadas (Relación boleto-cliente)
-CREATE TABLE EntradasAsignadas (
-    id_entradasAsignadas INT PRIMARY KEY,
-    id_boleto_FK INT NOT NULL,
-    id_Cliente_FK INT NOT NULL,
-    entA_Cantidad INT,
-    entA_fechaValida TIMESTAMP,
-    FOREIGN KEY (id_boleto_FK) REFERENCES Boleto(id_codigo),
-    FOREIGN KEY (id_Cliente_FK) REFERENCES Cliente(id_cliente_PK)
+CREATE TABLE IF NOT EXISTS EntradasAsignadas (
+    id_EntradasAsignadas SERIAL PRIMARY KEY,
+    id_Boletos_Fk INT NOT NULL REFERENCES Boletos(id_Boletos) ON DELETE CASCADE ON UPDATE CASCADE,
+    id_Clientes_Fk INT NOT NULL REFERENCES Clientes(id_Clientes) ON DELETE CASCADE ON UPDATE CASCADE,
+    Ent_FechaAsignacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Ent_FechaValidacion TIMESTAMP,
+    Ent_ValidadoPor VARCHAR(100),
+    Ent_Estado VARCHAR(50) DEFAULT 'Asignada' CHECK (Ent_Estado IN ('Asignada', 'Validada', 'Cancelada')),
+    id_modulo VARCHAR(50) DEFAULT 'boletos',
+    UNIQUE(id_Boletos_Fk)
 );
-
-CREATE TABLE IF NOT EXISTS EstadosBoleto (
-    id_estadoBoleto VARCHAR PRIMARY KEY,
-    EstB_nombre VARCHAR(20)
-);
-
 
 -- ============================================
 -- MÓDULO FACTURACIÓN
@@ -315,14 +367,13 @@ CREATE TABLE IF NOT EXISTS Detalle_factura (
 
 -- Tabla: Plantillas
 CREATE TABLE IF NOT EXISTS Plantillas (
-    id_Plantillas SERIAL PRIMARY KEY,
+    id_Plantillas_PK SERIAL PRIMARY KEY,
     Pla_Nombre VARCHAR(100) NOT NULL UNIQUE,
     Pla_Asunto VARCHAR(250),
     Pla_Contenido TEXT NOT NULL,
-    Pla_Tipo VARCHAR(20) CHECK (Pla_Tipo IN ('Email', 'Push', 'SMS')),
-    Pla_Variables TEXT,
+    Pla_Tipo VARCHAR(20) CHECK (Pla_Tipo IN ('Email', 'Push')),
     Pla_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Pla_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'notificaciones',
+    -- id_modulo VARCHAR(50) DEFAULT 'notificaciones', no creo que sea necesaria ya que notificaciones tambien cuenta con esta
     Pla_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Pla_FechaUltimaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -332,30 +383,33 @@ CREATE TABLE IF NOT EXISTS Notificaciones (
     id_Notificaciones SERIAL PRIMARY KEY,
     Not_Asunto VARCHAR(250),
     Not_Mensaje TEXT NOT NULL,
-    Not_Tipo VARCHAR(20) NOT NULL CHECK (Not_Tipo IN ('Email', 'Push', 'SMS')),
-    id_Plantillas_Fk INT REFERENCES Plantillas(id_Plantillas) ON DELETE SET NULL ON UPDATE CASCADE,
+    Not_Tipo VARCHAR(20) NOT NULL CHECK (Not_Tipo IN ('Email', 'Push')),
+    Not_Estado VARCHAR(50) DEFAULT 'Pendiente' CHECK (Not_Estado IN ('Pendiente', 'Enviada', 'Fallida', 'Cancelada')),
     Not_FechaProgramada TIMESTAMP,
     Not_FechaEnvio TIMESTAMP,
     Not_IntentosEnvio INT DEFAULT 0,
-    Not_Estado VARCHAR(50) DEFAULT 'Pendiente' CHECK (Not_Estado IN ('Pendiente', 'Enviada', 'Fallida', 'Cancelada')),
-    Not_ErrorMensaje TEXT,
-    id_modulo VARCHAR(50) DEFAULT 'notificaciones',
-    Not_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    Not_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id_Cliente_Fk INT REFERENCES Clientes(id_Clientes) ON DELETE SET NULL ON UPDATE CASCADE,
+    id_Boleto_Fk INT REFERENCES Boletos(id_Boletos) ON DELETE SET NULL ON UPDATE CASCADE,
+    id_Plantillas_Fk INT REFERENCES Plantillas(id_Plantillas) ON DELETE SET NULL ON UPDATE CASCADE,
+    id_Factura_Fk INT REFERENCES Factura(id_Factura) ON DELETE SET NULL ON UPDATE CASCADE,
+    --Not_ErrorMensaje TEXT, podria ir directamente desde la pagina 
+    --id_modulo VARCHAR(50) DEFAULT 'notificaciones',
 );
 
 -- Tabla: Destinatarios
 CREATE TABLE IF NOT EXISTS Destinatarios (
-    id_Destinatarios SERIAL PRIMARY KEY,
+    id_Destinatario_PK SERIAL PRIMARY KEY,
     id_Notificaciones_Fk INT NOT NULL REFERENCES Notificaciones(id_Notificaciones) ON DELETE CASCADE ON UPDATE CASCADE,
     id_Clientes_Fk INT REFERENCES Clientes(id_Clientes) ON DELETE CASCADE ON UPDATE CASCADE,
     Dest_Email VARCHAR(150),
     Dest_Telefono VARCHAR(15),
-    Dest_DeviceToken VARCHAR(500),
+    --Dest_DeviceToken VARCHAR(500), podria ir voy a ver si es necesario
     Dest_FechaEnvio TIMESTAMP,
     Dest_FechaLectura TIMESTAMP,
     Dest_Estado VARCHAR(50) DEFAULT 'Pendiente' CHECK (Dest_Estado IN ('Pendiente', 'Enviado', 'Leido', 'Fallido')),
-    id_modulo VARCHAR(50) DEFAULT 'notificaciones',
-    Dest_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    --id_modulo VARCHAR(50) DEFAULT 'notificaciones',
+    --Dest_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP (Si notificaciones ya tiene esta coumna no creo que sea necesaria aqui)
 );
 
 -- ============================================
@@ -364,45 +418,65 @@ CREATE TABLE IF NOT EXISTS Destinatarios (
 -- ============================================
 
 -- Tabla: ROLES
-CREATE TABLE IF NOT EXISTS Roles (
-    id_Rol SERIAL PRIMARY KEY,
-    rol_nombre VARCHAR(100) NOT NULL,
-    rol_descripcion VARCHAR(255)
-);
-
--- Tabla: Permisos 
-CREATE TABLE IF NOT EXISTS Permisos (
-    id_Permiso SERIAL PRIMARY KEY,
-    permiso_nombre VARCHAR(100) NOT NULL,
-    permiso_descripcion VARCHAR(255)
+CREATE TABLE IF NOT EXISTS ROLES (
+    id_ROLES SERIAL PRIMARY KEY,
+    Rol_Nombre VARCHAR(50) UNIQUE NOT NULL,
+    Rol_Descripcion TEXT,
+    Rol_Nivel INT DEFAULT 0,
+    Rol_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Rol_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'autenticacion',
+    Rol_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Tabla: USUARIOS
-CREATE TABLE IF NOT EXISTS Usuarios (
-    id_Usuario SERIAL PRIMARY KEY,
-    usuario_nombre VARCHAR(255) NOT NULL,
-    usuario_apellido VARCHAR(255) NOT NULL,
-    usuario_email VARCHAR(255) NOT NULL UNIQUE,
-    usuario_password VARCHAR(255) NOT NULL,
-    id_Estado_FK INT NOT NULL,
-    CONSTRAINT fk_usuario_estado
-        FOREIGN KEY (id_Estado_FK)
-        REFERENCES Estados_Generales(id_Estado)
-        ON DELETE RESTRICT
-        ON UPDATE CASCADE
+CREATE TABLE IF NOT EXISTS USUARIOS (
+    id_USUARIOS SERIAL PRIMARY KEY,
+    Usr_Email VARCHAR(150) UNIQUE NOT NULL,
+    Usr_Nombre VARCHAR(100) NOT NULL,
+    Usr_Apellido VARCHAR(100),
+    Usr_Telefono VARCHAR(15),
+    Usr_Avatar VARCHAR(500),
+    id_ROLES_Fk INT REFERENCES ROLES(id_ROLES) ON DELETE SET NULL ON UPDATE CASCADE,
+    Usr_UltimoAcceso TIMESTAMP,
+    Usr_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Usr_Estado IN ('Activo', 'Inactivo', 'Bloqueado')),
+    id_modulo VARCHAR(50) DEFAULT 'autenticacion',
+    Usr_FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Usr_FechaUltimaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Tabla: Tokens
-CREATE TABLE IF NOT EXISTS Tokens (
-    id_Token SERIAL PRIMARY KEY,
-    token_contenido VARCHAR(255) NOT NULL,
-    token_expiracion TIMESTAMP NOT NULL,
-    id_Usuario_FK INT NOT NULL,
-    CONSTRAINT fk_token_usuario
-        FOREIGN KEY (id_Usuario_FK)
-        REFERENCES Usuarios(id_Usuario)
-        ON DELETE CASCADE
-        ON UPDATE CASCADE
+-- Tabla: LOGIN
+CREATE TABLE IF NOT EXISTS LOGIN (
+    id_LOGIN SERIAL PRIMARY KEY,
+    id_USUARIOS_Fk INT UNIQUE NOT NULL REFERENCES USUARIOS(id_USUARIOS) ON DELETE CASCADE ON UPDATE CASCADE,
+    Log_Username VARCHAR(50) UNIQUE NOT NULL,
+    Log_PasswordHash VARCHAR(255) NOT NULL,
+    Log_Salt VARCHAR(100),
+    Log_RequiereCambioPassword BOOLEAN DEFAULT FALSE,
+    Log_IntentosLogin INT DEFAULT 0,
+    Log_FechaUltimoIntento TIMESTAMP,
+    Log_FechaUltimoCambioPassword TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    Log_TokenRecuperacion VARCHAR(255),
+    Log_FechaExpiracionToken TIMESTAMP,
+    Log_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Log_Estado IN ('Activo', 'Bloqueado', 'Suspendido')),
+    id_modulo VARCHAR(50) DEFAULT 'autenticacion',
+    Log_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla: Permisos (Pantallas/Vistas/Formularios por Rol)
+CREATE TABLE IF NOT EXISTS Permisos (
+    id_Permisos SERIAL PRIMARY KEY,
+    id_ROLES_Fk INT NOT NULL REFERENCES ROLES(id_ROLES) ON DELETE CASCADE ON UPDATE CASCADE,
+    Per_Modulo VARCHAR(50) NOT NULL,
+    Per_Pantalla VARCHAR(100) NOT NULL,
+    Per_Lectura BOOLEAN DEFAULT FALSE,
+    Per_Escritura BOOLEAN DEFAULT FALSE,
+    Per_Actualizacion BOOLEAN DEFAULT FALSE,
+    Per_Eliminacion BOOLEAN DEFAULT FALSE,
+    Per_Exportacion BOOLEAN DEFAULT FALSE,
+    Per_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Per_Estado IN ('Activo', 'Inactivo')),
+    id_modulo VARCHAR(50) DEFAULT 'autenticacion',
+    Per_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(id_ROLES_Fk, Per_Modulo, Per_Pantalla)
 );
 
 -- ============================================
