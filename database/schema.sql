@@ -45,19 +45,18 @@ CREATE TABLE IF NOT EXISTS EstadoCivil (
     EstCiv_Nombre ENUM('Soltero', 'Casado', 'Divorciado', 'Viudo') NOT NULL
 );
 
+
 -- Tabla: Proveedores
 CREATE TABLE IF NOT EXISTS Proveedores (
-    id_Proveedores SERIAL PRIMARY KEY,
+    id_Proveedores_PK INT PRIMARY KEY AUTO_INCREMENT,
     Prov_Nombre VARCHAR(150) NOT NULL,
     Prov_RUC VARCHAR(13) UNIQUE,
     Prov_Direccion VARCHAR(250),
     Prov_Telefono VARCHAR(15),
     Prov_Email VARCHAR(100),
     Prov_TipoServicio VARCHAR(100),
-    Prov_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Prov_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'general',
-    Prov_FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Tabla: TipoDocumento
 CREATE TABLE IF NOT EXISTS TipoDocumento (
@@ -66,16 +65,14 @@ CREATE TABLE IF NOT EXISTS TipoDocumento (
 );
 
 
+
 -- Tabla: UnidadMedida
 CREATE TABLE IF NOT EXISTS UnidadMedida (
-    id_UnidadMedida SERIAL PRIMARY KEY,
+    id_UnidadMedida_PK INT PRIMARY KEY AUTO_INCREMENT,
     UMed_Nombre VARCHAR(50) NOT NULL,
     UMed_Simbolo VARCHAR(10) NOT NULL UNIQUE,
-    UMed_Tipo VARCHAR(50),
-    UMed_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (UMed_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'general',
-    UMed_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Tabla: Provincias
 CREATE TABLE IF NOT EXISTS Provincias (
@@ -91,33 +88,28 @@ CREATE TABLE IF NOT EXISTS Ciudades (
     FOREIGN KEY (id_Provincias_Fk) REFERENCES Provincias(id_Provincias)ON DELETE CASCADE ON UPDATE CASCADE
 );
 
--- Tabla: ESTADOS_GENERALES
-CREATE TABLE IF NOT EXISTS Estados_Generales (
-    id_estado SERIAL PRIMARY KEY,
-    estado_nombre VARCHAR(100) NOT NULL,
-    estado_descripcion VARCHAR(255)
+-- Tabla: EstadosGenerales
+CREATE TABLE IF NOT EXISTS EstadosGenerales (
+    id_EstadosGenerales INT PRIMARY KEY AUTO_INCREMENT,
+    EstG_Nombre VARCHAR(50) NOT NULL UNIQUE,
+    EstG_Descripcion VARCHAR(150),
+   
 );
+
 
 -- Tabla: MetodoPago
 CREATE TABLE IF NOT EXISTS MetodoPago (
-    id_MetodoPago SERIAL PRIMARY KEY,
+    id_MetodoPago INT PRIMARY KEY AUTO_INCREMENT,
     MPago_Nombre VARCHAR(50) NOT NULL UNIQUE,
-    MPago_Descripcion VARCHAR(150),
-    MPago_RequiereReferencia BOOLEAN DEFAULT FALSE,
-    MPago_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (MPago_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'general',
-    MPago_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 -- Tabla: IVA
 CREATE TABLE IF NOT EXISTS IVA (
-    id_IVA SERIAL PRIMARY KEY,
+    id_IVA INT PRIMARY KEY AUTO_INCREMENT,
     IVA_Porcentaje DECIMAL(5,2) NOT NULL CHECK (IVA_Porcentaje >= 0 AND IVA_Porcentaje <= 100),
     IVA_FechaAplicacion DATE NOT NULL,
     IVA_FechaFin DATE,
-    IVA_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (IVA_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'general',
-    IVA_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(IVA_FechaAplicacion)
 );
 
