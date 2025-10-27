@@ -116,16 +116,11 @@ CREATE TABLE IF NOT EXISTS Ciudades (
     UNIQUE(Ciu_Nombre, id_Provincias_Fk)
 );
 
--- Tabla: EstadosGenerales
-CREATE TABLE IF NOT EXISTS EstadosGenerales (
-    id_EstadosGenerales SERIAL PRIMARY KEY,
-    EstG_Nombre VARCHAR(50) NOT NULL UNIQUE,
-    EstG_Descripcion VARCHAR(150),
-    EstG_Tipo VARCHAR(50),
-    EstG_Color VARCHAR(20),
-    EstG_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (EstG_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'general',
-    EstG_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+-- Tabla: ESTADOS_GENERALES
+CREATE TABLE IF NOT EXISTS Estados_Generales (
+    id_estado SERIAL PRIMARY KEY,
+    estado_nombre VARCHAR(100) NOT NULL,
+    estado_descripcion VARCHAR(255)
 );
 
 -- Tabla: MetodoPago
@@ -416,65 +411,45 @@ CREATE TABLE IF NOT EXISTS Destinatarios (
 -- ============================================
 
 -- Tabla: ROLES
-CREATE TABLE IF NOT EXISTS ROLES (
-    id_ROLES SERIAL PRIMARY KEY,
-    Rol_Nombre VARCHAR(50) UNIQUE NOT NULL,
-    Rol_Descripcion TEXT,
-    Rol_Nivel INT DEFAULT 0,
-    Rol_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Rol_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'autenticacion',
-    Rol_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS Roles (
+    id_Rol SERIAL PRIMARY KEY,
+    rol_nombre VARCHAR(100) NOT NULL,
+    rol_descripcion VARCHAR(255)
+);
+
+-- Tabla: Permisos 
+CREATE TABLE IF NOT EXISTS Permisos (
+    id_Permiso SERIAL PRIMARY KEY,
+    permiso_nombre VARCHAR(100) NOT NULL,
+    permiso_descripcion VARCHAR(255)
 );
 
 -- Tabla: USUARIOS
-CREATE TABLE IF NOT EXISTS USUARIOS (
-    id_USUARIOS SERIAL PRIMARY KEY,
-    Usr_Email VARCHAR(150) UNIQUE NOT NULL,
-    Usr_Nombre VARCHAR(100) NOT NULL,
-    Usr_Apellido VARCHAR(100),
-    Usr_Telefono VARCHAR(15),
-    Usr_Avatar VARCHAR(500),
-    id_ROLES_Fk INT REFERENCES ROLES(id_ROLES) ON DELETE SET NULL ON UPDATE CASCADE,
-    Usr_UltimoAcceso TIMESTAMP,
-    Usr_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Usr_Estado IN ('Activo', 'Inactivo', 'Bloqueado')),
-    id_modulo VARCHAR(50) DEFAULT 'autenticacion',
-    Usr_FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Usr_FechaUltimaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+CREATE TABLE IF NOT EXISTS Usuarios (
+    id_Usuario SERIAL PRIMARY KEY,
+    usuario_nombre VARCHAR(255) NOT NULL,
+    usuario_apellido VARCHAR(255) NOT NULL,
+    usuario_email VARCHAR(255) NOT NULL UNIQUE,
+    usuario_password VARCHAR(255) NOT NULL,
+    id_Estado_FK INT NOT NULL,
+    CONSTRAINT fk_usuario_estado
+        FOREIGN KEY (id_Estado_FK)
+        REFERENCES Estados_Generales(id_Estado)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
 );
 
--- Tabla: LOGIN
-CREATE TABLE IF NOT EXISTS LOGIN (
-    id_LOGIN SERIAL PRIMARY KEY,
-    id_USUARIOS_Fk INT UNIQUE NOT NULL REFERENCES USUARIOS(id_USUARIOS) ON DELETE CASCADE ON UPDATE CASCADE,
-    Log_Username VARCHAR(50) UNIQUE NOT NULL,
-    Log_PasswordHash VARCHAR(255) NOT NULL,
-    Log_Salt VARCHAR(100),
-    Log_RequiereCambioPassword BOOLEAN DEFAULT FALSE,
-    Log_IntentosLogin INT DEFAULT 0,
-    Log_FechaUltimoIntento TIMESTAMP,
-    Log_FechaUltimoCambioPassword TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Log_TokenRecuperacion VARCHAR(255),
-    Log_FechaExpiracionToken TIMESTAMP,
-    Log_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Log_Estado IN ('Activo', 'Bloqueado', 'Suspendido')),
-    id_modulo VARCHAR(50) DEFAULT 'autenticacion',
-    Log_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
--- Tabla: Permisos (Pantallas/Vistas/Formularios por Rol)
-CREATE TABLE IF NOT EXISTS Permisos (
-    id_Permisos SERIAL PRIMARY KEY,
-    id_ROLES_Fk INT NOT NULL REFERENCES ROLES(id_ROLES) ON DELETE CASCADE ON UPDATE CASCADE,
-    Per_Modulo VARCHAR(50) NOT NULL,
-    Per_Pantalla VARCHAR(100) NOT NULL,
-    Per_Lectura BOOLEAN DEFAULT FALSE,
-    Per_Escritura BOOLEAN DEFAULT FALSE,
-    Per_Actualizacion BOOLEAN DEFAULT FALSE,
-    Per_Eliminacion BOOLEAN DEFAULT FALSE,
-    Per_Exportacion BOOLEAN DEFAULT FALSE,
-    Per_Estado VARCHAR(20) DEFAULT 'Activo' CHECK (Per_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'autenticacion',
-    Per_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(id_ROLES_Fk, Per_Modulo, Per_Pantalla)
+-- Tabla: Tokens
+CREATE TABLE IF NOT EXISTS Tokens (
+    id_Token SERIAL PRIMARY KEY,
+    token_contenido VARCHAR(255) NOT NULL,
+    token_expiracion TIMESTAMP NOT NULL,
+    id_Usuario_FK INT NOT NULL,
+    CONSTRAINT fk_token_usuario
+        FOREIGN KEY (id_Usuario_FK)
+        REFERENCES Usuarios(id_Usuario)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
 );
 
 -- ============================================
