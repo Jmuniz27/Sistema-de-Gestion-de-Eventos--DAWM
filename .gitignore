@@ -69,6 +69,9 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 !.vscode/settings.json.example
 
+# Claude Code (solo local)
+.claude/
+
 # JetBrains
 .idea/
 *.swp
