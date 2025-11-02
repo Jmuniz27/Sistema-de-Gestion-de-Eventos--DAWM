@@ -92,14 +92,21 @@ Sistema-de-Gestion-de-Eventos--DAWM/
 │   ├── fonts/
 │   └── exports/
 │
+├── lib/                            # 📦 Librerías y utilidades
+│   └── supabase.js                 # ← Cliente de Supabase configurado
+│
+├── examples/                       # 📚 Ejemplos de código
+│   ├── clientes-crud.js            # Ejemplos CRUD de Clientes
+│   └── eventos-crud.js             # Ejemplos CRUD de Eventos
+│
 ├── database/                       # Scripts y documentación de BD
-│   ├── schema.sql                  # ← EJECUTAR ESTE EN SUPABASE
-│   ├── seed.sql
-│   ├── functions.sql
-│   ├── policies.sql
-│   └── DATABASE.md
+│   ├── schema.sql                  # ← EJECUTAR PRIMERO EN SUPABASE
+│   ├── seed.sql                    # ← EJECUTAR SEGUNDO (datos de prueba)
+│   ├── policies.sql                # ← EJECUTAR TERCERO (seguridad RLS)
+│   └── EXECUTION_ORDER.md          # Guía de ejecución de scripts SQL
 │
 └── docs/                           # Documentación del proyecto
+    ├── DATABASE_USAGE.md           # 📖 Guía completa de uso de la BD
     ├── api/
     ├── reuniones/
     ├── capturas/
@@ -135,6 +142,67 @@ Antes de instalar y ejecutar el proyecto, asegúrate de tener:
 - **Navegador web** moderno (Chrome, Firefox, Edge)
 - **Cuenta en Supabase** (gratuita)
 - **Cuenta en Vercel** (gratuita, opcional para deploy)
+
+---
+
+## 🚀 Inicio Rápido
+
+### Paso 1: Configurar el proyecto
+
+```bash
+# Clonar repositorio
+git clone <url-del-repositorio>
+cd Sistema-de-Gestion-de-Eventos--DAWM
+
+# Instalar dependencias
+npm install
+
+# Configurar variables de entorno
+cp .env.example .env
+# Edita .env con tus credenciales de Supabase
+```
+
+### Paso 2: Configurar Supabase
+
+1. Crea un proyecto en [Supabase](https://supabase.com)
+2. En **SQL Editor**, ejecuta en orden:
+   - `database/schema.sql`
+   - `database/seed.sql`
+   - `database/policies.sql`
+3. Copia tus credenciales desde **Settings → API** al archivo `.env`
+
+### Paso 3: Ejecutar el proyecto
+
+```bash
+npm run dev
+```
+
+Abre [http://localhost:5173](http://localhost:5173) en tu navegador.
+
+### 📚 Usando la Base de Datos
+
+Revisa los archivos de ejemplo:
+- [`lib/supabase.js`](lib/supabase.js) - Cliente configurado de Supabase
+- [`examples/clientes-crud.js`](examples/clientes-crud.js) - Operaciones CRUD de clientes
+- [`examples/eventos-crud.js`](examples/eventos-crud.js) - Operaciones CRUD de eventos
+- [`docs/DATABASE_USAGE.md`](docs/DATABASE_USAGE.md) - Guía completa de la BD
+
+**Ejemplo básico:**
+
+```javascript
+import { supabase } from './lib/supabase.js';
+
+// Obtener todos los eventos próximos
+const { data, error } = await supabase
+  .from('Eventos')
+  .select('*')
+  .eq('Evt_Estado', 'Programado')
+  .order('Evt_FechaInicio', { ascending: true });
+
+console.log(data);
+```
+
+Para más información, consulta la [Guía de Uso de Base de Datos](docs/DATABASE_USAGE.md).
 
 ---
 
