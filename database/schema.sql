@@ -275,47 +275,36 @@ CREATE TABLE IF NOT EXISTS Detalle_Eventos (
 
 -- Tabla: TiposBoleto
 CREATE TABLE IF NOT EXISTS TiposBoleto (
-    id_TiposBoleto SERIAL PRIMARY KEY,
-    TBol_Nombre VARCHAR(50) NOT NULL UNIQUE,
-    TBol_Descripcion VARCHAR(150),
-    TBol_Prioridad INT DEFAULT 0,
-    TBol_PermisoAcceso VARCHAR(100),
-    TBol_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (TBol_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'boletos',
-    TBol_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id_tiposBoleto VARCHAR PRIMARY KEY,
+    TipB_nombre VARCHAR(20)
 );
 
 -- Tabla: Boletos
-CREATE TABLE IF NOT EXISTS Boletos (
-    id_Boletos SERIAL PRIMARY KEY,
-    Bol_Codigo VARCHAR(50) UNIQUE NOT NULL,
-    Bol_CodigoQR TEXT,
-    Bol_Precio DECIMAL(10,2) NOT NULL CHECK (Bol_Precio >= 0),
-    Bol_PrecioOriginal DECIMAL(10,2),
-    Bol_Descuento DECIMAL(10,2) DEFAULT 0,
-    id_Eventos_Fk INT NOT NULL REFERENCES Eventos(id_Eventos) ON DELETE RESTRICT ON UPDATE CASCADE,
-    id_TiposBoleto_Fk INT NOT NULL REFERENCES TiposBoleto(id_TiposBoleto) ON DELETE RESTRICT ON UPDATE CASCADE,
-    Bol_NumeroAsiento VARCHAR(30),
-    Bol_SeccionZona VARCHAR(50),
-    Bol_FechaVencimiento TIMESTAMP,
-    Bol_Estado VARCHAR(50) DEFAULT 'Disponible' CHECK (Bol_Estado IN ('Disponible', 'Vendido', 'Reservado', 'Cancelado', 'Usado')),
-    id_modulo VARCHAR(50) DEFAULT 'boletos',
-    Bol_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Bol_FechaVenta TIMESTAMP,
-    Bol_FechaUso TIMESTAMP
+CREATE TABLE IF NOT EXISTS Boleto (
+    id_codigo INT PRIMARY KEY,
+    id_Evento_FK INT NOT NULL,
+    id_TiposBoleto_FK INT NOT NULL,
+    id_EstadoBoleto_FK INT NOT NULL,
+    id_Proveedor_PK INT NOT NULL,
+    bol_precio INT,
+    bol_fila INT,
+    bol_asiento INT,
+    bol_seccion INT,
+    FOREIGN KEY (id_Evento_FK) REFERENCES Evento(ID_Evento),
+    FOREIGN KEY (id_TiposBoleto_FK) REFERENCES TiposBoleto(id_tiposBoleto),
+    FOREIGN KEY (id_EstadoBoleto_FK) REFERENCES EstadosBoleto(id_estadoBoleto),
+    FOREIGN KEY (id_Proveedor_PK) REFERENCES Proveedor(id_Proveedores_PK)
 );
 
 -- Tabla: EntradasAsignadas (Relación boleto-cliente)
-CREATE TABLE IF NOT EXISTS EntradasAsignadas (
-    id_EntradasAsignadas SERIAL PRIMARY KEY,
-    id_Boletos_Fk INT NOT NULL REFERENCES Boletos(id_Boletos) ON DELETE CASCADE ON UPDATE CASCADE,
-    id_Clientes_Fk INT NOT NULL REFERENCES Clientes(id_Clientes) ON DELETE CASCADE ON UPDATE CASCADE,
-    Ent_FechaAsignacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Ent_FechaValidacion TIMESTAMP,
-    Ent_ValidadoPor VARCHAR(100),
-    Ent_Estado VARCHAR(50) DEFAULT 'Asignada' CHECK (Ent_Estado IN ('Asignada', 'Validada', 'Cancelada')),
-    id_modulo VARCHAR(50) DEFAULT 'boletos',
-    UNIQUE(id_Boletos_Fk)
+CREATE TABLE EntradasAsignadas (
+    id_entradasAsignadas INT PRIMARY KEY,
+    id_boleto_FK INT NOT NULL,
+    id_Cliente_FK INT NOT NULL,
+    entA_Cantidad INT,
+    entA_fechaValida TIMESTAMP,
+    FOREIGN KEY (id_boleto_FK) REFERENCES Boleto(id_codigo),
+    FOREIGN KEY (id_Cliente_FK) REFERENCES Cliente(id_cliente_PK)
 );
 
 -- ============================================
