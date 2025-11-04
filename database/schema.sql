@@ -279,6 +279,13 @@ CREATE TABLE IF NOT EXISTS TiposBoleto (
     TipB_nombre VARCHAR(20)
 );
 
+--  EstadoBoleto
+CREATE TABLE IF NOT EXISTS EstadoBoleto (
+    id_estadoBoleto SERIAL PRIMARY KEY,
+    EstB_nombre VARCHAR(20) NOT NULL UNIQUE
+);
+
+
 -- Tabla: Boletos
 CREATE TABLE IF NOT EXISTS Boleto (
     id_codigo INT PRIMARY KEY,
