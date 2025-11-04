@@ -243,51 +243,77 @@ CREATE TABLE IF NOT EXISTS Detalle_Eventos (
 );
 
 -- ============================================
--- MÓDULO BOLETOS Y ENTRADAS
+-- MÓDULO BOLETO Y ENTRADAS
 -- Responsable: BARRENO HERRERA ANDIE MATTHIUS
 -- ============================================
 
 -- Tabla: TiposBoleto
 CREATE TABLE IF NOT EXISTS TiposBoleto (
-    id_tiposBoleto VARCHAR PRIMARY KEY,
+    id_TiposBoleto VARCHAR(50) PRIMARY KEY,
     TipB_nombre VARCHAR(20)
 );
 
 --  EstadoBoleto
 CREATE TABLE IF NOT EXISTS EstadoBoleto (
-    id_estadoBoleto SERIAL PRIMARY KEY,
+    id_EstadoBoleto SERIAL PRIMARY KEY,
     EstB_nombre VARCHAR(20) NOT NULL UNIQUE
 );
 
 
 -- Tabla: Boletos
 CREATE TABLE IF NOT EXISTS Boleto (
-    id_codigo INT PRIMARY KEY,
-    id_Evento_FK INT NOT NULL,
-    id_TiposBoleto_FK INT NOT NULL,
-    id_EstadoBoleto_FK INT NOT NULL,
-    id_Proveedor_PK INT NOT NULL,
+    id_Boleto SERIAL PRIMARY KEY,
+    id_Evento_Fk INT NOT NULL,
+    id_TipoBoleto_Fk VARCHAR NOT NULL,
+    id_EstadoBoleto_Fk INT NOT NULL,
+    id_Proveedor_Fk INT NOT NULL,
     bol_precio INT,
     bol_fila INT,
     bol_asiento INT,
     bol_seccion INT,
-    FOREIGN KEY (id_Evento_FK) REFERENCES Evento(ID_Evento),
-    FOREIGN KEY (id_TiposBoleto_FK) REFERENCES TiposBoleto(id_tiposBoleto),
-    FOREIGN KEY (id_EstadoBoleto_FK) REFERENCES EstadosBoleto(id_estadoBoleto),
-    FOREIGN KEY (id_Proveedor_PK) REFERENCES Proveedor(id_Proveedores_PK)
+    FOREIGN KEY (id_Evento_Fk) REFERENCES Eventos(id_Eventos),
+    FOREIGN KEY (id_TipoBoleto_Fk) REFERENCES TiposBoleto(id_TiposBoleto),
+    FOREIGN KEY (id_EstadoBoleto_Fk) REFERENCES EstadoBoleto(id_EstadoBoleto),
+    FOREIGN KEY (id_Proveedor_Fk) REFERENCES Proveedores(id_Proveedores)
 );
 
--- Tabla: EntradasAsignadas (Relación boleto-cliente)
+-- ============================================
+-- MÓDULO AUTENTICACIÓN Y ROLES (Tabla Usuarios adelantada por dependencias)
+-- Responsable: TUMBACO SANTANA GABRIEL ALEJANDRO
+-- ============================================
+
+-- ======================================
+-- TABLA: Usuarios
+-- ======================================
+CREATE TABLE Usuarios (
+    id_Usuario SERIAL PRIMARY KEY,
+    Usuario_Nombre VARCHAR(255) NOT NULL,
+    Usuario_Apellido VARCHAR(255) NOT NULL,
+    Usuario_Email VARCHAR(255) UNIQUE NOT NULL,
+    Usuario_Password VARCHAR(255) NOT NULL,
+    Usuario_Token VARCHAR(255),
+    Usuario_Token_Exp TIMESTAMP,
+    id_Estado_Fk INT NOT NULL,
+    CONSTRAINT FK_Usuarios_EstadosGenerales
+        FOREIGN KEY (id_Estado_Fk)
+        REFERENCES Estados_Generales (id_Estado)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+);
+
+-- ======================================
+-- TABLA: EntradasAsignadas (Relación boleto-cliente)
+-- ======================================
 CREATE TABLE EntradasAsignadas (
-    id_entradasAsignadas INT PRIMARY KEY,
-    id_boleto_FK INT NOT NULL,
-    id_Cliente_FK INT NOT NULL,
-    id_Usuario_FK INT NOT NULL,
+    id_EntradaAsignada SERIAL PRIMARY KEY,
+    id_Boleto_Fk INT NOT NULL,
+    id_Cliente_Fk INT NOT NULL,
+    id_Usuario_Fk INT NOT NULL,
     entA_Cantidad INT,
     entA_fechaValida TIMESTAMP,
-    FOREIGN KEY (id_boleto_FK) REFERENCES Boleto(id_codigo),
-    FOREIGN KEY (id_Cliente_FK) REFERENCES Clientes(id_cliente_PK),
-    FOREIGN KEY (id_Usuario_FK) REFERENCES Usuarios(id_Usuario),
+    FOREIGN KEY (id_Boleto_Fk) REFERENCES Boleto(id_Boleto),
+    FOREIGN KEY (id_Cliente_Fk) REFERENCES Clientes(id_Clientes),
+    FOREIGN KEY (id_Usuario_Fk) REFERENCES Usuarios(id_Usuario)
 );
 
 -- ============================================
@@ -328,8 +354,8 @@ CREATE TABLE IF NOT EXISTS Detalle_factura (
         ON UPDATE CASCADE,
 
     -- Clave foránea corregida a EntradasAsignadas
-    id_EntradasAsignadas INT
-        REFERENCES EntradasAsignadas(id_EntradasAsignadas)
+    id_EntradaAsignada_Fk INT
+        REFERENCES EntradasAsignadas(id_EntradaAsignada)
         ON DELETE SET NULL
         ON UPDATE CASCADE,
 
@@ -372,16 +398,14 @@ CREATE TABLE IF NOT EXISTS Notificaciones (
     Not_IntentosEnvio INT DEFAULT 0,
     Not_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     id_Cliente_Fk INT REFERENCES Clientes(id_Clientes) ON DELETE SET NULL ON UPDATE CASCADE,
-    id_Boleto_Fk INT REFERENCES Boletos(id_Boletos) ON DELETE SET NULL ON UPDATE CASCADE,
+    id_Boleto_Fk INT REFERENCES Boleto(id_Boleto) ON DELETE SET NULL ON UPDATE CASCADE,
     id_Plantillas_Fk INT REFERENCES Plantillas(id_Plantillas) ON DELETE SET NULL ON UPDATE CASCADE,
-    id_Factura_Fk INT REFERENCES Factura(id_Factura) ON DELETE SET NULL ON UPDATE CASCADE,
-    --Not_ErrorMensaje TEXT, podria ir directamente desde la pagina 
-    --id_modulo VARCHAR(50) DEFAULT 'notificaciones',
+    id_Factura_Fk INT REFERENCES Factura(id_Factura) ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- Tabla: Destinatarios
 CREATE TABLE IF NOT EXISTS Destinatarios (
-    id_Destinatario_PK SERIAL PRIMARY KEY,
+    id_Destinatario SERIAL PRIMARY KEY,
     id_Notificaciones_Fk INT NOT NULL REFERENCES Notificaciones(id_Notificaciones) ON DELETE CASCADE ON UPDATE CASCADE,
     id_Clientes_Fk INT REFERENCES Clientes(id_Clientes) ON DELETE CASCADE ON UPDATE CASCADE,
     Dest_Email VARCHAR(150),
@@ -389,33 +413,11 @@ CREATE TABLE IF NOT EXISTS Destinatarios (
     --Dest_DeviceToken VARCHAR(500), podria ir voy a ver si es necesario
     Dest_FechaEnvio TIMESTAMP,
     Dest_FechaLectura TIMESTAMP,
-    Dest_Estado VARCHAR(50) DEFAULT 'Pendiente' CHECK (Dest_Estado IN ('Pendiente', 'Enviado', 'Leido', 'Fallido')),
-    --id_modulo VARCHAR(50) DEFAULT 'notificaciones',
-    --Dest_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP (Si notificaciones ya tiene esta coumna no creo que sea necesaria aqui)
+    Dest_Estado VARCHAR(50) DEFAULT 'Pendiente' CHECK (Dest_Estado IN ('Pendiente', 'Enviado', 'Leido', 'Fallido'))
 );
 -- ============================================
--- MÓDULO AUTENTICACIÓN Y ROLES
--- Responsable: TUMBACO SANTANA GABRIEL ALEJANDRO
+-- CONTINUACIÓN MÓDULO AUTENTICACIÓN Y ROLES
 -- ============================================
-
--- ======================================
--- TABLA: Usuarios
--- ======================================
-CREATE TABLE Usuarios (
-    id_Usuario SERIAL PRIMARY KEY,
-    Usuario_Nombre VARCHAR(255) NOT NULL,
-    Usuario_Apellido VARCHAR(255) NOT NULL,
-    Usuario_Email VARCHAR(255) UNIQUE NOT NULL,
-    Usuario_Password VARCHAR(255) NOT NULL,
-    Usuario_Token VARCHAR(255),
-    Usuario_Token_Exp TIMESTAMP,
-    id_Estado_Fk INT NOT NULL,
-    CONSTRAINT FK_Usuarios_EstadosGenerales
-        FOREIGN KEY (id_Estado_Fk)
-        REFERENCES Estados_Generales (id_Estado)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
-);
 
 -- ======================================
 -- TABLA: Roles
@@ -480,7 +482,6 @@ CREATE TABLE Roles_Permisos (
 -- Índices para búsquedas frecuentes
 CREATE INDEX IF NOT EXISTS idx_clientes_email ON Clientes(Cli_Email);
 CREATE INDEX IF NOT EXISTS idx_clientes_celular ON Clientes(Cli_Celular);
-CREATE INDEX IF NOT EXISTS idx_clientes_estado ON Clientes(Cli_Estado);
 CREATE INDEX IF NOT EXISTS idx_clientes_tipo ON Clientes(id_TipoCliente_Fk);
 
 CREATE INDEX IF NOT EXISTS idx_eventos_fecha_inicio ON Eventos(Evt_FechaInicio);
@@ -488,9 +489,9 @@ CREATE INDEX IF NOT EXISTS idx_eventos_categoria ON Eventos(id_CategoriaEvento_F
 CREATE INDEX IF NOT EXISTS idx_eventos_estado ON Eventos(Evt_Estado);
 CREATE INDEX IF NOT EXISTS idx_eventos_ciudad ON Eventos(id_Ciudades_Fk);
 
-CREATE INDEX IF NOT EXISTS idx_boletos_codigo ON Boletos(Bol_Codigo);
-CREATE INDEX IF NOT EXISTS idx_boletos_estado ON Boletos(Bol_Estado);
-CREATE INDEX IF NOT EXISTS idx_boletos_evento ON Boletos(id_Eventos_Fk);
+CREATE INDEX IF NOT EXISTS idx_boleto_id ON Boleto(id_Boleto);
+CREATE INDEX IF NOT EXISTS idx_boleto_estado ON Boleto(id_EstadoBoleto_Fk);
+CREATE INDEX IF NOT EXISTS idx_boleto_evento ON Boleto(id_Evento_Fk);
 
 CREATE INDEX IF NOT EXISTS idx_factura_numero ON Factura(Fac_Numero);
 CREATE INDEX IF NOT EXISTS idx_factura_cliente ON Factura(id_Clientes_Fk);
@@ -501,9 +502,8 @@ CREATE INDEX IF NOT EXISTS idx_notificaciones_tipo ON Notificaciones(Not_Tipo);
 CREATE INDEX IF NOT EXISTS idx_notificaciones_estado ON Notificaciones(Not_Estado);
 CREATE INDEX IF NOT EXISTS idx_notificaciones_fecha ON Notificaciones(Not_FechaProgramada);
 
-CREATE INDEX IF NOT EXISTS idx_usuarios_email ON USUARIOS(Usr_Email);
-CREATE INDEX IF NOT EXISTS idx_usuarios_rol ON USUARIOS(id_ROLES_Fk);
-CREATE INDEX IF NOT EXISTS idx_login_username ON LOGIN(Log_Username);
+CREATE INDEX IF NOT EXISTS idx_usuarios_email ON Usuarios(Usuario_Email);
+CREATE INDEX IF NOT EXISTS idx_usuarios_estado ON Usuarios(id_Estado_Fk);
 
 -- ============================================
 -- COMENTARIOS EN TABLAS (Documentación)
@@ -511,10 +511,10 @@ CREATE INDEX IF NOT EXISTS idx_login_username ON LOGIN(Log_Username);
 
 COMMENT ON TABLE Clientes IS 'Tabla principal de clientes con información personal y de contacto';
 COMMENT ON TABLE Eventos IS 'Registro de eventos con fechas, capacidad y ubicación';
-COMMENT ON TABLE Boletos IS 'Boletos generados para eventos con precios y estados';
+COMMENT ON TABLE Boleto IS 'Boletos generados para eventos con precios y estados';
 COMMENT ON TABLE Factura IS 'Facturas emitidas con detalles de pago e IVA';
 COMMENT ON TABLE Notificaciones IS 'Registro de notificaciones enviadas (Email/Push/SMS)';
-COMMENT ON TABLE USUARIOS IS 'Usuarios del sistema con roles asignados';
+COMMENT ON TABLE Usuarios IS 'Usuarios del sistema con roles asignados';
 COMMENT ON TABLE Permisos IS 'Permisos de acceso por rol a pantallas/funcionalidades';
 
 -- ============================================
