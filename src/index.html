@@ -3,43 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestión de Eventos - ESPOL</title>
+    <title>EventManager - Sistema de Gestión de Eventos</title>
+    <meta name="description" content="Gestiona tus eventos, vende boletos y controla la facturación de manera profesional">
 
-    <!--
-      Archivo: src/index.html
-      Propósito: Landing page principal del sistema
-
-      Debe contener:
-      - Navbar con navegación a todos los módulos
-      - Hero section con información del sistema
-      - Cards de acceso rápido a cada módulo
-      - Footer con información del proyecto
-
-      Dependencias:
-      - styles/main.css (estilos principales)
-      - scripts/supabase-client.js (para verificar conexión)
-      - scripts/auth.js (para manejo de autenticación)
-    -->
-
-    <link rel="stylesheet" href="./styles/main.css">
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="./css/variables.css">
+    <link rel="stylesheet" href="./css/main.css">
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/landing.css">
 </head>
-<body>
-    <!-- TODO: Agregar navbar de navegación -->
+<body class="has-navbar">
+    <!-- Navbar Component -->
+    <div id="navbar-container"></div>
 
-    <!-- TODO: Agregar hero section -->
+    <!-- Main Content -->
+    <main>
+        <!-- Events Grid Section -->
+        <section class="events-section" id="events">
+            <div class="container">
+                <h2 class="section-title">Próximos Eventos</h2>
+                <p class="section-subtitle">Descubre los mejores eventos y conciertos disponibles</p>
 
-    <!-- TODO: Agregar grid de módulos disponibles:
-         - Módulo General
-         - Clientes
-         - Eventos
-         - Boletos y Entradas
-         - Facturación
-         - Notificaciones
-         - Autenticación y Roles
-    -->
+                <!-- Events Grid -->
+                <div class="events-grid" id="eventsGrid">
+                    <!-- Events will be loaded dynamically from Supabase -->
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <!-- TODO: Agregar footer -->
+        <!-- Features Section -->
+        <section class="features-section" id="features">
+            <div class="container">
+                <h2 class="section-title">Características Principales</h2>
+                <p class="section-subtitle">Todo lo que necesitas para gestionar tus eventos</p>
 
+                <div class="features-grid">
+                    <!-- Feature 1: Gestión de Eventos -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="48" height="48" rx="12" fill="#2E4A8B"/>
+                                <rect x="12" y="14" width="24" height="22" rx="2" stroke="white" stroke-width="2" fill="none"/>
+                                <line x1="12" y1="20" x2="36" y2="20" stroke="white" stroke-width="2"/>
+                                <circle cx="18" cy="26" r="1.5" fill="white"/>
+                                <circle cx="24" cy="26" r="1.5" fill="white"/>
+                                <circle cx="30" cy="26" r="1.5" fill="white"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Gestión de Eventos</h3>
+                        <p class="feature-description">
+                            Crea y administra eventos con múltiples tipos de boletos
+                        </p>
+                    </div>
+
+                    <!-- Feature 2: Venta de Boletos -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="48" height="48" rx="12" fill="#2E4A8B"/>
+                                <rect x="10" y="18" width="28" height="12" rx="2" stroke="white" stroke-width="2" fill="none"/>
+                                <circle cx="16" cy="24" r="2" fill="white"/>
+                                <circle cx="24" cy="24" r="2" fill="white"/>
+                                <circle cx="32" cy="24" r="2" fill="white"/>
+                                <line x1="20" y1="18" x2="20" y2="30" stroke="white" stroke-width="1" stroke-dasharray="2 2"/>
+                                <line x1="28" y1="18" x2="28" y2="30" stroke="white" stroke-width="1" stroke-dasharray="2 2"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Venta de Boletos</h3>
+                        <p class="feature-description">
+                            Sistema completo de venta con códigos únicos y seguimiento
+                        </p>
+                    </div>
+
+                    <!-- Feature 3: Facturación -->
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="48" height="48" rx="12" fill="#2E4A8B"/>
+                                <path d="M14 12H28L34 18V34C34 35.1 33.1 36 32 36H14C12.9 36 12 35.1 12 34V14C12 12.9 12.9 12 14 12Z" stroke="white" stroke-width="2" fill="none"/>
+                                <line x1="18" y1="22" x2="30" y2="22" stroke="white" stroke-width="2"/>
+                                <line x1="18" y1="28" x2="26" y2="28" stroke="white" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h3 class="feature-title">Facturación</h3>
+                        <p class="feature-description">
+                            Genera facturas automáticas y controla tus ingresos
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Component -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script src="./js/navbar.js"></script>
+    <script type="module" src="./js/state-manager.js"></script>
+    <script type="module" src="./js/landing.js"></script>
     <script type="module" src="./scripts/supabase-client.js"></script>
     <script type="module" src="./scripts/auth.js"></script>
 </body>
