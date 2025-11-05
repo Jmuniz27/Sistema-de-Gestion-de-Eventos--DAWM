@@ -8,7 +8,7 @@ const supabase = createClient(
 console.log('Supabase client creado con éxito');
 
 const probar = async () => {
-  const { data, error } = await supabase.from('boletos').select('*').limit(5);
+  const { data, error } = await supabase.from('boleto').select('*').limit(5);
   if (error) {
     console.error('Error:', error);
     return;
