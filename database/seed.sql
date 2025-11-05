@@ -178,45 +178,49 @@ INSERT INTO DireccionesCliente (id_Clientes_Fk, id_Ciudades_Fk, DirCli_Direccion
 -- MÓDULO EVENTOS
 -- ============================================
 
--- Categorías de Eventos
-INSERT INTO CategoriasEvento (CatEvt_Nombre, CatEvt_Descripcion, CatEvt_Color, CatEvt_Icono, CatEvt_Estado, id_modulo) VALUES
-('Concierto de Rock', 'Eventos de rock, metal y alternativo', '#e74c3c', 'guitar', 'Activo', 'eventos'),
-('Concierto de Reggaeton', 'Eventos de música urbana y reggaeton', '#9b59b6', 'music', 'Activo', 'eventos'),
-('Concierto de Salsa', 'Eventos de salsa y música tropical', '#f39c12', 'drum', 'Activo', 'eventos'),
-('Festival', 'Festivales musicales de varios géneros', '#3498db', 'star', 'Activo', 'eventos'),
-('Teatro', 'Obras de teatro y espectáculos dramáticos', '#e67e22', 'theater', 'Activo', 'eventos'),
-('Stand Up Comedy', 'Shows de comedia en vivo', '#f1c40f', 'laugh', 'Activo', 'eventos'),
-('Deportivo', 'Eventos deportivos en vivo', '#2ecc71', 'football', 'Activo', 'eventos'),
-('Cultural', 'Eventos culturales y exposiciones', '#1abc9c', 'palette', 'Activo', 'eventos');
+-- Categorías de Eventos (tabla simplificada)
+INSERT INTO CategoriaEvento (CatEvt_Nombre, CatEvt_Descripcion, id_modulo) VALUES
+('Concierto de Rock', 'Eventos de rock, metal y alternativo', 'eventos'),
+('Concierto de Reggaeton', 'Eventos de música urbana y reggaeton', 'eventos'),
+('Concierto de Salsa', 'Eventos de salsa y música tropical', 'eventos'),
+('Festival', 'Festivales musicales de varios géneros', 'eventos'),
+('Teatro', 'Obras de teatro y espectáculos dramáticos', 'eventos'),
+('Stand Up Comedy', 'Shows de comedia en vivo', 'eventos'),
+('Deportivo', 'Eventos deportivos en vivo', 'eventos'),
+('Cultural', 'Eventos culturales y exposiciones', 'eventos');
 
--- Tipos de Ingreso
-INSERT INTO TipoIngreso (TIng_Nombre, TIng_Descripcion, TIng_RequiereBoleto, TIng_Estado, id_modulo) VALUES
-('Pago General', 'Entrada con pago de boleto', TRUE, 'Activo', 'eventos'),
-('Cortesía', 'Entrada gratuita de cortesía', TRUE, 'Activo', 'eventos'),
-('Invitación', 'Entrada por invitación', TRUE, 'Activo', 'eventos'),
-('Libre', 'Evento de acceso libre sin boleto', FALSE, 'Activo', 'eventos'),
-('Early Bird', 'Entrada con descuento anticipado', TRUE, 'Activo', 'eventos'),
-('VIP', 'Entrada con accesos exclusivos', TRUE, 'Activo', 'eventos');
+-- Tipos de Ingreso (tabla simplificada)
+INSERT INTO TipoIngreso (TIng_Nombre, TIng_Descripcion, TIng_RequiereBoleto, id_modulo) VALUES
+('Pago General', 'Entrada con pago de boleto', TRUE, 'eventos'),
+('Cortesía', 'Entrada gratuita de cortesía', TRUE, 'eventos'),
+('Invitación', 'Entrada por invitación', TRUE, 'eventos'),
+('Libre', 'Evento de acceso libre sin boleto', FALSE, 'eventos'),
+('Early Bird', 'Entrada con descuento anticipado', TRUE, 'eventos'),
+('VIP', 'Entrada con accesos exclusivos', TRUE, 'eventos');
 
--- Eventos (Contexto ecuatoriano)
-INSERT INTO Eventos (Evt_Nombre, Evt_Descripcion, Evt_FechaInicio, Evt_FechaFin, Evt_Lugar, Evt_Direccion, id_Ciudades_Fk, Evt_CapacidadTotal, Evt_CapacidadDisponible, Evt_ImagenURL, Evt_PrecioBaseGeneral, id_CategoriaEvento_Fk, id_TipoIngreso_Fk, id_Proveedores_Fk, Evt_Estado, id_modulo) VALUES
-('Feid en Guayaquil - Mor Tour 2025', 'El artista colombiano Feid llega a Guayaquil con su exitosa gira Mor Tour.', '2025-11-15 21:00:00', '2025-11-16 02:00:00', 'Estadio Modelo', 'Av. de las Américas, Guayaquil', 1, 25000, 22500, 'https://ejemplo.com/feid-guayaquil.jpg', 65.00, 2, 1, 5, 'Programado', 'eventos'),
-('Karol G - Mañana Será Bonito Tour Quito', 'La Bichota llega a Ecuador con su tour mundial.', '2025-12-20 20:00:00', '2025-12-21 01:00:00', 'Estadio Olímpico Atahualpa', 'Av. 6 de Diciembre y Naciones Unidas, Quito', 5, 35000, 30000, 'https://ejemplo.com/karol-g-quito.jpg', 80.00, 2, 1, 5, 'Programado', 'eventos'),
-('Festival Rock al Parque Ecuador', 'El festival de rock más grande de Ecuador regresa con bandas nacionales e internacionales.', '2025-10-10 15:00:00', '2025-10-12 23:00:00', 'Parque La Carolina', 'Av. Río Amazonas, Quito', 5, 15000, 12000, 'https://ejemplo.com/rock-parque.jpg', 45.00, 1, 1, 5, 'Programado', 'eventos'),
-('Marc Anthony en Guayaquil', 'El rey de la salsa Marc Anthony presenta su tour Puro Genio.', '2025-11-28 20:00:00', '2025-11-29 00:30:00', 'Estadio Modelo', 'Av. de las Américas, Guayaquil', 1, 30000, 25000, 'https://ejemplo.com/marc-anthony.jpg', 95.00, 3, 1, 5, 'Programado', 'eventos'),
-('Festival de Salsa Cali Pachanguero en Manta', 'El mejor festival de salsa llega a Manta con orquestas de Colombia y Ecuador.', '2025-09-05 18:00:00', '2025-09-06 04:00:00', 'Malecón de Manta', 'Av. Malecón, Manta', 8, 8000, 7200, 'https://ejemplo.com/salsa-manta.jpg', 35.00, 3, 1, 5, 'Programado', 'eventos'),
-('Liga de Quito vs Barcelona SC - Clásico del Astillero', 'El clásico del fútbol ecuatoriano.', '2025-07-20 16:00:00', '2025-07-20 18:00:00', 'Estadio Rodrigo Paz Delgado', 'Casa Blanca, Quito', 5, 41575, 38000, 'https://ejemplo.com/clasico-ecuador.jpg', 25.00, 7, 1, 3, 'Programado', 'eventos');
+-- Eventos (Contexto ecuatoriano - estructura simplificada)
+INSERT INTO Eventos (Evt_Nombre, Evt_Descripcion, Evt_FechaInicio, Evt_FechaFin, Evt_Direccion, id_Ciudades_Fk, Evt_CapacidadTotal, Evt_CapacidadDisponible, Evt_PrecioBaseGeneral, Evt_Estado, id_modulo) VALUES
+('Feid en Guayaquil - Mor Tour 2025', 'El artista colombiano Feid llega a Guayaquil con su exitosa gira Mor Tour.', '2025-11-15 21:00:00', '2025-11-16 02:00:00', 'Estadio Modelo, Av. de las Américas, Guayaquil', 1, 25000, 22500, 65.00, 'Programado', 'eventos'),
+('Karol G - Mañana Será Bonito Tour Quito', 'La Bichota llega a Ecuador con su tour mundial.', '2025-12-20 20:00:00', '2025-12-21 01:00:00', 'Estadio Olímpico Atahualpa, Av. 6 de Diciembre y Naciones Unidas, Quito', 5, 35000, 30000, 80.00, 'Programado', 'eventos'),
+('Festival Rock al Parque Ecuador', 'El festival de rock más grande de Ecuador regresa con bandas nacionales e internacionales.', '2025-10-10 15:00:00', '2025-10-12 23:00:00', 'Parque La Carolina, Av. Río Amazonas, Quito', 5, 15000, 12000, 45.00, 'Programado', 'eventos'),
+('Marc Anthony en Guayaquil', 'El rey de la salsa Marc Anthony presenta su tour Puro Genio.', '2025-11-28 20:00:00', '2025-11-29 00:30:00', 'Estadio Modelo, Av. de las Américas, Guayaquil', 1, 30000, 25000, 95.00, 'Programado', 'eventos'),
+('Festival de Salsa Cali Pachanguero en Manta', 'El mejor festival de salsa llega a Manta con orquestas de Colombia y Ecuador.', '2025-09-05 18:00:00', '2025-09-06 04:00:00', 'Malecón de Manta, Av. Malecón, Manta', 8, 8000, 7200, 35.00, 'Programado', 'eventos'),
+('Liga de Quito vs Barcelona SC - Clásico del Astillero', 'El clásico del fútbol ecuatoriano.', '2025-07-20 16:00:00', '2025-07-20 18:00:00', 'Estadio Rodrigo Paz Delgado, Casa Blanca, Quito', 5, 41575, 38000, 25.00, 'Programado', 'eventos');
 
--- Detalles de Eventos
-INSERT INTO Detalle_Eventos (id_Eventos_Fk, DetEvt_Clave, DetEvt_Valor, DetEvt_Tipo, id_modulo) VALUES
-(1, 'artista_principal', 'Feid', 'info', 'eventos'),
-(1, 'artistas_invitados', 'Mañas Ru-Fino, Sky Rompiendo', 'info', 'eventos'),
-(1, 'edad_minima', '18', 'restriccion', 'eventos'),
-(2, 'artista_principal', 'Karol G', 'info', 'eventos'),
-(2, 'duracion_aproximada', '180', 'info', 'eventos'),
-(3, 'bandas_confirmadas', 'Bajo Sueños, Pulpo 3, Rocola Bacalao', 'info', 'eventos'),
-(3, 'numero_dias', '3', 'info', 'eventos'),
-(4, 'artista_principal', 'Marc Anthony', 'info', 'eventos');
+-- Detalle_Eventos (Relación muchos-a-muchos: Evento-TipoIngreso-Categoria)
+INSERT INTO Detalle_Eventos (id_Eventos_Fk, id_TipoIngreso_Fk, id_CategoriaEvento_Fk, id_modulo) VALUES
+-- Evento 1: Feid - Reggaeton, Pago General
+(1, 1, 2, 'eventos'),
+-- Evento 2: Karol G - Reggaeton, Pago General
+(2, 1, 2, 'eventos'),
+-- Evento 3: Festival Rock - Rock, Pago General
+(3, 1, 1, 'eventos'),
+-- Evento 4: Marc Anthony - Salsa, Pago General
+(4, 1, 3, 'eventos'),
+-- Evento 5: Festival Salsa - Salsa, Pago General
+(5, 1, 3, 'eventos'),
+-- Evento 6: Liga vs Barcelona - Deportivo, Pago General
+(6, 1, 7, 'eventos');
 
 -- ============================================
 -- MÓDULO AUTENTICACIÓN Y ROLES (Creado antes por dependencias)

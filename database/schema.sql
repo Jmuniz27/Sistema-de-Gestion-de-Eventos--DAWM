@@ -184,15 +184,11 @@ CREATE TABLE IF NOT EXISTS DireccionesCliente (
 -- ============================================
 
 -- Tabla: CategoriasEvento
-CREATE TABLE IF NOT EXISTS CategoriasEvento (
+CREATE TABLE IF NOT EXISTS CategoriaEvento (
     id_CategoriaEvento SERIAL PRIMARY KEY,
     CatEvt_Nombre VARCHAR(100) NOT NULL UNIQUE,
     CatEvt_Descripcion TEXT,
-    CatEvt_Color VARCHAR(30),
-    CatEvt_Icono VARCHAR(50),
-    CatEvt_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (CatEvt_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'eventos',
-    CatEvt_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id_modulo VARCHAR(50) DEFAULT 'eventos'
 );
 
 -- Tabla: TipoIngreso
@@ -201,9 +197,7 @@ CREATE TABLE IF NOT EXISTS TipoIngreso (
     TIng_Nombre VARCHAR(50) NOT NULL UNIQUE,
     TIng_Descripcion VARCHAR(150),
     TIng_RequiereBoleto BOOLEAN DEFAULT TRUE,
-    TIng_Estado VARCHAR(30) DEFAULT 'Activo' CHECK (TIng_Estado IN ('Activo', 'Inactivo')),
-    id_modulo VARCHAR(50) DEFAULT 'eventos',
-    TIng_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id_modulo VARCHAR(50) DEFAULT 'eventos'
 );
 
 -- Tabla: Eventos
@@ -213,33 +207,26 @@ CREATE TABLE IF NOT EXISTS Eventos (
     Evt_Descripcion TEXT,
     Evt_FechaInicio TIMESTAMP NOT NULL,
     Evt_FechaFin TIMESTAMP,
-    Evt_Lugar VARCHAR(250),
     Evt_Direccion VARCHAR(300),
     id_Ciudades_Fk INT REFERENCES Ciudades(id_Ciudades) ON DELETE SET NULL ON UPDATE CASCADE,
     Evt_CapacidadTotal INT CHECK (Evt_CapacidadTotal > 0),
     Evt_CapacidadDisponible INT,
-    Evt_ImagenURL VARCHAR(500),
     Evt_PrecioBaseGeneral DECIMAL(10,2),
-    id_CategoriaEvento_Fk INT REFERENCES CategoriasEvento(id_CategoriaEvento) ON DELETE SET NULL ON UPDATE CASCADE,
-    id_TipoIngreso_Fk INT REFERENCES TipoIngreso(id_TipoIngreso) ON DELETE SET NULL ON UPDATE CASCADE,
-    id_Proveedores_Fk INT REFERENCES Proveedores(id_Proveedores) ON DELETE SET NULL ON UPDATE CASCADE,
     Evt_Estado VARCHAR(50) DEFAULT 'Programado' CHECK (Evt_Estado IN ('Programado', 'EnCurso', 'Finalizado', 'Cancelado', 'Pospuesto')),
     id_modulo VARCHAR(50) DEFAULT 'eventos',
-    Evt_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    Evt_FechaUltimaModificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CHECK (Evt_FechaFin IS NULL OR Evt_FechaFin >= Evt_FechaInicio)
 );
 
--- Tabla: Detalle_Eventos (Opcional según necesidad)
+-- Tabla: Detalle_Eventos (Relación muchos-a-muchos)
 CREATE TABLE IF NOT EXISTS Detalle_Eventos (
-    id_DetalleEvento SERIAL PRIMARY KEY,
-    id_Eventos_Fk INT NOT NULL REFERENCES Eventos(id_Eventos) ON DELETE CASCADE ON UPDATE CASCADE,
-    DetEvt_Clave VARCHAR(50) NOT NULL,
-    DetEvt_Valor TEXT,
-    DetEvt_Tipo VARCHAR(50),
+    id_Eventos_Fk INT NOT NULL,
+    id_TipoIngreso_Fk INT NOT NULL,
+    id_CategoriaEvento_Fk INT NOT NULL,
     id_modulo VARCHAR(50) DEFAULT 'eventos',
-    DetEvt_FechaCreacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(id_Eventos_Fk, DetEvt_Clave)
+    PRIMARY KEY (id_Eventos_Fk, id_TipoIngreso_Fk, id_CategoriaEvento_Fk),
+    FOREIGN KEY (id_Eventos_Fk) REFERENCES Eventos(id_Eventos) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_TipoIngreso_Fk) REFERENCES TipoIngreso(id_TipoIngreso) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (id_CategoriaEvento_Fk) REFERENCES CategoriaEvento(id_CategoriaEvento) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- ============================================
@@ -485,7 +472,6 @@ CREATE INDEX IF NOT EXISTS idx_clientes_celular ON Clientes(Cli_Celular);
 CREATE INDEX IF NOT EXISTS idx_clientes_tipo ON Clientes(id_TipoCliente_Fk);
 
 CREATE INDEX IF NOT EXISTS idx_eventos_fecha_inicio ON Eventos(Evt_FechaInicio);
-CREATE INDEX IF NOT EXISTS idx_eventos_categoria ON Eventos(id_CategoriaEvento_Fk);
 CREATE INDEX IF NOT EXISTS idx_eventos_estado ON Eventos(Evt_Estado);
 CREATE INDEX IF NOT EXISTS idx_eventos_ciudad ON Eventos(id_Ciudades_Fk);
 
