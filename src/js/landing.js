@@ -30,6 +30,7 @@ async function loadEventsFromDatabase() {
         evt_capacidadtotal,
         evt_capacidaddisponible,
         evt_preciobasegeneral,
+        evt_imagenportada,
         evt_estado,
         ciudades (
           ciu_nombre
@@ -133,10 +134,12 @@ function createEventCard(evento) {
     badgeDisponibilidad = '<span class="availability-badge medium">Disponibilidad limitada</span>';
   }
 
+  const portada = evento.evt_imagenportada || `https://via.placeholder.com/300x200/2E4A8B/FFFFFF?text=${encodeURIComponent(evento.evt_nombre.substring(0, 20))}`;
+
   card.innerHTML = `
     <div class="event-card-image">
       <img
-        src="https://via.placeholder.com/300x200/2E4A8B/FFFFFF?text=${encodeURIComponent(evento.evt_nombre.substring(0, 20))}"
+        src="${portada}"
         alt="${evento.evt_nombre}"
         loading="lazy"
       >
