@@ -34,7 +34,7 @@
  * - Todas las páginas que requieren autenticación
  */
 
-import { supabase } from './supabase-client.js'
+import { supabase } from "./supabase-client.js"
 
 // TODO: Implementar funciones de autenticación
 
@@ -44,6 +44,28 @@ import { supabase } from './supabase-client.js'
 export async function login(email, password) {
   // TODO: Implementar usando supabase.auth.signInWithPassword()
 }
+
+// TODO: Implementar gestión de usuarios y roles
+// TODO: Implementar control de permisos
+
+export async function getData() {
+  if (!supabase) {
+    return { data: null, error: new Error('Cliente de Supabase no inicializado') }
+  }
+
+  try {
+    const { data, error } = await supabase
+      .from('Usuarios')
+      .select('*')
+
+    return { data, error }
+  } catch (err) {
+    return { data: null, error: err }
+  }
+}
+
+
+// ...existing code...
 
 /**
  * Cerrar sesión
