@@ -743,6 +743,8 @@ CREATE TABLE IF NOT EXISTS Eventos (
     Evt_CapacidadTotal INT CHECK (Evt_CapacidadTotal > 0),
     Evt_CapacidadDisponible INT,
     Evt_PrecioBaseGeneral DECIMAL(10,2),
+    -- URL de imagen de portada del evento
+    Evt_ImagenPortada TEXT,
     Evt_Estado VARCHAR(50) DEFAULT 'Programado' CHECK (Evt_Estado IN ('Programado', 'EnCurso', 'Finalizado', 'Cancelado', 'Pospuesto')),
     id_modulo VARCHAR(50) DEFAULT 'eventos',
     CHECK (Evt_FechaFin IS NULL OR Evt_FechaFin >= Evt_FechaInicio)
