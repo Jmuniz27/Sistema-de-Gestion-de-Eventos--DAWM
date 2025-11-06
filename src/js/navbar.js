@@ -1,25 +1,23 @@
 /**
  * Navbar Component Loader and Functionality
- * Loads navbar.html and handles mobile menu interactions
+ * Carga navbar y footer sin fetch, importando los HTML como raw (compatible Vite)
  */
+import navbarHTML from '../components/navbar.html?raw';
+import footerHTML from '../components/footer.html?raw';
 
 // Load Navbar Component
-async function loadNavbar() {
+function loadNavbar() {
   try {
     const navbarContainer = document.getElementById('navbar-container');
     if (!navbarContainer) return;
 
-    // Fetch navbar HTML
-    const response = await fetch('/components/navbar.html');
-    if (!response.ok) throw new Error('Failed to load navbar');
-
-    const navbarHTML = await response.text();
+    // Insertar HTML del navbar
     navbarContainer.innerHTML = navbarHTML;
 
-    // Initialize navbar functionality
+    // Inicializar funcionalidad del navbar
     initializeNavbar();
 
-    // Load footer as well
+    // Cargar footer también
     loadFooter();
   } catch (error) {
     console.error('Error loading navbar:', error);
@@ -106,16 +104,10 @@ function highlightActivePage() {
 }
 
 // Load Footer Component
-async function loadFooter() {
+function loadFooter() {
   try {
     const footerContainer = document.getElementById('footer-container');
     if (!footerContainer) return;
-
-    // Fetch footer HTML
-    const response = await fetch('/components/footer.html');
-    if (!response.ok) throw new Error('Failed to load footer');
-
-    const footerHTML = await response.text();
     footerContainer.innerHTML = footerHTML;
   } catch (error) {
     console.error('Error loading footer:', error);

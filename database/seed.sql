@@ -207,6 +207,21 @@ INSERT INTO Eventos (Evt_Nombre, Evt_Descripcion, Evt_FechaInicio, Evt_FechaFin,
 ('Festival de Salsa Cali Pachanguero en Manta', 'El mejor festival de salsa llega a Manta con orquestas de Colombia y Ecuador.', '2025-09-05 18:00:00', '2025-09-06 04:00:00', 'Malecón de Manta, Av. Malecón, Manta', 8, 8000, 7200, 35.00, 'Programado', 'eventos'),
 ('Liga de Quito vs Barcelona SC - Clásico del Astillero', 'El clásico del fútbol ecuatoriano.', '2025-07-20 16:00:00', '2025-07-20 18:00:00', 'Estadio Rodrigo Paz Delgado, Casa Blanca, Quito', 5, 41575, 38000, 25.00, 'Programado', 'eventos');
 
+-- Asignar imágenes de portada a los eventos sembrados
+WITH imgs (nombre, portada) AS (
+	VALUES
+		('Feid en Guayaquil - Mor Tour 2025', 'https://www.eluniverso.com/resizer/Ko4cyugibyviX52MqC5SkI9PVso=/arc-anglerfish-arc2-prod-eluniverso/public/PTUX6VCGVBAWBDAWRONLZU7DLA.jpg'),
+		('Karol G - Mañana Será Bonito Tour Quito', 'https://i.imgur.com/g3wIEZQ.png'),
+		('Festival Rock al Parque Ecuador', 'https://imagenes.primicias.ec/files/og_thumbnail/uploads/2024/12/06/6752f6f416d78.png'),
+		('Marc Anthony en Guayaquil', 'https://www.elcomercio.com/wp-content/uploads/2022/07/marc-anthony-concierto-700x391.jpg'),
+		('Festival de Salsa Cali Pachanguero en Manta', 'https://www.flashthetickets.com/images/maelo%20manta%20localidades.jpg'),
+		('Liga de Quito vs Barcelona SC - Clásico del Astillero', 'https://imagenes.expreso.ec/files/image_440_279/uploads/2025/05/12/682262a83d63b.jpeg')
+)
+UPDATE Eventos e
+SET Evt_ImagenPortada = i.portada
+FROM imgs i
+WHERE e.Evt_Nombre = i.nombre;
+
 -- Detalle_Eventos (Relación muchos-a-muchos: Evento-TipoIngreso-Categoria)
 INSERT INTO Detalle_Eventos (id_Eventos_Fk, id_TipoIngreso_Fk, id_CategoriaEvento_Fk, id_modulo) VALUES
 -- Evento 1: Feid - Reggaeton, Pago General

@@ -21,23 +21,26 @@ async function loadEventsFromDatabase() {
     const { data: eventos, error } = await supabase
       .from('eventos')
       .select(`
-        id_Eventos,
-        Evt_Nombre,
-        Evt_Descripcion,
-        Evt_FechaInicio,
-        Evt_FechaFin,
-        Evt_Direccion,
-        Evt_CapacidadTotal,
-        Evt_CapacidadDisponible,
-        Evt_PrecioBaseGeneral,
-        Evt_Estado,
-        Ciudades (
-          Ciu_Nombre
+        id_eventos,
+        evt_nombre,
+        evt_descripcion,
+        evt_fechainicio,
+        evt_fechafin,
+        evt_direccion,
+        evt_capacidadtotal,
+        evt_capacidaddisponible,
+        evt_preciobasegeneral,
+        evt_imagenportada,
+        evt_estado,
+        ciudades (
+          ciu_nombre
         )
       `)
-      .eq('Evt_Estado', 'Programado')
-      .order('Evt_FechaInicio', { ascending: true });
+      .eq('evt_estado', 'Programado')
+      .order('evt_fechainicio', { ascending: true });
 
+    // Mostrar datos crudos en consola
+    console.log('Datos crudos de eventos desde Supabase:', eventos);
     if (error) {
       console.error('Error fetching events:', error);
       showErrorState(eventsGrid, 'No se pudieron cargar los eventos');
@@ -53,24 +56,27 @@ async function loadEventsFromDatabase() {
     // Obtener categorías de cada evento
     const eventosConCategorias = await Promise.all(
       eventos.map(async (evento) => {
-        // Consultar categoría del evento desde Detalle_Eventos
+        // Consultar categoría del evento desde detalle_eventos
         const { data: detalles } = await supabase
-          .from('Detalle_Eventos')
+          .from('detalle_eventos')
           .select(`
-            CategoriaEvento (
-              CatEvt_Nombre
+            categoriaevento (
+              catevt_nombre
             )
           `)
-          .eq('id_Eventos_Fk', evento.id_Eventos)
+          .eq('id_eventos_fk', evento.id_eventos)
           .limit(1)
           .single();
 
         return {
           ...evento,
-          categoria: detalles?.CategoriaEvento?.CatEvt_Nombre || 'Evento'
+          categoria: detalles?.categoriaevento?.catevt_nombre || 'Evento'
         };
       })
     );
+
+    // Mostrar datos finales en consola
+    console.log('Eventos con categoría:', eventosConCategorias);
 
     // Renderizar eventos
     renderEvents(eventsGrid, eventosConCategorias);
@@ -102,10 +108,10 @@ function renderEvents(container, eventos) {
 function createEventCard(evento) {
   const card = document.createElement('div');
   card.className = 'event-card';
-  card.setAttribute('data-event-id', evento.id_Eventos);
+  card.setAttribute('data-event-id', evento.id_eventos);
 
   // Formatear fecha
-  const fecha = new Date(evento.Evt_FechaInicio);
+  const fecha = new Date(evento.evt_fechainicio);
   const fechaFormateada = fecha.toLocaleDateString('es-EC', {
     year: 'numeric',
     month: 'long',
@@ -113,11 +119,11 @@ function createEventCard(evento) {
   });
 
   // Nombre de ciudad
-  const ciudad = evento.Ciudades?.Ciu_Nombre || 'Ecuador';
+  const ciudad = evento.ciudades?.ciu_nombre || 'Ecuador';
 
   // Calcular disponibilidad
-  const disponibilidad = evento.Evt_CapacidadDisponible;
-  const capacidadTotal = evento.Evt_CapacidadTotal;
+  const disponibilidad = evento.evt_capacidaddisponible;
+  const capacidadTotal = evento.evt_capacidadtotal;
   const porcentajeDisponible = (disponibilidad / capacidadTotal) * 100;
 
   // Badge de disponibilidad
@@ -128,19 +134,21 @@ function createEventCard(evento) {
     badgeDisponibilidad = '<span class="availability-badge medium">Disponibilidad limitada</span>';
   }
 
+  const portada = evento.evt_imagenportada || `https://via.placeholder.com/300x200/2E4A8B/FFFFFF?text=${encodeURIComponent(evento.evt_nombre.substring(0, 20))}`;
+
   card.innerHTML = `
     <div class="event-card-image">
       <img
-        src="https://via.placeholder.com/300x200/2E4A8B/FFFFFF?text=${encodeURIComponent(evento.Evt_Nombre.substring(0, 20))}"
-        alt="${evento.Evt_Nombre}"
+        src="${portada}"
+        alt="${evento.evt_nombre}"
         loading="lazy"
       >
       <span class="event-badge">${evento.categoria}</span>
       ${badgeDisponibilidad}
     </div>
     <div class="event-card-content">
-      <h3 class="event-card-title">${evento.Evt_Nombre}</h3>
-      <p class="event-card-description">${evento.Evt_Descripcion || ''}</p>
+      <h3 class="event-card-title">${evento.evt_nombre}</h3>
+      <p class="event-card-description">${evento.evt_descripcion || ''}</p>
       <p class="event-card-date">
         <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/>
@@ -160,8 +168,8 @@ function createEventCard(evento) {
         ${disponibilidad.toLocaleString()} lugares disponibles
       </p>
       <div class="event-card-footer">
-        <span class="event-card-price">Desde $${evento.Evt_PrecioBaseGeneral.toFixed(2)}</span>
-        <button class="btn btn-primary btn-sm" onclick="window.handleEventClick(${evento.id_Eventos})">
+        <span class="event-card-price">Desde $${evento.evt_preciobasegeneral.toFixed(2)}</span>
+        <button class="btn btn-primary btn-sm" onclick="window.handleEventClick(${evento.id_eventos})">
           Ver Detalles
         </button>
       </div>
@@ -178,16 +186,16 @@ window.handleEventClick = async function(eventId) {
   try {
     // Obtener datos completos del evento
     const { data: evento, error } = await supabase
-      .from('Eventos')
+      .from('eventos')
       .select(`
         *,
-        Ciudades (*),
-        Detalle_Eventos (
-          CategoriaEvento (*),
-          TipoIngreso (*)
+        ciudades (*),
+        detalle_eventos (
+          categoriaevento (*),
+          tipoingreso (*)
         )
       `)
-      .eq('id_Eventos', eventId)
+      .eq('id_eventos', eventId)
       .single();
 
     if (error) {
