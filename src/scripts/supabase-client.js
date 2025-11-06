@@ -38,7 +38,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
 
 // Validar que las credenciales existan
 if (!supabaseUrl || !supabaseAnonKey) {
-  console.error('❌ Error: Faltan las credenciales de Supabase')
+  console.error('Error: Faltan las credenciales de Supabase')
   console.error('Asegúrate de tener un archivo .env con:')
   console.error('VITE_SUPABASE_URL=tu-url')
   console.error('VITE_SUPABASE_ANON_KEY=tu-key')
@@ -48,4 +48,4 @@ if (!supabaseUrl || !supabaseAnonKey) {
 export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // Verificar conexión (opcional, para debugging)
-console.log('✅ Cliente de Supabase inicializado correctamente')
+console.log('Cliente de Supabase inicializado correctamente')
