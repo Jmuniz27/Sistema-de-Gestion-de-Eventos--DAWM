@@ -1,4 +1,4 @@
-import { generarFactura } from '../controllers/facturaController.js'
+import { generarFactura } from 'scripts/modules/controllers/factura_Controller.js'
 import {
   obtenerFacturaCompleta,
   actualizarFacturaYDetalles
