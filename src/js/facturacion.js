@@ -1,5 +1,5 @@
 import { generarFactura, actualizarFactura } from '../scripts/modules/factura_controlador.js'
-import { obtenerFacturas, obtenerFacturaCompleta } from '../scripts/modules/servicio_facturacion.js'
+import { obtenerFacturas, obtenerFacturaCompleta } from '../scripts/modules/servicios_facturacion.js'
 
 // Helpers
 function paramId() {

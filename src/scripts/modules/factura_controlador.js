@@ -1,5 +1,5 @@
 
-import { crearFacturaConDetalles, actualizarFacturaYDetalles } from './facturacionService.js'
+import { crearFacturaConDetalles, actualizarFacturaYDetalles } from './servicios_facturacion.js'
 import { calcularTotalesFactura } from './calculosFactura.js'
 
 
