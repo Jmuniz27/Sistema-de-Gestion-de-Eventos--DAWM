@@ -3,12 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Boletos y Entradas - Sistema de Gestión de Eventos</title>
-    <!-- Listado de boletos: Bol_Codigo, Bol_Tipo, Bol_Precio, Bol_Estado -->
-    <link rel="stylesheet" href="../../styles/main.css">
+    <title>Mis Entradas - Sistema de Gestión de Eventos</title>
+    
+    <!-- Stylesheets (igual que landing) -->
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
 </head>
-<body>
-    <!-- TODO: Tabla de boletos con filtros por evento, tipo y estado -->
+<body class="has-navbar">
+    <!-- Navbar Component -->
+    <div id="navbar-container"></div>
+
+    <!-- Main Content -->
+    <main>
+        <section class="events-section" id="mis-entradas">
+            <div class="container">
+                <h2 class="section-title">Mis Entradas Asignadas</h2>
+                <p class="section-subtitle">Gestiona tus boletos y entradas para eventos</p>
+
+                <!-- TODO: Tabla de boletos con filtros por evento, tipo y estado -->
+
+                <!-- Contenedor de Entradas -->
+                <div id="entradas-container">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Component -->
+    <div id="footer-container"></div>
+
+    <!-- Scripts -->
+    <script type="module" src="../../js/navbar.js"></script>
     <script type="module" src="../../scripts/modules/boletos.js"></script>
+    <script type="module" src="./index.js"></script>
 </body>
 </html>
