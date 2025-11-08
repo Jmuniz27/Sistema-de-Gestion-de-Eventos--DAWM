@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instrucciones - EventManager</title>
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/auth.css">
+</head>
+
+<body>
+    <header class="login__header">
+            <h1 class="header__title">EventManager</h1>
+            <p class="header__tagline">Administra y reserva tus eventos</p>
+    </header>
+    <main class="container login__main">
+        <div class="login__form email_instructions">
+            <h2 class="login__description">Revisa tu correo</h2>
+            <p>Hemos enviado las instrucciones a <strong id="userEmail"></strong> para recuperar el acceso a tu cuenta</p>
+            <p>Token de simulación: <code id="resetToken"></code></p>
+            <p><a href="#" id="resetLink">Haz clic aquí para resetear tu contraseña</a></p>
+        </div>
+
+        <div class="actions">
+            <a href="./login.html"><span>Volver a inicio de sesión</span></a>
+        </div>
+    </main>
+    <script type="module" src="../../scripts/modules/auth/email_instructions.js"></script>
+</body>
+</html>
