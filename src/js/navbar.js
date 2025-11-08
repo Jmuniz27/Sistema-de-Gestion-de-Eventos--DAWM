@@ -4,7 +4,11 @@
  */
 import navbarHTML from '../components/navbar.html?raw';
 import footerHTML from '../components/footer.html?raw';
+<<<<<<< Updated upstream
 import stateManager from './state-manager.js';
+=======
+import notificationsNavbarHTML from '../components/navbar-notificaciones.html?raw';
+>>>>>>> Stashed changes
 
 // Load Navbar Component
 function loadNavbar() {
@@ -22,6 +26,18 @@ function loadNavbar() {
     loadFooter();
   } catch (error) {
     console.error('Error loading navbar:', error);
+  }
+}
+
+// Load Notifications Module Navbar when available
+function loadNotificacionesNavbar() {
+  try {
+    const moduleNavbarContainer = document.getElementById('navbar-notificaciones');
+    if (!moduleNavbarContainer) return;
+
+    moduleNavbarContainer.innerHTML = notificationsNavbarHTML;
+  } catch (error) {
+    console.error('Error loading notifications navbar:', error);
   }
 }
 
@@ -74,6 +90,7 @@ function initializeNavbar() {
     });
   });
 
+<<<<<<< Updated upstream
   // Highlight active page
   highlightActivePage();
 
@@ -84,6 +101,8 @@ function initializeNavbar() {
   stateManager.subscribe('userChanged', () => {
     updateAuthLinks();
   });
+=======
+>>>>>>> Stashed changes
 }
 
 // Update Authentication Links Based on User State
@@ -147,8 +166,13 @@ function highlightActivePage() {
 
   navbarLinks.forEach(link => {
     const linkPath = new URL(link.href).pathname;
-    if (currentPath === linkPath || (currentPath === '/' && linkPath === '/index.html')) {
+    const isActive = currentPath === linkPath || (currentPath === '/' && linkPath === '/index.html');
+    if (isActive) {
       link.classList.add('active');
+      link.setAttribute('aria-current', 'page');
+    } else {
+      link.classList.remove('active');
+      link.removeAttribute('aria-current');
     }
   });
 }
@@ -165,7 +189,11 @@ function loadFooter() {
 }
 
 // Initialize on DOM Content Loaded
-document.addEventListener('DOMContentLoaded', loadNavbar);
+document.addEventListener('DOMContentLoaded', function() {
+  loadNavbar();
+  loadNotificacionesNavbar();
+  highlightActivePage();
+});
 
 // Handle window resize
 let resizeTimer;

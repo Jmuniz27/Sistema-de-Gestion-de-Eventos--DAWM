@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventManager - Sistema de notificaciones</title>
+  <meta name="description"
+    content="Gestiona tus eventos, vende boletos y controla la facturación de manera profesional">
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/landing.css">
+</head>
+
+<body class="has-navbar">
+  <!-- Navbar Component -->
+  <div id="navbar-container"></div>
+  <!-- Navbar notificaciones -->
+  <div id="navbar-notificaciones"></div>
+  <!-- Main Content -->
+  <main>
+    <!-- Notifications Table Section -->
+    <section class="events-section" id="notifications">
+      <!--Container para las notificaciones-->
+      <div class="container">
+        <!-- Titulo y subtitulo-->
+        <h2 class="section-title">Notificaciones</h2>
+        <p class="section-subtitle">Mantente al tanto de las últimas notificaciones</p>
+
+        <!-- Notifications Filters -->
+        <section class="notifications-filters" aria-label="Filtrar notificaciones">
+          <!-- Busqueda de notificacion por ingreso de ID-->
+          <div class="notifications-filters__field">
+            <!--Etiqueta para el campo de busqueda por ID-->
+            <label class="notifications-filters__label" for="notificationFilterId">Buscar por ID</label>
+            <!--Input o entrada para el campo de busqueda por ID-->
+            <input
+              type="search"
+              id="notificationFilterId"
+              class="notifications-filters__input"
+              placeholder="Ej. 123"
+              inputmode="numeric"
+            >
+          </div>
+          <!--Filtro por medio de tipo de envio-->
+          <div class="notifications-filters__field">
+            <!-- Etiqueta para el campo de filtro por tipo de envío-->
+            <label class="notifications-filters__label" for="notificationFilterType">Tipo de envío</label>
+            <!-- Select para el campo de filtro por tipo de envío-->
+            <select id="notificationFilterType" class="notifications-filters__input">
+              <option value="all">Todos</option>
+              <option value="email">Email</option>
+              <option value="push">Push</option>
+            </select>
+          </div>
+          <!--Filtro por medio del estado de notificacion-->
+          <div class="notifications-filters__field">
+            <!--Etiqueta para el camppo de filtro por estado-->
+            <label class="notifications-filters__label" for="notificationFilterState">Estado</label>
+            <!--Select con opciones de estado para el filtro-->
+            <select id="notificationFilterState" class="notifications-filters__input">
+              <option value="all">Todos</option>
+              <option value="programado">Programada</option>
+              <option value="enviado">Enviada</option>
+              <option value="pendiente">Pendiente</option>
+              <option value="fallido">Fallida</option>
+              <option value="cancelado">Cancelada</option>
+            </select>
+          </div>
+          <!--Conetenedo para resetear o limpiar filtros -->
+          <div class="notifications-filters__actions">
+            <!-- Boton para limpiar filtros seleccionados-->
+            <button type="button" id="notificationFiltersReset" class="btn btn-outline btn-sm">
+              Limpiar filtros
+            </button>
+          </div>
+        </section>
+
+        <!-- Tabla de notificaciones -->
+        <div class="notifications-table-wrapper" aria-live="polite">
+          <table class="notifications-table" id="notificationsTable">
+            <thead>
+              <!--Secciones a presentar en la tabla de notificaciones-->
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Asunto</th>
+                <th scope="col">Tipo</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Programada</th>
+                <th scope="col">Último envío</th>
+                <th scope="col">Intentos</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <!--Cuerpo de la tabla de notificaciones-->
+            <tbody id="notificationsTableBody">
+              <tr>
+                <!-- Mensaje de carga mientras que se obtienen notificaciones de la base de datos -->
+                <td class="table-message" colspan="8">Cargando notificaciones...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Footer Component -->
+  <div id="footer-container"></div>
+
+  <!-- Scripts -->
+  <!--Script que se encarga de manejar el navegador y el footer-->
+  <script type="module" src="../../js/navbar.js"></script>
+  <!--Script que maneja el estado global de la aplicacion-->
+  <script type="module" src="../../js/state-manager.js"></script>
+  <!--Script que maneja notificaciones (tablas, filtros, carga de datos y acciones)-->
+  <script type="module" src="../../js/notificaciones/notificaciones.js"></script>
+  <!--Inicializa la conexion con la base de datos-->
+  <script type="module" src="../../scripts/supabase-client.js"></script>
+  <!--Manejo de autenticacion (si el usuario esta logueado o redirigir al login)-->
+  <script type="module" src="../../scripts/auth.js"></script>
+</body>
+
+</html>

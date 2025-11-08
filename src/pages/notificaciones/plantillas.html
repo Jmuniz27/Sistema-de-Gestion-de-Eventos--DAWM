@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Titulo de la pagina-->
+    <title>EventManager - Plantillas de notificaciones</title>
+    <meta name="description"
+        content="Consulta tus plantillas activas e inactivas para reutilizarlas en futuras campañas de notificaciones." />
+    <!--Conexion a estilos de la pagina-->
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/landing.css">
+</head>
+
+<!--Inicio del cuerpo de la plantilla-->
+<body class="has-navbar">
+    <!--Barra de navegacion principal-->
+    <div id="navbar-container"></div>
+    <!--Barra de navegacion secundaria-->
+    <div id="navbar-notificaciones"></div>
+
+    <main>
+        <!-- Contenido principal de la página -->
+        <section class="events-section" id="templates">
+            <!-- Contenedor para las plantillas-->
+            <div class="container">
+                <!--Titulo y parrafo explicativo de las plantillas-->
+                <h2 class="section-title">Plantillas</h2>
+                <p class="section-subtitle">Organiza tus mensajes base para campañas y recordatorios</p>
+                        <!--Accion para crear una nueva plantilla-->
+                        <div class="templates-actions">
+                            <a class="btn btn-primary btn-sm" href="./editor.html">Crear plantilla</a>
+                        </div>
+
+            <!-- Panel de filtros reutilizado de la vista de notificaciones -->
+            <section class="notifications-filters" aria-label="Filtrar plantillas">
+                    <!-- Campo para filtrar una plantilla por ID-->
+                    <div class="notifications-filters__field">
+                        <label class="notifications-filters__label" for="templateFilterId">Buscar por ID</label>
+                        <input
+                            type="search"
+                            id="templateFilterId"
+                            class="notifications-filters__input"
+                            placeholder="Ej. 45"
+                            inputmode="numeric"
+                        />
+                    </div>
+                    <!--Campo para filtrar una plantilla por tipo de envio-->
+                    <div class="notifications-filters__field">
+                        <label class="notifications-filters__label" for="templateFilterType">Tipo de plantilla</label>
+                        <select id="templateFilterType" class="notifications-filters__input">
+                            <option value="all">Todos</option>
+                            <option value="email">Email</option>
+                            <option value="push">Push</option>
+                        </select>
+                    </div>
+                    <!--Campos para filtrar una plantilla por estado-->
+                    <div class="notifications-filters__field">
+                        <label class="notifications-filters__label" for="templateFilterState">Estado</label>
+                        <select id="templateFilterState" class="notifications-filters__input">
+                            <option value="all">Todos</option>
+                            <option value="active">Activa</option>
+                            <option value="inactive">Inactiva</option>
+                        </select>
+                    </div>
+                    <!--Contenedor y boton para limpiar filtros-->
+                    <div class="notifications-filters__actions">
+                        <button type="button" id="templateFiltersReset" class="btn btn-outline btn-sm">
+                            Limpiar filtros
+                        </button>
+                    </div>
+                </section>
+
+            <!-- Tabla compartida que muestra plantillas con los mismos estilos de notificaciones -->
+            <div class="notifications-table-wrapper" aria-live="polite">
+                    <!--Tabla de plantillas-->
+                    <table class="notifications-table" id="templatesTable">
+                        <!--Cabecera con datos a presentar de las plantillas-->
+                        <thead>
+                            <tr>
+                                <th scope="col">ID</th>
+                                <th scope="col">Módulo</th>
+                                <th scope="col">Nombre</th>
+                                <th scope="col">Tipo</th>
+                                <th scope="col">Estado</th>
+                                <th scope="col">Actualizada</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                        </thead>
+                        <!--Cuerpo de la tabla de plantillas con mensaje de carga-->
+                        <tbody id="templatesTableBody">
+                            <tr>
+                                                <td class="table-message" colspan="7">Cargando plantillas...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer Component -->
+    <div id="footer-container"></div>
+    <!-- Scripts -->
+    <!--Script que se encarga de manejar el navegador y el footer-->
+    <script type="module" src="../../js/navbar.js"></script>
+    <!--Script que maneja el estado global de la aplicacion-->
+    <script type="module" src="../../js/state-manager.js"></script>
+    <!--Script que maneja plantillas (tablas, filtros, carga de datos y acciones)-->
+    <script type="module" src="../../js/notificaciones/plantillas.js"></script>
+    <!--Inicializa la conexion con la base de datos-->
+    <script type="module" src="../../scripts/supabase-client.js"></script>
+    <!--Manejo de autenticacion (si el usuario esta logueado o redirigir al login)-->
+    <script type="module" src="../../scripts/auth.js"></script>
+</body>
+
+
+</html>

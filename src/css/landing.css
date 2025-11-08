@@ -12,6 +12,11 @@
   align-items: center;
   justify-content: center;
   background: linear-gradient(135deg, #F9F9F9 0%, #E8E8E8 100%);
+
+/* ========================================
+   ENVIAR NOTIFICACIÓN PAGE
+   ======================================== */
+
   padding: var(--space-12) 0;
 }
 
@@ -84,35 +89,6 @@
 
   .hero-actions .btn {
     width: 100%;
-  }
-}
-
-/* ========================================
-   SECTION HEADERS
-   ======================================== */
-
-.section-title {
-  font-size: var(--font-size-4xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary-blue);
-  text-align: center;
-  margin-bottom: var(--space-3);
-}
-
-.section-subtitle {
-  font-size: var(--font-size-lg);
-  color: var(--color-text-secondary);
-  text-align: center;
-  margin-bottom: var(--space-8);
-}
-
-@media (max-width: 767px) {
-  .section-title {
-    font-size: var(--font-size-2xl);
-  }
-
-  .section-subtitle {
-    font-size: var(--font-size-base);
   }
 }
 
@@ -223,6 +199,7 @@
   margin-bottom: var(--space-3);
   line-height: var(--line-height-relaxed);
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -397,6 +374,312 @@
   animation: spin 1s linear infinite;
 }
 
+/* ========================================
+   NOTIFICATIONS TABLE
+   ======================================== */
+
+.notifications-filters {
+  /* Panel superior con controles de búsqueda y filtros */
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  align-items: flex-end;
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  background-color: var(--color-white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+}
+
+.notifications-filters__field {
+  /* Cada filtro mantiene etiqueta y campo apilados */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  min-width: 180px;
+}
+
+.notifications-filters__label {
+  /* Estilos consistentes con etiquetas de formularios */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-text-secondary);
+}
+
+.notifications-filters__input {
+  /* Inputs con bordes suaves reutilizables */
+  padding: var(--space-3);
+  border-radius: var(--radius-base);
+  border: 1px solid var(--color-gray-200);
+  background-color: var(--color-white);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.notifications-filters__input:focus {
+  /* Indica foco con halo suave siguiendo el esquema de color */
+  outline: none;
+  border-color: var(--color-primary-blue);
+  box-shadow: 0 0 0 3px rgba(46, 74, 139, 0.15);
+}
+
+.notifications-filters__actions {
+  /* Agrupa botones auxiliares (limpiar filtros, etc.) */
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.templates-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-4);
+}
+
+.templates-actions .btn {
+  align-self: flex-start;
+}
+
+@media (max-width: 767px) {
+  .notifications-filters {
+    /* Ajusta padding cuando la tarjeta se apila en mobile */
+    padding: var(--space-3);
+  }
+
+  .notifications-filters__field,
+  .notifications-filters__actions {
+    width: 100%;
+  }
+
+  .notifications-filters__actions {
+    /* Botones alineados a la derecha en vistas estrechas */
+    justify-content: flex-end;
+  }
+}
+
+.notifications-table-wrapper {
+  /* Contenedor con sombra que mantiene la tabla desplazable */
+  margin-top: var(--space-8);
+  border-radius: var(--radius-md);
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-base);
+  overflow: hidden;
+  overflow-x: auto;
+}
+
+.notifications-table {
+  /* Evita que las columnas colapsen en pantallas pequeñas */
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+}
+
+.notifications-table thead {
+  /* Encabezado con contraste suave */
+  background-color: var(--color-gray-50);
+  text-transform: uppercase;
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.08em;
+}
+
+.notifications-table th {
+  padding: var(--space-4) var(--space-5);
+  text-align: left;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+}
+
+.notifications-table td {
+  /* Separa filas y mejora la lectura */
+  padding: var(--space-4) var(--space-5);
+  color: var(--color-text-primary);
+  vertical-align: top;
+  font-size: var(--font-size-sm);
+}
+
+.notifications-table tbody tr {
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.notifications-table tbody tr:last-child {
+  border-bottom: none;
+}
+
+.notifications-table tbody tr:hover {
+  /* Resalta la fila bajo el cursor */
+  background-color: var(--color-gray-50);
+}
+
+.notifications-table__id {
+  font-variant-numeric: tabular-nums;
+  color: var(--color-text-secondary);
+  width: 80px;
+}
+
+.notifications-table__subject {
+  /* Agrupa asunto y resumen en un bloque vertical */
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.notifications-table__subject-title {
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.notifications-table__subject-message {
+  /* Limita el mensaje a dos líneas con elipsis */
+  color: var(--color-text-secondary);
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.notification-type {
+  /* Badge neutro para distinguir canal de entrega */
+  display: inline-flex;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  background-color: rgba(46, 74, 139, 0.12);
+  color: var(--color-primary-blue);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ========================================
+   MÓDULO: NOTIFICACIONES
+   Badge de estado para notificaciones
+   Usado en: tabla de notificaciones (notificaciones.html)
+   ======================================== */
+.notification-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: capitalize;
+}
+
+/* ========================================
+   COMPONENTE REUTILIZABLE: Acciones de Tabla
+   Usado en: notificaciones, plantillas, eventos
+   Contenedor para botones de editar/eliminar
+   ======================================== */
+.table-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+/* ========================================
+   BOTONES DE ACCIÓN EN TABLAS
+   Botón base reutilizable para editar/eliminar
+   ======================================== */
+.table-action {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+/* Botón de eliminar - Usado en todas las tablas del sistema */
+.table-action--delete {
+  border-color: #B91C1C;
+  color: #B91C1C;
+}
+
+.table-action--delete:hover {
+  background-color: #B91C1C;
+  color: var(--color-white);
+}
+
+/* Botón de editar - Usado en todas las tablas del sistema */
+.table-action--edit {
+  border-color: #60A5FA;
+  color: #1D4ED8;
+}
+
+.table-action--edit:hover {
+  background-color: #DBEAFE;
+}
+
+/* ========================================
+   MÓDULO: NOTIFICACIONES - Estados
+   Badges de estado para notificaciones
+   Enviado: Verde (exitoso)
+   ======================================== */
+.status-enviado {
+  background-color: #DCFCE7;
+  color: #166534;
+}
+
+/* Programado: Azul (pendiente de envío) */
+.status-programado {
+  background-color: #DBEAFE;
+  color: #1D4ED8;
+}
+
+/* Pendiente: Amarillo (en espera) */
+.status-pendiente {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+/* Fallido/Cancelado: Rojo (error o cancelación) */
+.status-fallido,
+.status-cancelado {
+  background-color: #FEE2E2;
+  color: #991B1B;
+}
+
+/* ========================================
+   COMPONENTE REUTILIZABLE: Mensajes de Tabla
+   Usado en: notificaciones, eventos, clientes, boletos
+   Mensajes centrados para estados de carga, error o vacío
+   ======================================== */
+.table-message {
+  text-align: center;
+  padding: var(--space-6) var(--space-4);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+/* Estado: Error de carga */
+.table-message--error {
+  color: #B91C1C;
+}
+
+/* Estado: Cargando datos */
+.table-message--loading {
+  color: var(--color-primary-blue);
+}
+
+/* Estado: Sin datos disponibles */
+.table-message--empty {
+  color: var(--color-text-secondary);
+}
+
+@media (max-width: 767px) {
+  .notifications-table-wrapper {
+    box-shadow: none;
+    border-radius: var(--radius-sm);
+  }
+
+  .notifications-table {
+    min-width: 100%;
+  }
+}
+
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -452,3 +735,4 @@
 .fade-in-delayed {
   animation: fadeIn 0.8s ease-out 0.2s backwards;
 }
+

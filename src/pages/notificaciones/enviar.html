@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventManager - Enviar notificación</title>
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/landing.css">
+</head>
+<body class="has-navbar">
+  <div id="navbar-container"></div>
+  <div id="navbar-notificaciones"></div>
+
+  <main>
+    <section class="events-section template-editor" id="sendNotification">
+      <div class="container">
+        <div class="template-editor__header">
+          <a href="./notificaciones.html" class="btn btn-outline btn-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" />
+            </svg>
+            Volver al historial
+          </a>
+          <div>
+            <h2 class="section-title">Enviar notificación</h2>
+            <p class="section-subtitle">Programa y personaliza una campaña para tus asistentes.</p>
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" id="enviarBtn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13" />
+              <polygon points="22 2 15 22 11 13 2 9 22 2" />
+            </svg>
+            Programar Envío
+          </button>
+        </div>
+
+        <div class="template-editor__form">
+          <div class="template-editor__grid">
+            <div class="template-editor__field template-editor__field--full">
+              <label for="selectPlantilla">Plantilla de notificación</label>
+              <select id="selectPlantilla">
+                <option value="">Selecciona una plantilla</option>
+              </select>
+            </div>
+
+            <div class="template-editor__field template-editor__field--full">
+              <label for="notificacionAsunto">Asunto</label>
+              <input type="text" id="notificacionAsunto" placeholder="Ej. Recordatorio del evento">
+            </div>
+
+            <div class="template-editor__field template-editor__field--full">
+              <label for="fechaProgramada">Fecha y hora de envío</label>
+              <input type="datetime-local" id="fechaProgramada">
+              <small class="text-secondary">El sistema ejecutará el envío automáticamente en la fecha seleccionada.</small>
+            </div>
+
+            <div class="template-editor__field template-editor__field--full">
+              <div class="card" id="previewCard">
+                <h3 class="card-title">Vista previa de la plantilla</h3>
+                <div class="template-editor__grid">
+                  <div class="template-editor__field">
+                    <label>Plantilla</label>
+                    <p class="text-secondary" id="previewNombre">Selecciona una plantilla</p>
+                  </div>
+                  <div class="template-editor__field">
+                    <label>Canal</label>
+                    <p class="text-secondary" id="previewTipo">-</p>
+                  </div>
+                  <div class="template-editor__field">
+                    <label>Módulo</label>
+                    <p class="text-secondary" id="previewModulo">Sin módulo definido</p>
+                  </div>
+                  <div class="template-editor__field template-editor__field--full">
+                    <label>Asunto</label>
+                    <p class="text-secondary" id="previewAsunto">Sin asunto</p>
+                  </div>
+                  <div class="template-editor__field template-editor__field--full">
+                    <label>Contenido</label>
+                    <p class="text-secondary" id="previewContenido" style="white-space: pre-wrap;">Selecciona una plantilla para ver el contenido.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-container"></div>
+
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../js/state-manager.js"></script>
+  <script type="module" src="../../scripts/supabase-client.js"></script>
+  <script type="module" src="../../scripts/utils.js"></script>
+  <script type="module" src="../../scripts/modules/notificaciones/plantillas_crud.js"></script>
+  <script type="module" src="../../scripts/modules/notificaciones/notificaciones_crud.js"></script>
+  <script type="module" src="../../scripts/modules/notificaciones/enviar_page.js"></script>
+  <script type="module" src="../../scripts/auth.js"></script>
+</body>
+</html>

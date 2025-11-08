@@ -1,0 +1,104 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--Titulo de la pagina-->
+    <title>EventManager - Editor de plantillas</title>
+    <meta name="description" content="Crea o actualiza las plantillas de notificaciones para tus campañas." />
+    <!--Linkeo con las paginas de estilos para el editor de plantillas-->
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/landing.css">
+</head>
+
+<body class="has-navbar">
+    <!--Barra de navegacion principal-->
+    <div id="navbar-container"></div>
+    <!--Barra de navegacion secundaria-->
+    <div id="navbar-notificaciones"></div>
+
+    <main>
+        <!--Contenido principal de la pagina-->
+        <section class="events-section template-editor" id="templateEditor">
+            <!--Contenedor para el editor de plantillas-->
+            <div class="container">
+                <!-- Encabezado del editor de plantillas -->
+                <div class="template-editor__header">
+                    <!--Boton para volver a la seccion anterior-->
+                    <a href="./plantillas.html" class="btn btn-outline btn-sm">Volver a plantillas</a>
+                    <!-- Contenedor para el titulo y subtitulo-->
+                    <div>
+                        <h2 class="section-title" id="templateEditorTitle">Nueva plantilla</h2>
+                        <p class="section-subtitle" id="templateEditorSubtitle">
+                            Define el contenido base que usaremos al generar notificaciones.
+                        </p>
+                    </div>
+                </div>
+                <!--Formulario para crear o editar una plantilla de notificacion-->
+                <form id="templateEditorForm" class="template-editor__form" novalidate>
+                    <!--Contenedor principal para datos de la edicion-->
+                    <div class="template-editor__grid">
+                        <!--Contenedor para el nombre de la plantilla-->
+                        <div class="template-editor__field">
+                            <label for="templateName">Nombre</label>
+                            <input type="text" id="templateName" name="name" placeholder="Confirmación de compra" required />
+                        </div>
+                        <!--Contenedor para el módulo de la plantilla-->
+                        <div class="template-editor__field">
+                            <label for="templateModule">Módulo</label>
+                            <select id="templateModule" name="module"></select>
+                        </div>
+                        <!--Contenedor para el tipo de plantilla-->
+                        <div class="template-editor__field">
+                            <label for="templateType">Canal</label>
+                            <select id="templateType" name="type">
+                                <option value="Email">Email</option>
+                                <option value="Push">Push</option>
+                            </select>
+                        </div>
+                        <!--Contenedor para el asunto de la plantilla-->
+                        <div class="template-editor__field">
+                            <label for="templateSubject">Asunto</label>
+                            <input type="text" id="templateSubject" name="subject" placeholder="Tu compra ha sido confirmada" required />
+                            <!--Explicacion de variables personalizadas para reemplazar por nombre al ser enviada-->
+                            <small class="text-secondary">Puedes usar variables personalizadas dentro de llaves: {cliente_nombre}</small>
+                        </div>
+                        <!--Contenedor para el contenido de la plantilla-->
+                        <div class="template-editor__field template-editor__field--full">
+                            <label for="templateContent">Contenido</label>
+                            <textarea id="templateContent" name="content" rows="10" placeholder="Hola {cliente_nombre}, gracias por tu compra." required></textarea>
+                        </div>
+                    </div>
+                    <!-- Contenedor que contiene el checkbox para activar o desactivar la plantilla-->
+                    <div class="template-editor__toggle">
+                        <input type="checkbox" id="templateIsActive" name="isActive" />
+                        <label for="templateIsActive">Activar plantilla inmediatamente</label>
+                    </div>
+                    <!-- Contenedor para el boton de guardar plantilla-->
+                    <div class="template-editor__actions">
+                        <button type="submit" class="btn btn-primary" id="templateSaveButton">Guardar plantilla</button>
+                    </div>
+                </form>
+
+            </div>
+        </section>
+    </main>
+    <!-- Footer Component -->
+    <div id="footer-container"></div>
+    <!-- Scripts -->
+    <!--Script que se encarga de manejar el navegador y el footer-->
+    <script type="module" src="../../js/navbar.js"></script>
+    <!--Script que maneja el estado global de la aplicacion-->
+    <script type="module" src="../../js/state-manager.js"></script>
+    <!--Script que maneja editor de plantillas (tablas, filtros, carga de datos y acciones)-->
+    <script type="module" src="../../js/notificaciones/plantillas-editor.js"></script>
+    <!--Inicializa la conexion con la base de datos-->
+    <script type="module" src="../../scripts/supabase-client.js"></script>
+    <!--Manejo de autenticacion (si el usuario esta logueado o redirigir al login)-->
+    <script type="module" src="../../scripts/auth.js"></script>
+</body>
+
+</html>
