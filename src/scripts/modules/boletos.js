@@ -252,3 +252,21 @@ export async function eliminarEntradaAsignada(id) {
   if (error) return { success: false, error: error.message };
   return { success: true };
 }
+
+// ==================== FILTRAR POR USUARIO ====================
+
+export async function obtenerEntradasPorUsuario(idUsuario) {
+  const { data, error } = await supabase
+    .from('entradasasignadas')
+    .select(`
+      *,
+      boleto:id_boleto_fk(
+        *,
+        eventos:id_evento_fk(*)
+      )
+    `)
+    .eq('id_usuario_fk', idUsuario);
+
+  if (error) return { success: false, error: error.message };
+  return { success: true, data };
+}

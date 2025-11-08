@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crear Cuenta</title>
+    <title>Crear Cuenta - EventManager</title>
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/auth.css">
 </head>
 
 <body>
@@ -12,6 +16,7 @@
             <p class="header__tagline">Administra y reserva tus eventos</p>
     </header>
     <main class="container login__main">
+        <div class="login__form">
             <h2 class="login__description">Crea tu cuenta</h2>
             <form class="form">
                 
@@ -42,13 +47,12 @@
 
                 <button type="submit" class="button">Crear Cuenta</button>
             </form>
-
-            <div class="actions">
-                <a href="./login.html">¿Ya tienes una cuenta? <span>Iniciar Sesión</span></a>
-                <a href="./olvide_password.html">¿Olvidaste tu contraseña?</a>
-            </div>
+        </div>
+        <div class="actions">
+            <a href="./login.html">¿Ya tienes una cuenta? <span>Iniciar Sesión</span></a>
+            <a href="./olvide_password.html">¿Olvidaste tu contraseña?</a>
         </div>
     </main>
-    <script type="module" src="../../scripts/auth.js"></script>
+    <script type="module" src="../../scripts/modules/auth/registro.js"></script>
 </body>
 </html>

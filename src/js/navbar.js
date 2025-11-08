@@ -4,6 +4,7 @@
  */
 import navbarHTML from '../components/navbar.html?raw';
 import footerHTML from '../components/footer.html?raw';
+import stateManager from './state-manager.js';
 
 // Load Navbar Component
 function loadNavbar() {
@@ -75,7 +76,56 @@ function initializeNavbar() {
 
   // Highlight active page
   highlightActivePage();
+
+  // Update auth links based on user state
+  updateAuthLinks();
+
+  // Subscribe to user changes
+  stateManager.subscribe('userChanged', () => {
+    updateAuthLinks();
+  });
 }
+
+// Update Authentication Links Based on User State
+function updateAuthLinks() {
+  const navbarActions = document.querySelector('.navbar-actions');
+  if (!navbarActions) return;
+
+  const isAuthenticated = stateManager.isAuthenticated();
+  const currentUser = stateManager.getCurrentUser();
+
+  if (isAuthenticated && currentUser) {
+    const rol = currentUser.rol;
+    let linksHTML = '';
+
+    if (rol === 'Administrador') {
+      linksHTML = `
+        <a href="../pages/admin-eventos.html" class="btn btn-outline btn-sm">Zona Admin</a>
+        <button class="btn btn-primary btn-sm" onclick="logout()">Cerrar Sesión</button>
+      `;
+    } else {
+      linksHTML = `
+        <a href="../pages/boletos/index.html" class="btn btn-outline btn-sm">Mis Entradas</a>
+        <button class="btn btn-primary btn-sm" onclick="logout()">Cerrar Sesión</button>
+      `;
+    }
+
+    navbarActions.innerHTML = linksHTML;
+  } else {
+    // Default: not authenticated
+    navbarActions.innerHTML = `
+      <a href="../pages/autenticacion/login.html" class="btn btn-outline btn-sm">Iniciar Sesión</a>
+      <a href="../pages/autenticacion/crear_cuenta.html" class="btn btn-primary btn-sm">Registrarse</a>
+    `;
+  }
+}
+
+// Global logout function
+window.logout = function() {
+  stateManager.logout();
+  alert('Sesión cerrada exitosamente.');
+  window.location.href = '../index.html';
+};
 
 // Close Navbar
 function closeNavbar() {

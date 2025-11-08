@@ -6,13 +6,14 @@
  * Gestión de permisos por rol
  */
 
-import { supabase } from '../supabase-client.js'
+import { supabase } from '../../supabase-client.js'
 
 // TODO: Implementar gestión de usuarios y roles
 // TODO: Implementar control de permisos
 
-import { getData } from '../auth.js'
+import { getData, getDataUsers} from '../../auth.js'
+import { getUsersWithRolesAndPermissions, deleteUser } from '../../auth.js'
 
-const { data, error } = await getData()
+const { data, error } = await getDataUsers()
 if (error) console.error(error)
-else console.log(data)
+else console.log(data) // Array de usuarios con objetos anidados de roles, permisos y estado
