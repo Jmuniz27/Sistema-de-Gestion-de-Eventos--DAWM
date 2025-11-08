@@ -7,6 +7,18 @@
     <link rel="stylesheet" href="../../styles/main.css">
 </head>
 <body>
+	<h2>Nueva Factura</h2>
+	  <form id="formFactura">
+		<input type="text" id="cliente" placeholder="Cliente" required />
+		<input type="date" id="fecha" required />
+		<input type="number" id="monto" placeholder="Monto" required />
+		<select id="estado">
+		  <option value="Emitida">Emitida</option>
+		  <option value="Pagada">Pagada</option>
+		  <option value="Pendiente">Pendiente</option>
+		</select>
+		<button type="submit">Guardar</button>
+	  </form>
     <!-- TODO: Formulario con selección de cliente, boletos, cálculo automático de totales -->
     <script type="module" src="../../scripts/modules/facturacion.js"></script>
 </body>
