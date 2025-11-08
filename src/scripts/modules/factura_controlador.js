@@ -1,6 +1,6 @@
 
 import { crearFacturaConDetalles, actualizarFacturaYDetalles } from './servicios_facturacion.js'
-import { calcularTotalesFactura } from './calculosFactura.js'
+import { calcularTotalesFactura } from './factura_calculos.js'
 
 
 export async function generarFactura(
