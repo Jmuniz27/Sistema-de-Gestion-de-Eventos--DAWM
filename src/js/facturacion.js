@@ -1,9 +1,8 @@
-import { generarFactura } from '../scripts/modules/controllers/factura_Controlador.js'
+import { generarFactura, actualizarFactura } from '../scripts/modules/controllers/factura_Controlador.js'
 import {
   obtenerFacturaCompleta,
-  actualizarFacturaYDetalles
-  obtnerFacturas
-} from '../services/facturacionService.js'
+  obtenerFacturaCompleta 
+} from '../services/factura_servicios.js'
 
 function obtenerIdDesdeURL() {
   const params = new URLSearchParams(window.location.search)
