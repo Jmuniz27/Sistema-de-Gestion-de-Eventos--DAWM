@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LogIn</title>
+    <title>Instrucciones - EventManager</title>
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/auth.css">
 </head>
 
 <body>
@@ -12,12 +16,13 @@
             <p class="header__tagline">Administra y reserva tus eventos</p>
     </header>
     <main class="container login__main">
-            <h2 class="login__description">Buenas Noticias</h2>
+        <div class="login__form email_instructions">
+            <h2 class="login__description">Revisa tu correo</h2>
             <p>Hemos enviado las instrucciones a tu correo electrónico para recuperar el acceso a tu cuenta</p>
+        </div>
 
-            <div class="actions">
-                <a href="./login.html"><span>Volver a inicio de sesión</span></a>
-            </div>
+        <div class="actions">
+            <a href="./login.html"><span>Volver a inicio de sesión</span></a>
         </div>
     </main>
     <script type="module" src="../../scripts/auth.js"></script>

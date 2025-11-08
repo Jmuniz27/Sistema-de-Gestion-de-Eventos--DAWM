@@ -54,9 +54,7 @@ export async function getData() {
   }
 
   try {
-    const { data, error } = await supabase
-      .from('Usuarios')
-      .select('*')
+    const { data, error } = await supabase.from('usuarios').select('*')
 
     return { data, error }
   } catch (err) {

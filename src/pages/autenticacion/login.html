@@ -3,18 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login - EventManager</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/auth.css">
 </head>
 
 <body>
     <header class="login__header">
-            <h1 class="header__title">EventManager</h1>
-            <p class="header__tagline">Administra y reserva tus eventos</p>
+        <h1 class="header__title">EventManager</h1>
+        <p class="header__tagline">Administra y reserva tus eventos</p>
     </header>
     <main class="container login__main">
+        <div class="login__form">
             <h2 class="login__description">Iniciar Sesión</h2>
             <form class="form">
-
                 <div class="form__field">
                     <label for="email">Correo</label>
                     <input id="email" type="email" placeholder="Tu correo" name="email" value="" required>
@@ -27,14 +32,13 @@
 
                 <button type="submit" class="button">Iniciar Sesión</button>
             </form>
+        </div>
 
-            <div class="actions">
-                <a href="crear_cuenta.html">¿Aún no tienes una cuenta? <span>Crear una</span></a>
-                <a href="./olvide_password.html">¿Olvidaste tu contraseña?</a>
-            </div>
+        <div class="actions">
+            <a href="crear_cuenta.html">¿Aún no tienes una cuenta? <span>Crear una</span></a>
+            <a href="./olvide_password.html">¿Olvidaste tu contraseña?</a>
         </div>
     </main>
-    <script type="module" src="../../scripts/auth.js"></script>
     <script type="module" src="../../scripts/modules/autenticacion.js"></script>
 </body>
 </html>
