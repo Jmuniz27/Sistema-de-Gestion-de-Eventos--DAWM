@@ -29,3 +29,6 @@ import { supabase } from '../supabase-client.js'
 // TODO: Implementar funciones CRUD
 // TODO: Implementar reportes
 // TODO: Implementar validaciones
+import { crearEvento, obtenerEventos } from './supabase-crud.js'
+
+crearEvento({ nombre: 'Conferencia JS', fecha: '2025-11-15', lugar: 'UNAM' })
