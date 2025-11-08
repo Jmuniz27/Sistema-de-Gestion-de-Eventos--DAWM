@@ -18,11 +18,11 @@ async function verifyPassword(inputPassword, storedHash) {
 }
 
 /**
- * Registrar usuario (inserta en tabla usuarios)
+ * Registrar usuario (inserta en tabla usuarios y asigna rol cliente)
  */
 export async function register(email, password, userData = {}) {
   const hashedPassword = await hashPassword(password)
-  const { data, error } = await supabase
+  const { data: userDataInserted, error: userError } = await supabase
     .from('usuarios')
     .insert([{
       usuario_email: email,
@@ -31,7 +31,25 @@ export async function register(email, password, userData = {}) {
       usuario_apellido: userData.apellido || '',
       id_estado_fk: 5 // Estado pendiente (deben verificar correo)
     }])
-  return { data, error }
+    .select('id_usuario') // Para obtener el id insertado
+    .single()
+
+  if (userError) return { error: userError }
+
+  // Asignar rol cliente (id_rol_fk = 6)
+  const { error: roleError } = await supabase
+    .from('usuarios_roles')
+    .insert([{
+      id_usuario_fk: userDataInserted.id_usuario,
+      id_rol_fk: 6
+    }])
+
+  if (roleError) {
+    // Opcional: Si falla el rol, podrías eliminar el usuario, pero para simplicidad, solo reportar error
+    return { error: roleError }
+  }
+
+  return { data: userDataInserted }
 }
 
 /**
@@ -105,7 +123,55 @@ export async function getData() {
 }
 
 export async function getDataUsers() {
-  const { data, error } = await supabase.from('usuarios').select('*')
+  const { data, error } = await supabase.from('roles').select('*')
+  return { data, error }
+}
+
+/**
+ * Función para obtener información cruzada de usuarios con roles, permisos y estados
+ */
+export async function getUsersWithRolesAndPermissions() {
+  const { data, error } = await supabase
+    .from('usuarios')
+    .select(`
+      *,
+      usuarios_roles (
+        roles (
+          *,
+          roles_permisos (
+            permisos (*)
+          )
+        )
+      ),
+      estados_generales (*)
+    `)
+  return { data, error }
+}
+
+/**
+ * Función para obtener el rol de un usuario específico
+ */
+export async function getUserRole(userId) {
+  const { data: rolesData, error } = await supabase
+    .from('usuarios_roles')
+    .select('roles(rol_nombre)')
+    .eq('id_usuario_fk', userId)
+    .single()
+
+  if (error) return { error }
+
+  const rol = rolesData?.roles?.rol_nombre || 'Cliente'
+  return { data: { rol } }
+}
+
+/**
+ * Función para eliminar un usuario específico (elimina también relaciones por CASCADE)
+ */
+export async function deleteUser(userId) {
+  const { data, error } = await supabase
+    .from('usuarios')
+    .delete()
+    .eq('id_usuario', userId)
   return { data, error }
 }
 

@@ -14,7 +14,7 @@ class StateManager {
    */
   init() {
     // Cargar usuario desde localStorage si existe
-    const savedUser = localStorage.getItem('currentUser');
+    const savedUser = localStorage.getItem('user');
     if (savedUser) {
       try {
         this.user = JSON.parse(savedUser);
@@ -46,7 +46,7 @@ class StateManager {
    */
   setCurrentUser(user) {
     this.user = user;
-    localStorage.setItem('currentUser', JSON.stringify(user));
+    localStorage.setItem('user', JSON.stringify(user));
     this.notify('userChanged', user);
   }
 
@@ -55,7 +55,7 @@ class StateManager {
    */
   logout() {
     this.user = null;
-    localStorage.removeItem('currentUser');
+    localStorage.removeItem('user');
     localStorage.removeItem('selectedEvent');
     sessionStorage.clear();
     this.notify('userChanged', null);

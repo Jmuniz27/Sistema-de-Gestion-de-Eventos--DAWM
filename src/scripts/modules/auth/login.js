@@ -5,7 +5,8 @@
  * Maneja el formulario de login, validación básica y llamada a auth.js
  */
 
-import { login } from '../../auth.js'
+import { login, getUserRole } from '../../auth.js'
+import stateManager from '../../../js/state-manager.js'
 
 // Función para validar email básico
 function isValidEmail(email) {
@@ -44,8 +45,23 @@ async function handleLogin(event) {
   if (error) {
     alert('Error al iniciar sesión: ' + error)
   } else {
-    localStorage.setItem('user', JSON.stringify(userData))
+
+    // Consultar rol del usuario usando la función reutilizable
+    const { data: roleData, error: rolesError } = await getUserRole(userData.id_usuario)
+
+    if (rolesError) {
+      alert('Error al obtener el rol del usuario: ' + rolesError)
+      return
+    }
+
+    const rol = roleData.rol
+
+    // Guardar en localStorage y stateManager con rol
+    const userWithRol = { ...userData, rol }
+    localStorage.setItem('user', JSON.stringify(userWithRol))
+    stateManager.setCurrentUser(userWithRol)
     alert('Inicio de sesión exitoso.')
+    // Redirigir a la página principal o dashboard
     window.location.href = '../index.html'
   }
 }
