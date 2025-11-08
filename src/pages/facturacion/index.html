@@ -1,26 +1,71 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facturación - Sistema de Gestión de Eventos</title>
-    <!-- Listado de facturas con detalles -->
-    <link rel="stylesheet" href="../../styles/main.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Facturación - Sistema de Gestión de Eventos</title>
+  <!-- Listado de facturas con detalles -->
+  <link rel="stylesheet" href="../../styles/main.css">
 </head>
 <body>
+  <aside class="sidebar">
+    <h2>Sistema de Gestión de Eventos</h2>
+    <nav>
+      <ul>
+        <li>Dashboard</li>
+        <li>Clientes</li>
+        <li>Eventos</li>
+        <li class="active">Facturación</li>
+        <li>Notificaciones</li>
+        <li>Configuración</li>
+        <li>Cerrar Sesión</li>
+      </ul>
+    </nav>
+  </aside>
 
-	<h1>Facturación</h1>
-	  <p>Gestiona facturas y pagos</p>
-	  <button onclick="window.location.href='crear.html'">Nueva Factura</button>
+  <main class="content">
+    <header class="header">
+      <div>
+        <h1>Facturación</h1>
+        <p>Gestiona facturas y pagos</p>
+      </div>
+      <button class="btn-primary" onclick="window.location.href='./crear.html'">Nueva Factura</button>
+    </header>
 
-	  <section id="resumen">
-		<p>Ingresos totales: <span id="ingresos"></span></p>
-		<p>Facturas pagadas: <span id="pagadas"></span></p>
-		<p>Pendientes: <span id="pendientes"></span></p>
-	  </section>
+    <section class="stats" id="resumen">
+      <div class="card">
+        <span class="label">Ingresos totales</span>
+        <span id="ingresosTotales">$0.00</span>
+      </div>
+      <div class="card">
+        <span class="label">Facturas pagadas</span>
+        <span id="facturasPagadas">0</span>
+      </div>
+      <div class="card">
+        <span class="label">Pendientes</span>
+        <span id="facturasPendientes">0</span>
+      </div>
+    </section>
 
-	  <section id="listaFacturas"></section>
-    <!-- TODO: Tabla de facturas con búsqueda por cliente, fecha, monto -->
-    <script type="module" src="../../scripts/modules/facturacion.js"></script>
+    <section class="invoices">
+      <div class="section-header">
+        <h2>Facturas recientes</h2>
+        <div class="filters">
+          <input type="text" id="buscadorCliente" placeholder="Buscar por cliente o número..." />
+        </div>
+      </div>
+	  <!-- TODO: Tabla de facturas con búsqueda por cliente, fecha, monto -->
+      <div class="list-header detalle-item grid-4">
+        <strong>ID</strong>
+        <strong>Cliente</strong>
+        <strong>Monto</strong>
+        <strong>Acciones</strong>
+      </div>
+
+      <div id="listaFacturas" class="list"></div>
+    </section>
+  </main>
+
+  <script type="module" src="../../scripts/modules/facturacion.js"></script>
 </body>
 </html>
