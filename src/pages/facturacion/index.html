@@ -8,6 +8,18 @@
     <link rel="stylesheet" href="../../styles/main.css">
 </head>
 <body>
+
+	<h1>Facturación</h1>
+	  <p>Gestiona facturas y pagos</p>
+	  <button onclick="window.location.href='crear.html'">Nueva Factura</button>
+
+	  <section id="resumen">
+		<p>Ingresos totales: <span id="ingresos"></span></p>
+		<p>Facturas pagadas: <span id="pagadas"></span></p>
+		<p>Pendientes: <span id="pendientes"></span></p>
+	  </section>
+
+	  <section id="listaFacturas"></section>
     <!-- TODO: Tabla de facturas con búsqueda por cliente, fecha, monto -->
     <script type="module" src="../../scripts/modules/facturacion.js"></script>
 </body>
