@@ -213,7 +213,7 @@ window.handleEventClick = async function(eventId) {
     // Redirigir a la página de detalles
     // El otro miembro del grupo puede acceder a los datos con:
     // const evento = stateManager.getSelectedEvent();
-    window.location.href = `/pages/evento-detalle.html?id=${eventId}`;
+    window.location.href = `/pages/eventos/mostrarEvento.html?id=${eventId}`;
 
   } catch (error) {
     console.error('Error handling event click:', error);

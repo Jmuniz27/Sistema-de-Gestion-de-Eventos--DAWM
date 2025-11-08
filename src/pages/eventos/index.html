@@ -3,24 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eventos - Sistema de Gestión de Eventos</title>
-
-    <!--
-      Archivo: src/pages/eventos/index.html
-      Propósito: Listado de eventos con funcionalidades CRUD
-
-      Tablas: Eventos, Detalle_Eventos, CategoriasEvento, TipoIngreso
-      Columnas: Evt_Nombre, Evt_Descripcion, Evt_Fecha, Evt_Lugar, Evt_Capacidad, Evt_Estado
-      Nomenclatura: id_Eventos (PK), id_CategoriaEvento_Fk (FK)
-
-      Funcionalidades: CRUD, búsqueda, filtros por categoría/fecha, exportación
-      Dependencias: ../../scripts/modules/eventos.js
-    -->
-
-    <link rel="stylesheet" href="../../styles/main.css">
+    <title>Eventos - Sistema de Gestión</title>
+    
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
 </head>
-<body>
-    <!-- TODO: Implementar interfaz de listado de eventos -->
-    <script type="module" src="../../scripts/modules/eventos.js"></script>
+<body class="has-navbar">
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <main>
+        <section class="events-section">
+            <div class="container" style="text-align: center; padding: 100px 20px;">
+                <h2 class="section-title">Detalle del Evento</h2>
+                <p class="section-subtitle">Sección en desarrollo por otro módulo</p>
+                
+                <!-- Botón para ir a crear boletos -->
+                <a href="../boletos/crear.html" class="btn btn-primary" style="margin-top: 30px; display: inline-block;">
+                    Ir a Crear Boletos
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script type="module" src="../../js/navbar.js"></script>
 </body>
 </html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Evento - Sistema de Gestión</title>
+    
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/landing.css">
+    <style>
+        .event-detail-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px #0002;
+            padding: 2rem;
+        }
+        .event-detail-title {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .event-detail-info {
+            margin-bottom: 1rem;
+        }
+        .event-detail-info p {
+            margin: 0.4rem 0;
+        }
+        .btn-crear-boleto {
+            display: inline-block;
+            margin-top: 20px;
+        }
+        .event-detail-image {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="has-navbar">
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <main>
+        <div class="event-detail-container">
+            <h2 class="event-detail-title" id="eventoNombre">Cargando evento...</h2>
+            <img id="eventoImagen" class="event-detail-image" src="https://via.placeholder.com/800x400?text=Cargando" alt="Imagen del evento">
+            <div class="event-detail-info">
+                <p id="eventoDescripcion">Descripción no disponible</p>
+                <p><strong>Fecha Inicio:</strong> <span id="eventoFechaInicio"></span></p>
+                <p><strong>Fecha Fin:</strong> <span id="eventoFechaFin"></span></p>
+                <p><strong>Dirección:</strong> <span id="eventoDireccion"></span></p>
+                <p><strong>Ciudad:</strong> <span id="eventoCiudad"></span></p>
+                <p><strong>Capacidad Disponible:</strong> <span id="eventoCapacidad"></span></p>
+                <p><strong>Precio Base:</strong> $<span id="eventoPrecio"></span></p>
+            </div>
+            <!-- Botón para ir a crear boletos -->
+            <button id="btnCrearBoleto" class="btn btn-primary btn-crear-boleto">
+                Crear Boleto
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script type="module" src="../../js/navbar.js"></script>
+    <script type="module">
+        import stateManager from '../../js/state-manager.js';
+
+        const evento = stateManager.getSelectedEvent();
+
+        if (evento) {
+            // Actualizar datos del evento en la página
+            document.getElementById('eventoNombre').textContent = evento.evt_nombre;
+            document.getElementById('eventoDescripcion').textContent = evento.evt_descripcion || 'Sin descripción disponible';
+            document.getElementById('eventoImagen').src = evento.evt_imagenportada || `https://via.placeholder.com/800x400?text=${encodeURIComponent(evento.evt_nombre)}`;
+            
+            const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleString('es-EC', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
+            
+            document.getElementById('eventoFechaInicio').textContent = formatDate(evento.evt_fechainicio);
+            document.getElementById('eventoFechaFin').textContent = formatDate(evento.evt_fechafin);
+            document.getElementById('eventoDireccion').textContent = evento.evt_direccion || 'N/A';
+            document.getElementById('eventoCiudad').textContent = evento.ciudades?.ciu_nombre || 'N/A';
+            document.getElementById('eventoCapacidad').textContent = evento.evt_capacidaddisponible || 0;
+            document.getElementById('eventoPrecio').textContent = evento.evt_preciobasegeneral?.toFixed(2) || '0.00';
+        }
+
+        // Botón Crear Boleto
+        document.getElementById('btnCrearBoleto').addEventListener('click', () => {
+            if (!evento) {
+                alert('No hay evento seleccionado.');
+                return;
+            }
+            window.location.href = '../boletos/crear.html';
+        });
+    </script>
+</body>
+</html>
