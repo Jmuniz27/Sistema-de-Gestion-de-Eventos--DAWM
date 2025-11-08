@@ -4,11 +4,14 @@
  */
 import navbarHTML from '../components/navbar.html?raw';
 import footerHTML from '../components/footer.html?raw';
-<<<<<<< Updated upstream
+
+
 import stateManager from './state-manager.js';
-=======
+
 import notificationsNavbarHTML from '../components/navbar-notificaciones.html?raw';
->>>>>>> Stashed changes
+
+import notificationsNavbarHTML from '../components/navbar-notificaciones.html?raw';
+
 
 // Load Navbar Component
 function loadNavbar() {
@@ -90,7 +93,7 @@ function initializeNavbar() {
     });
   });
 
-<<<<<<< Updated upstream
+
   // Highlight active page
   highlightActivePage();
 
@@ -101,8 +104,7 @@ function initializeNavbar() {
   stateManager.subscribe('userChanged', () => {
     updateAuthLinks();
   });
-=======
->>>>>>> Stashed changes
+
 }
 
 // Update Authentication Links Based on User State
