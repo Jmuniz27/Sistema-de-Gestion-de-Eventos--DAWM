@@ -23,3 +23,55 @@
     <script type="module" src="../../scripts/modules/facturacion.js"></script>
 </body>
 </html>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crear Factura - Sistema de Gestión de Eventos</title>
+  <link rel="stylesheet" href="../../styles/main.css">
+</head>
+<body>
+	<!-- TODO: Formulario con selección de cliente, boletos, cálculo automático de totales -->
+  <main class="content narrow">
+    <h2>Nueva Factura</h2>
+
+    <form id="formFactura" class="form">
+      <div class="grid-2">
+        <label>
+          <span>Cliente (id)</span>
+          <input type="number" id="cliente" placeholder="ID de cliente" required />
+        </label>
+
+        <label>
+          <span>Método de pago (id)</span>
+          <input type="number" id="metodoPago" placeholder="ID método (opcional)" />
+        </label>
+
+        <label>
+          <span>Referencia de pago</span>
+          <input type="text" id="refPago" placeholder="Referencia (opcional)" />
+        </label>
+
+        <label>
+          <span>Observaciones</span>
+          <input type="text" id="observaciones" placeholder="Observaciones (opcional)" />
+        </label>
+      </div>
+
+      <h3>Detalles</h3>
+      <div id="detallesContainer" class="detalle-container"></div>
+      <button type="button" id="btnAgregarDetalle" class="btn-secondary">Agregar detalle</button>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Guardar</button>
+        <button type="button" class="btn" onclick="location.href='./index.html'">Cancelar</button>
+      </div>
+    </form>
+  </main>
+
+  
+    <script type="module" src="../../scripts/modules/facturacion.js"></script>
+</body>
+</html>
