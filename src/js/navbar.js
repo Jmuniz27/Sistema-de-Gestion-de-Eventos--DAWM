@@ -4,14 +4,8 @@
  */
 import navbarHTML from '../components/navbar.html?raw';
 import footerHTML from '../components/footer.html?raw';
-
-
+import notificationsNavbarHTML from '../components/navbar-notificaciones.html?raw';
 import stateManager from './state-manager.js';
-
-import notificationsNavbarHTML from '../components/navbar-notificaciones.html?raw';
-
-import notificationsNavbarHTML from '../components/navbar-notificaciones.html?raw';
-
 
 // Load Navbar Component
 function loadNavbar() {
