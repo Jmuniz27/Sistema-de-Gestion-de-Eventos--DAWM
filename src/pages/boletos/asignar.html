@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asignar Boletos - Sistema de Gestión</title>
+
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+
+    <style>
+        .asignar-boleto-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px #0002;
+            padding: 2rem;
+        }
+        .section-title { text-align: center; margin-bottom: 1.5rem; }
+        .ticket-info {
+            margin-bottom: 1rem;
+        }
+        .ticket-info p {
+            margin: 0.4rem 0;
+        }
+    </style>
+</head>
+<body class="has-navbar">
+    <div id="navbar-container"></div>
+
+    <main>
+        <div class="asignar-boleto-container">
+            <h2 class="section-title">Información de Boletos Seleccionados</h2>
+            <div id="ticketInfo" class="ticket-info">
+                <!-- Se llenará con JS -->
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+
+    <script type="module">
+        import stateManager from '../../js/state-manager.js';
+
+        // Obtener la selección guardada
+        const seleccion = stateManager.getSessionData('selectedTickets');
+        const ticketDiv = document.getElementById('ticketInfo');
+
+        if (!seleccion) {
+            ticketDiv.innerHTML = '<p>No se ha seleccionado ningún boleto.</p>';
+        } else {
+            ticketDiv.innerHTML = `
+                <p><strong>Evento ID:</strong> ${seleccion.eventoId}</p>
+                <p><strong>Sección:</strong> ${seleccion.seccion}</p>
+                <p><strong>Tipo de Boleto:</strong> ${seleccion.tipo}</p>
+                <p><strong>Cantidad:</strong> ${seleccion.cantidad}</p>
+                <p><strong>Precio Total:</strong> $${seleccion.precioTotal.toFixed(2)}</p>
+            `;
+            console.log('Información de boletos asignados:', seleccion);
+        }
+    </script>
+
+    <script type="module" src="../../js/navbar.js"></script>
+</body>
+</html>

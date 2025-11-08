@@ -42,7 +42,6 @@
     </style>
 </head>
 <body class="has-navbar">
-    <!-- Navbar -->
     <div id="navbar-container"></div>
 
     <main>
@@ -58,24 +57,25 @@
                 <p><strong>Capacidad Disponible:</strong> <span id="eventoCapacidad"></span></p>
                 <p><strong>Precio Base:</strong> $<span id="eventoPrecio"></span></p>
             </div>
-            <!-- Botón para ir a crear boletos -->
             <button id="btnCrearBoleto" class="btn btn-primary btn-crear-boleto">
                 Crear Boleto
             </button>
         </div>
     </main>
 
-    <!-- Footer -->
     <div id="footer-container"></div>
 
     <script type="module" src="../../js/navbar.js"></script>
     <script type="module">
         import stateManager from '../../js/state-manager.js';
 
+        // Obtener evento seleccionado desde stateManager
         const evento = stateManager.getSelectedEvent();
 
+        // Mostrar en consola el contenido guardado
+        console.log("Evento cargado desde stateManager:", evento);
+
         if (evento) {
-            // Actualizar datos del evento en la página
             document.getElementById('eventoNombre').textContent = evento.evt_nombre;
             document.getElementById('eventoDescripcion').textContent = evento.evt_descripcion || 'Sin descripción disponible';
             document.getElementById('eventoImagen').src = evento.evt_imagenportada || `https://via.placeholder.com/800x400?text=${encodeURIComponent(evento.evt_nombre)}`;
@@ -90,7 +90,6 @@
             document.getElementById('eventoPrecio').textContent = evento.evt_preciobasegeneral?.toFixed(2) || '0.00';
         }
 
-        // Botón Crear Boleto
         document.getElementById('btnCrearBoleto').addEventListener('click', () => {
             if (!evento) {
                 alert('No hay evento seleccionado.');
