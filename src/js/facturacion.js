@@ -1,7 +1,8 @@
-import { generarFactura } from 'scripts/modules/controllers/factura_Controller.js'
+import { generarFactura } from '../scripts/modules/controllers/factura_Controlador.js'
 import {
   obtenerFacturaCompleta,
   actualizarFacturaYDetalles
+  obtnerFacturas
 } from '../services/facturacionService.js'
 
 function obtenerIdDesdeURL() {
@@ -44,6 +45,19 @@ function obtenerDetallesEditados() {
 
 // Detectar vista actual
 const ruta = location.pathname
+
+if (ruta.includes('index.html')) {
+  document.addEventListener('DOMContentLoaded', async () => {
+    const facturas = await obtenerFacturas()
+    const lista = document.getElementById('listaFacturas')
+    lista.innerHTML = facturas.map(f => `
+      <div>
+        <strong>${f.Fac_Numero}</strong> - ${f.Fac_Total} - ${f.Fac_Estado}
+        <button onclick="location.href='editar.html?id=${f.id_Factura}'">Editar</button>
+      </div>
+    `).join('')
+  })
+}
 
 if (ruta.includes('crear.html')) {
   document.getElementById('formFactura')?.addEventListener('submit', async e => {
