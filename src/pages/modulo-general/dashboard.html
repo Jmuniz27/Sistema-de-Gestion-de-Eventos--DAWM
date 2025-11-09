@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventManager - Dashboard</title>
+    <meta name="description" content="Visualiza y gestiona tus eventos desde el panel de control">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/dashboard.css">
+</head>
+<body class="has-navbar">
+    <!-- Navbar Component -->
+    <div id="navbar-container"></div>
+
+   <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Hero Section -->
+        <section class="dashboard-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-text">
+                        <h1 class="hero-title">Sistema de Gestión de Eventos</h1>
+                        <p class="hero-subtitle">¡Bienvenidos a EventManager!</p>
+                        <p class="hero-description">Gestiona tus eventos de manera profesional y eficiente</p>
+                    </div>
+                    <div class="hero-action">
+                        <a href="../eventos/crear.html" class="btn btn-create-event">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/>
+                            </svg>
+                            Crear Evento
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Section -->
+        <section class="dashboard-stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <!-- Stat Card 1: Total Eventos -->
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <h3 class="stat-label">Total Eventos</h3>
+                            <p class="stat-value" id="totalEventos">
+                                <span class="loading-spinner-sm"></span>
+                            </p>
+                            <p class="stat-description">Eventos activos este mes</p>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 2: Clientes Registrados -->
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <h3 class="stat-label">Clientes Registrados</h3>
+                            <p class="stat-value" id="totalClientes">
+                                <span class="loading-spinner-sm"></span>
+                            </p>
+                            <p class="stat-description">Nuevos clientes este mes</p>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 3: Boletos Vendidos -->
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <h3 class="stat-label">Boletos Vendidos</h3>
+                            <p class="stat-value" id="totalBoletos">
+                                <span class="loading-spinner-sm"></span>
+                            </p>
+                            <p class="stat-description">Ventas este mes</p>
+                        </div>
+                    </div>
+
+                    <!-- Stat Card 4: Ingresos -->
+                    <div class="stat-card">
+                        <div class="stat-content">
+                            <h3 class="stat-label">Ingresos</h3>
+                            <p class="stat-value" id="totalIngresos">
+                                <span class="loading-spinner-sm"></span>
+                            </p>
+                            <p class="stat-description">Ingresos este mes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Content Grid Section -->
+        <section class="dashboard-content">
+            <div class="container">
+                <div class="content-grid">
+                    <!-- Próximos Eventos -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Próximos Eventos</h2>
+                        </div>
+                        <div class="card-body" id="proximosEventos">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Ventas Recientes  -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Ventas Recientes</h2>
+                        </div>
+                        <div class="card-body" id="ventasRecientes">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notificaciones  -->
+                    <div class="content-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Notificaciones</h2>
+                        </div>
+                        <div class="card-body" id="ultimasNotificaciones">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Component -->
+    <div id="footer-container"></div>
+    
+    <!-- Scripts -->
+    <script type="module" src="../../js/navbar.js"></script>
+    <script type="module" src="../../js/state-manager.js"></script>
+    <script type="module" src="../../scripts/modules/dashboard.js"></script>
+    <script type="module" src="../../scripts/supabase-client.js"></script>
+</body>
+</html>
