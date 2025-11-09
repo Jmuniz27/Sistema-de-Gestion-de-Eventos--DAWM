@@ -64,9 +64,9 @@ async function handleLogin(event) {
 
     // Redirigir según el rol del usuario
     if (rol === 'Administrador') {
-      window.location.href = '../modulo-general/dashboard.html'
+      window.location.href = '/pages/modulo-general/dashboard.html'
     } else {
-      window.location.href = '../../index.html'
+      window.location.href = '/'
     }
   }
 }

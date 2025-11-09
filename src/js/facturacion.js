@@ -72,7 +72,7 @@ if (location.pathname.includes('index.html')) {
           <span>${f.Fac_Numero}</span>
           <span>${f.id_Clientes_Fk}</span>
           <span>$${Number(f.Fac_Total).toFixed(2)}</span>
-          <button class="btn" onclick="location.href='editar.html?id=${f.id_Factura}'">Editar</button>
+          <button class="btn" onclick="location.href='/pages/facturacion/editar.html?id=${f.id_Factura}'">Editar</button>
         </div>
       `).join('')
     } catch (err) {
@@ -99,7 +99,7 @@ if (location.pathname.includes('crear.html')) {
       try {
         const idFactura = await generarFactura(clienteId, detalles, metodoPagoId, refPago, observaciones)
         alert(`Factura creada: ${idFactura}`)
-        location.href = 'index.html'
+        location.href = '/pages/facturacion/index.html'
       } catch (err) {
         alert('No tienes permisos para crear facturas: ' + err.message)
       }
@@ -142,14 +142,14 @@ if (location.pathname.includes('editar.html')) {
         try {
           await actualizarFactura(id, nuevosDatos, nuevosDetalles)
           alert('Factura actualizada correctamente')
-          location.href = 'index.html'
+          location.href = '/pages/facturacion/index.html'
         } catch (err) {
           alert('No tienes permisos para actualizar facturas: ' + err.message)
         }
       })
     } catch (err) {
       alert('Acceso denegado o error al cargar factura: ' + err.message)
-      location.href = 'index.html'
+      location.href = '/pages/facturacion/index.html'
     }
   })
 }

@@ -111,11 +111,11 @@ function updateAuthLinks() {
     // Add role-specific links
     if ((roleLabel || '').toString().toLowerCase() === 'administrador' || (roleLabel || '').toString().toLowerCase() === 'admin') {
       userActions += `
-        <a href="../pages/admin-eventos.html" class="btn btn-outline btn-sm">Zona Admin</a>
+        <a href="/pages/admin-eventos.html" class="btn btn-outline btn-sm">Zona Admin</a>
       `;
     } else {
       userActions += `
-        <a href="../pages/boletos/index.html" class="btn btn-outline btn-sm">Mis Entradas</a>
+        <a href="/pages/boletos/index.html" class="btn btn-outline btn-sm">Mis Entradas</a>
       `;
     }
 
@@ -137,8 +137,8 @@ function updateAuthLinks() {
   } else {
     // Default: not authenticated
     navbarActions.innerHTML = `
-      <a href="../pages/autenticacion/login.html" class="btn btn-outline btn-sm">Iniciar Sesión</a>
-      <a href="../pages/autenticacion/crear_cuenta.html" class="btn btn-primary btn-sm">Registrarse</a>
+      <a href="/pages/autenticacion/login.html" class="btn btn-outline btn-sm">Iniciar Sesión</a>
+      <a href="/pages/autenticacion/crear_cuenta.html" class="btn btn-primary btn-sm">Registrarse</a>
     `;
 
     // Ocultar todos los elementos admin-only si no está autenticado
@@ -153,7 +153,7 @@ function updateAuthLinks() {
 window.logout = function() {
   stateManager.logout();
   alert('Sesión cerrada exitosamente.');
-  window.location.href = '../index.html';
+  window.location.href = '/';
 };
 
 // Close Navbar
