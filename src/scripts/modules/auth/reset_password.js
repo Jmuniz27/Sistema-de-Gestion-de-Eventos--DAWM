@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(error)
       } else {
         alert('Contraseña actualizada exitosamente. Ahora puedes iniciar sesión.')
-        window.location.href = 'login.html'
+        window.location.href = '/pages/autenticacion/login.html'
       }
     })
   }

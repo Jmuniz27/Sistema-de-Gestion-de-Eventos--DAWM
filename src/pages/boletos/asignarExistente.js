@@ -303,12 +303,12 @@ async function handleConfirmarCompra() {
         if (resultado.exito) {
             console.log('✅ Compra exitosa:', resultado);
             alert('✅ ' + resultado.mensaje);
-            
+
             // Limpiar datos de sesión
             stateManager.setSessionData('selectedTickets', null);
-            
+
             // Redirigir a landing
-            window.location.href = '../landing/landing.html';
+            window.location.href = '/';
         } else {
             console.error('❌ Error en la compra:', resultado);
             btnConfirmar.disabled = false;

@@ -52,7 +52,7 @@ async function handleRegister(event) {
   } else {
     alert('Cuenta creada exitosamente. Ahora puedes iniciar sesión.')
     // Redirigir a login
-    window.location.href = 'login.html'
+    window.location.href = '/pages/autenticacion/login.html'
   }
 }
 
