@@ -1,29 +1,40 @@
 /**
  * ============================================
- * MODULO: Notificaciones del Cliente
+ * VISTA: NOTIFICACIONES DEL CLIENTE (SOLO LECTURA)
  * ============================================
  * Archivo: src/js/clientes/notificaciones.js
- * Descripcion: Vista de notificaciones filtrada exclusivamente por cliente autenticado.
- *              Muestra solo las notificaciones asignadas directamente al cliente
- *              o a traves de la tabla destinatarios.
  * 
- * Funcionalidades:
- * - Autenticacion y validacion del usuario cliente
- * - Resolucion del id_clientes desde el estado de sesion o por email
- * - Carga de notificaciones especificas del cliente usando NotificacionesCRUD.getByCliente
+ * PROPÓSITO:
+ * Vista de notificaciones filtrada EXCLUSIVAMENTE para el cliente autenticado.
+ * Muestra SOLO las notificaciones asignadas a ese cliente específico.
+ * 
+ * CARACTERÍSTICAS:
+ * - Autenticación y validación del usuario cliente
  * - Tabla simplificada (2 columnas: ID, Asunto)
- * - Modal de vista previa con detalles completos de la notificacion
- * - Cierre del modal con overlay, boton X o tecla Escape
+ * - Modal de vista previa con detalles completos
+ * - SOLO LECTURA: No puede editar ni eliminar
  * 
- * Relacionado con:
- * - pages/clientes/notificaciones.html
- * - scripts/modules/notificaciones/notificaciones_crud.js (getByCliente)
- * - scripts/utils.js (normalizeNotificacion, normalizeEstado, formatDate)
- * - js/shared/table-helpers.js (escapeHtml, setTableMessage)
+ * FLUJO:
+ * 1. Valida que el usuario esté autenticado
+ * 2. Resuelve el id_clientes desde sesión o por email
+ * 3. Obtiene notificaciones usando NotificacionesCRUD.getByCliente()
+ * 4. Renderiza tabla con ID y Asunto
+ * 5. Al hacer click, abre modal con detalles completos
+ * 
+ * PERMISOS:
+ * Solo para usuarios CLIENTES autenticados
+ * 
+ * PÁGINA HTML:
+ * pages/clientes/notificaciones.html
+ * 
+ * DIFERENCIA CON VISTA ADMIN:
+ * - Esta muestra solo notificaciones del cliente (Cliente)
+ * - La otra muestra TODAS las notificaciones (Admin)
+ * - Esta NO permite editar/eliminar
  * ============================================
  */
 
-import { NotificacionesCRUD } from '../../scripts/modules/notificaciones/notificaciones_crud.js';
+import { NotificacionesCRUD } from '../../scripts/modules/notificaciones.js';
 import { normalizeNotificacion, normalizeEstado, formatDate as formatDateUtil } from '../../scripts/utils.js';
 import { escapeHtml, setTableMessage } from '../shared/table-helpers.js';
 import stateManager from '../state-manager.js';
@@ -232,14 +243,8 @@ async function loadNotifications() {
     return;
   }
 
-  // Normalizar cada notificacion y preservar datos de destinatario
-  clienteNotifications = (data ?? []).map(row => {
-    const normalized = normalizeNotificacion(row);
-    return {
-      ...normalized,
-      destinatario: row?.destinatario || null // Preservar info de destinatario si existe
-    };
-  });
+  // Los datos ya vienen correctos desde el módulo, solo asignarlos
+  clienteNotifications = data ?? [];
 
   // Si no hay notificaciones, mostrar mensaje informativo
   if (!clienteNotifications.length) {
@@ -257,16 +262,16 @@ async function loadNotifications() {
  * Cada fila incluye un atributo data-notification-id para identificacion en eventos.
  * 
  * @param {Array<Object>} rows - Array de notificaciones normalizadas
- * @param {string|number} rows[].id_Notificaciones - ID de la notificacion
- * @param {string} rows[].Not_Asunto - Asunto de la notificacion
+ * @param {string|number} rows[].id_notificaciones - ID de la notificacion
+ * @param {string} rows[].not_asunto - Asunto de la notificacion
  * @returns {void}
  */
 function renderTable(rows) {
   tableBodyRef.innerHTML = rows
     .map(notification => {
-      // Obtener ID con fallback a multiples formatos
-      const id = notification.id_Notificaciones ?? notification.id_notificaciones ?? '';
-      const subject = notification.Not_Asunto || 'Sin asunto';
+      // Obtener ID y asunto (en minúsculas porque Supabase devuelve así)
+      const id = notification.id_notificaciones ?? '';
+      const subject = notification.not_asunto || 'Sin asunto';
 
       // Generar fila HTML con datos escapados para prevenir XSS
       return `
@@ -305,9 +310,9 @@ function handleTableClick(event) {
   const notificationId = row.dataset.notificationId;
   if (!notificationId) return;
 
-  // Buscar la notificacion completa en el cache
+  // Buscar la notificacion completa en el cache (usar minúsculas)
   const notification = clienteNotifications.find(item => {
-    const id = item.id_Notificaciones ?? item.id_notificaciones;
+    const id = item.id_notificaciones;
     return String(id) === String(notificationId);
   });
 
@@ -393,17 +398,17 @@ function openModal(notification) {
   // Validar que el modal este inicializado
   if (!modalRefs.modal || !modalRefs.body || !modalRefs.title) return;
 
-  // Formatear datos de la notificacion
-  const estado = formatEstado(notification.Not_Estado);
-  const programada = formatDateUtil(notification.Not_FechaProgramada, DATE_OPTIONS);
-  const enviada = formatDateUtil(notification.Not_FechaEnvio, DATE_OPTIONS);
-  const tipo = notification.Not_TipoEnvio || notification.Not_Tipo || 'Email';
+  // Formatear datos de la notificacion (usar minúsculas porque Supabase devuelve así)
+  const estado = formatEstado(notification.not_estado);
+  const programada = formatDateUtil(notification.not_fechaprogramada, DATE_OPTIONS);
+  const enviada = formatDateUtil(notification.not_fechaenvio, DATE_OPTIONS);
+  const tipo = notification.not_tipo || 'Email';
 
   // Establecer el titulo del modal
-  modalRefs.title.textContent = notification.Not_Asunto || 'Notificacion';
+  modalRefs.title.textContent = notification.not_asunto || 'Notificacion';
 
   // Escapar el mensaje y preservar saltos de linea convirtiendolos a <br>
-  const safeMessage = escapeHtml(notification.Not_Mensaje || 'Sin contenido').replace(/\n/g, '<br>');
+  const safeMessage = escapeHtml(notification.not_mensaje || 'Sin contenido').replace(/\n/g, '<br>');
 
   // Construir el contenido HTML del modal
   modalRefs.body.innerHTML = `

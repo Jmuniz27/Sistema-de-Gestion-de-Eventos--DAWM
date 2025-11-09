@@ -28,6 +28,15 @@
       padding-top: 90px;
     }
 
+    main {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    #footer-container {
+      margin-top: 1rem;
+    }
+
     .container {
       width: 90%;
       max-width: 1100px;
@@ -127,8 +136,21 @@
       transition: .2s;
     }
 
+    .btn-delete {
+      background: red;
+    }
+
+    .btn-disabled {
+      cursor: not-allowed;
+      background-color: #999;
+    }
+    
     .btn-edit:hover { background: var(--secondary-color); }
 
+    .btn-disabled:hover {
+      cursor: not-allowed;
+      background-color: #666;
+    }
     .modal {
       position: fixed;
       inset: 0;
@@ -175,6 +197,30 @@
       border-radius: 6px;
       cursor: pointer;
     }
+
+    /* Estilos para selects en modales */
+    .modal-content select {
+      width: 100%;
+      padding: .6rem;
+      margin-bottom: .8rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: white;
+      font-size: 1rem;
+      color: #333;
+      cursor: pointer;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .modal-content select:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 5px rgba(46, 74, 139, 0.3);
+    }
+
+    .modal-content select:hover {
+      border-color: #999;
+    }
   </style>
 </head>
 
@@ -186,24 +232,23 @@
   <main>
     <section>
       <div class="container">
-        <h2>Gestión de Clientes</h2>
+        <h2>Gestión de Usuarios</h2>
         <p>Administra clientes y administradores del sistema</p>
 
         <!-- TABS -->
         <div class="tabs">
-          <button class="tab-button active" data-tab="admins">Administradores</button>
+          <button class="tab-button active" data-tab="admins">Usuarios</button>
           <button class="tab-button" data-tab="clientes">Clientes</button>
         </div>
 
         <!-- ADMINISTRADORES -->
         <div id="admins" class="tab-content active">
           <div class="table-header">
-            <h3>Lista de Administradores</h3>
-            <button id="addAdminBtn" class="btn-primary">➕ Añadir Administrador</button>
+            <h3>Lista de Usuarios</h3>
           </div>
           <table>
             <thead>
-              <tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Email</th></tr>
+              <tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>Rol</th><th>Estado</th><th>Acciones</th></tr>
             </thead>
             <tbody id="adminsTable">
               <tr><td colspan="4">Cargando...</td></tr>
@@ -231,20 +276,6 @@
   <div id="footer-container"></div>
 
   <!-- MODALES -->
-  <div id="addAdminModal" class="modal">
-    <div class="modal-content">
-      <h3>Añadir Administrador</h3>
-      <input type="text" id="adminNombre" placeholder="Nombre">
-      <input type="text" id="adminApellido" placeholder="Apellido">
-      <input type="email" id="adminEmail" placeholder="Correo electrónico">
-      <input type="password" id="adminPassword" placeholder="Contraseña">
-      <div class="modal-actions">
-        <button class="btn-cancel" id="cancelAddAdmin">Cancelar</button>
-        <button class="btn-primary" id="saveAdmin">Guardar</button>
-      </div>
-    </div>
-  </div>
-
   <div id="editModal" class="modal">
     <div class="modal-content">
       <h3>Editar Cliente</h3>
@@ -255,6 +286,25 @@
       <div class="modal-actions">
         <button class="btn-cancel" id="cancelEdit">Cancelar</button>
         <button class="btn-primary" id="saveEdit">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="editUserModal" class="modal">
+    <div class="modal-content">
+      <h3>Editar Usuario</h3>
+      <input type="text" id="editUserName" placeholder="Nombre">
+      <input type="text" id="editUserLast" placeholder="Apellido">
+      <input type="email" id="editUserEmail" placeholder="Correo electrónico">
+      <select id="editUserRole">
+        <option value="">Selecciona un rol</option>
+      </select>
+      <select id="editUserEstado">
+        <option value="">Selecciona un estado</option>
+      </select>
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelEditUser">Cancelar</button>
+        <button class="btn-primary" id="saveEditUser">Guardar</button>
       </div>
     </div>
   </div>

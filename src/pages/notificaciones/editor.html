@@ -92,10 +92,12 @@
     <!-- Scripts -->
     <!--Script que se encarga de manejar el navegador y el footer-->
     <script type="module" src="../../js/navbar.js"></script>
+    <!--Navbar secundario del módulo-->
+    <script type="module" src="../../js/notificaciones/navbar-secundario.js"></script>
     <!--Script que maneja el estado global de la aplicacion-->
     <script type="module" src="../../js/state-manager.js"></script>
-    <!--Script que maneja editor de plantillas (tablas, filtros, carga de datos y acciones)-->
-    <script type="module" src="../../js/notificaciones/plantillas-editor.js"></script>
+    <!--Script consolidado que maneja plantillas (tablas, filtros, editor)-->
+    <script type="module" src="../../js/notificaciones/plantillas-manager.js"></script>
     <!--Inicializa la conexion con la base de datos-->
     <script type="module" src="../../scripts/supabase-client.js"></script>
     <!--Manejo de autenticacion (si el usuario esta logueado o redirigir al login)-->
