@@ -1,95 +1,267 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Usuarios - Sistema de Gestión de Eventos</title>
-    <!-- Stylesheets -->
-    <link rel="stylesheet" href="../../css/variables.css">
-    <link rel="stylesheet" href="../../css/main.css">
-    <link rel="stylesheet" href="../../css/components.css">
-    <link rel="icon" type="image/png" href="../../img/logo.png">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Clientes - EventManager</title>
 
-    <!--
-      Archivo: src/pages/clientes/index.html (ahora página de Usuarios)
-      Propósito: Página de gestión de usuarios del sistema
+  <!-- Estilos globales -->
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/landing.css">
 
-      Funcionalidades:
-      - Listar todos los usuarios con paginación
-      - Búsqueda por nombre, apellido, email
-      - Filtros por rol y estado
-      - CRUD completo de usuarios
-      - Ver roles y permisos de cada usuario
-      - Exportación: PDF, Excel, CSV, JSON, TXT
+  <style>
+    :root {
+      --primary-color: #2E4A8B;
+      --secondary-color: #1f3260;
+      --light-bg: #f9f9f9;
+    }
 
-      Dependencias:
-      - ../../js/navbar.js
-      - ../../scripts/auth.js
-      - ../../components/table.html
-    -->
-    <link rel="stylesheet" href="../../css/usuarios.css">
+    body {
+      font-family: "Chivo", sans-serif;
+      margin: 0;
+      color: #222;
+    }
+
+    .has-navbar {
+      padding-top: 90px;
+    }
+
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      text-align: center;
+      margin-bottom: .3rem;
+    }
+
+    p {
+      text-align: center;
+      color: #666;
+      margin-bottom: 2rem;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: .5rem;
+      margin-bottom: 1rem;
+    }
+
+    .tab-button {
+      padding: .6rem 1.2rem;
+      border: 1px solid var(--primary-color);
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--primary-color);
+      background: transparent;
+      font-weight: 600;
+      transition: .3s;
+    }
+
+    .tab-button.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    thead {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    th, td {
+      padding: .8rem 1rem;
+      text-align: left;
+    }
+
+    tbody tr:nth-child(even) { background: var(--light-bg); }
+    tbody tr:hover { background: #eef3ff; }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      padding: .6rem 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      transition: .2s;
+    }
+
+    .btn-primary:hover { background: var(--secondary-color); }
+
+    .btn-edit {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: .3rem .8rem;
+      cursor: pointer;
+      font-size: .85rem;
+      transition: .2s;
+    }
+
+    .btn-edit:hover { background: var(--secondary-color); }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal.active { display: flex; }
+
+    .modal-content {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    .modal-content h3 {
+      color: var(--primary-color);
+      margin-bottom: 1rem;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: .6rem;
+      margin-bottom: .8rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: .5rem;
+    }
+
+    .btn-cancel {
+      background: #ccc;
+      border: none;
+      padding: .5rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
 </head>
-<body>
-    <!-- Navbar -->
-    <div id="navbar-container"></div>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
-            <!-- Header Section -->
-            <div class="page-header">
-                <div class="page-title">
-                    <h1>Gestión de Usuarios</h1>
-                    <p>Administra los usuarios del sistema, sus roles y permisos</p>
-                </div>
-                <div class="page-actions">
-                    <button class="btn btn-primary" id="btnCrearUsuario">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/>
-                        </svg>
-                        Nuevo Usuario
-                    </button>
-                </div>
-            </div>
+<body class="has-navbar">
+  <!-- Header -->
+  <div id="navbar-container"></div>
 
-            <!-- Users Table -->
-            <section class="table-container" aria-labelledby="table-heading">
-                <h2 id="table-heading" class="sr-only">Lista de usuarios</h2>
-                <table class="data-table" id="usuariosTable" role="table" aria-label="Tabla de usuarios del sistema">
-                    <thead>
-                        <tr role="row">
-                            <th role="columnheader" scope="col">ID</th>
-                            <th role="columnheader" scope="col">Nombre</th>
-                            <th role="columnheader" scope="col">Apellido</th>
-                            <th role="columnheader" scope="col">Email</th>
-                            <th role="columnheader" scope="col">Rol</th>
-                            <th role="columnheader" scope="col">Estado</th>
-                            <th role="columnheader" scope="col">Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="usuariosTableBody" role="rowgroup">
-                        <!-- Los datos se cargarán dinámicamente con JavaScript -->
-                        <tr role="row">
-                            <td colspan="7" class="text-center" role="cell">
-                                <div class="loading-spinner" role="status" aria-live="polite">
-                                    <div class="spinner" aria-hidden="true"></div>
-                                    <p>Cargando usuarios...</p>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </section>
+  <!-- MAIN -->
+  <main>
+    <section>
+      <div class="container">
+        <h2>Gestión de Clientes</h2>
+        <p>Administra clientes y administradores del sistema</p>
+
+        <!-- TABS -->
+        <div class="tabs">
+          <button class="tab-button active" data-tab="admins">Administradores</button>
+          <button class="tab-button" data-tab="clientes">Clientes</button>
         </div>
-    </main>
 
-    <!-- Footer -->
-    <div id="footer-container"></div>
+        <!-- ADMINISTRADORES -->
+        <div id="admins" class="tab-content active">
+          <div class="table-header">
+            <h3>Lista de Administradores</h3>
+            <button id="addAdminBtn" class="btn-primary">➕ Añadir Administrador</button>
+          </div>
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Email</th></tr>
+            </thead>
+            <tbody id="adminsTable">
+              <tr><td colspan="4">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
 
+        <!-- CLIENTES -->
+        <div id="clientes" class="tab-content">
+          <div class="table-header"><h3>Clientes Registrados</h3></div>
+          <table>
+            <thead>
+              <tr><th>ID</th><th>Nombre</th><th>Apellido</th><th>Email</th><th>Celular</th><th>Acciones</th></tr>
+            </thead>
+            <tbody id="clientesTable">
+              <tr><td colspan="6">Cargando...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
 
-    <script type="module" src="../../js/navbar.js"></script>
-    <script type="module" src="../../scripts/supabase-client.js"></script>
-    <script type="module" src="../../scripts/auth.js"></script>
-    <script type="module" src="../../scripts/modules/usuarios.js"></script>
+  <!-- FOOTER -->
+  <div id="footer-container"></div>
+
+  <!-- MODALES -->
+  <div id="addAdminModal" class="modal">
+    <div class="modal-content">
+      <h3>Añadir Administrador</h3>
+      <input type="text" id="adminNombre" placeholder="Nombre">
+      <input type="text" id="adminApellido" placeholder="Apellido">
+      <input type="email" id="adminEmail" placeholder="Correo electrónico">
+      <input type="password" id="adminPassword" placeholder="Contraseña">
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelAddAdmin">Cancelar</button>
+        <button class="btn-primary" id="saveAdmin">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <h3>Editar Cliente</h3>
+      <input type="text" id="editName" placeholder="Nombre">
+      <input type="text" id="editLast" placeholder="Apellido">
+      <input type="email" id="editEmail" placeholder="Email">
+      <input type="text" id="editPhone" placeholder="Celular">
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelEdit">Cancelar</button>
+        <button class="btn-primary" id="saveEdit">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../scripts/modules/clientes.js"></script>
 </body>
 </html>
+

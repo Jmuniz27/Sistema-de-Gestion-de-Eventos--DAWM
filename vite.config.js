@@ -1,17 +1,36 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 export default defineConfig({
+  // La raíz del proyecto es la carpeta src
   root: './src',
-  // Cargar variables de entorno desde la raíz del repositorio (donde está .env)
-  // Vite, al cambiar root a './src', por defecto busca .env dentro de ./src.
-  // Con envDir, indicamos que lo busque un nivel arriba (../) para usar el .env del proyecto.
+
+  // Permitir que Vite lea las variables .env que están en la raíz del proyecto
   envDir: '../',
-  build: {
-    outDir: '../dist',
-    emptyOutDir: true
-  },
+
+  // Configuración del servidor de desarrollo
   server: {
-    port: 3000,
-    open: true
-  }
-})
+    port: 3000,   // localhost:3000
+    open: true,   // se abre automáticamente en el navegador
+  },
+
+  // Configuración de compilación (build)
+  build: {
+    outDir: '../dist',     // salida final en la raíz del proyecto
+    emptyOutDir: true,     // limpia la carpeta dist antes de construir
+
+    // 👉 Multipágina: definimos las entradas para cada módulo del sistema
+    rollupOptions: {
+      input: {
+        // Página principal (landing o dashboard)
+        main: './src/index.html',
+
+        // Páginas internas de cada módulo
+        clientes: './src/pages/clientes/index.html',
+        eventos: './src/pages/eventos/index.html',
+        facturacion: './src/pages/facturacion/index.html',
+        notificaciones: './src/pages/notificaciones/index.html',
+        autenticacion: './src/pages/autenticacion/index.html', // si existe
+      },
+    },
+  },
+});
