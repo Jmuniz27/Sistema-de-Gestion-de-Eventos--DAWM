@@ -3,96 +3,63 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin - Crear Evento</title>
+  <title>Panel Administrativo - Eventos</title>
   <link rel="stylesheet" href="../css/variables.css">
   <link rel="stylesheet" href="../css/main.css">
   <link rel="stylesheet" href="../css/components.css">
-  <link rel="stylesheet" href="../css/landing.css">
+  <link rel="stylesheet" href="../css/buttons.css">
+  <link rel="stylesheet" href="../css/admin-eventos.css">
   <link rel="icon" type="image/png" href="../img/logo.png">
-  <style>
-    .admin-container { max-width: 700px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 16px #0002; padding: 2rem; }
-    .admin-title { text-align: center; margin-bottom: 1.5rem; }
-    .form-group { margin-bottom: 1.2rem; }
-    .form-group label { font-weight: 500; display: block; margin-bottom: 0.4rem; }
-    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.6rem; border-radius: 6px; border: 1px solid #ccc; font-size: 1rem; }
-    .form-actions { text-align: center; margin-top: 2rem; }
-    .event-list { margin-top: 2.5rem; }
-    .event-list h3 { margin-bottom: 1rem; }
-    .event-card { background: #f7f9fc; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; box-shadow: 0 1px 6px #0001; display: flex; gap: 1rem; align-items: center; }
-    .event-card img { width: 120px; height: 80px; object-fit: cover; border-radius: 6px; }
-    .event-card-content { flex: 1; }
-    .success-msg { color: #2e8b57; font-weight: 500; margin-bottom: 1rem; }
-    .error-msg { color: #b22222; font-weight: 500; margin-bottom: 1rem; }
-  </style>
 </head>
-<body>
+<body class="has-navbar">
+  <!-- Navbar Component -->
   <div id="navbar-container"></div>
+
+  <!-- Main Content -->
   <main>
-    <div class="admin-container">
-      <h2 class="admin-title">Crear Nuevo Evento</h2>
-      <form id="eventoForm">
-        <div class="form-group">
-          <label for="evt_nombre">Nombre del Evento</label>
-          <input type="text" id="evt_nombre" name="evt_nombre" required maxlength="200">
+    <section class="admin-eventos-section">
+      <div class="container">
+        <!-- Admin Header -->
+        <div class="admin-header">
+          <div class="admin-header-content">
+            <h1>Panel de Eventos</h1>
+            <p>Gestiona todos los eventos del sistema</p>
+          </div>
+          <div class="admin-actions">
+            <button class="btn btn-outline" id="btnRefrescar">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"></polyline>
+                <polyline points="1 20 1 14 7 14"></polyline>
+                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+              </svg>
+              Refrescar
+            </button>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="evt_descripcion">Descripción</label>
-          <textarea id="evt_descripcion" name="evt_descripcion" rows="3" maxlength="1000"></textarea>
+
+        <!-- Events Table -->
+        <div class="events-table-container">
+          <div class="table-header">
+            <h2>Eventos Registrados</h2>
+            <p>Ordenados por fecha más próxima</p>
+          </div>
+
+          <div id="tableContent">
+            <!-- Loading state -->
+            <div class="loading-table">
+              <div class="loading-spinner"></div>
+              <p>Cargando eventos...</p>
+            </div>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="evt_fechainicio">Fecha Inicio</label>
-          <input type="datetime-local" id="evt_fechainicio" name="evt_fechainicio" required>
-        </div>
-        <div class="form-group">
-          <label for="evt_fechafin">Fecha Fin</label>
-          <input type="datetime-local" id="evt_fechafin" name="evt_fechafin">
-        </div>
-        <div class="form-group">
-          <label for="evt_direccion">Dirección</label>
-          <input type="text" id="evt_direccion" name="evt_direccion" maxlength="300">
-        </div>
-        <div class="form-group">
-          <label for="id_ciudades_fk">Ciudad</label>
-          <select id="id_ciudades_fk" name="id_ciudades_fk" required></select>
-        </div>
-        <div class="form-group">
-          <label for="evt_capacidadtotal">Capacidad Total</label>
-          <input type="number" id="evt_capacidadtotal" name="evt_capacidadtotal" min="1" required>
-        </div>
-        <div class="form-group">
-          <label for="evt_capacidaddisponible">Capacidad Disponible</label>
-          <input type="number" id="evt_capacidaddisponible" name="evt_capacidaddisponible" min="0" required>
-        </div>
-        <div class="form-group">
-          <label for="evt_preciobasegeneral">Precio Base General</label>
-          <input type="number" id="evt_preciobasegeneral" name="evt_preciobasegeneral" min="0" step="0.01" required>
-        </div>
-        <div class="form-group">
-          <label for="evt_estado">Estado</label>
-          <select id="evt_estado" name="evt_estado" required>
-            <option value="Programado">Programado</option>
-            <option value="EnCurso">EnCurso</option>
-            <option value="Finalizado">Finalizado</option>
-            <option value="Cancelado">Cancelado</option>
-            <option value="Pospuesto">Pospuesto</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="evt_imagenportada">URL Imagen Portada</label>
-          <input type="url" id="evt_imagenportada" name="evt_imagenportada" maxlength="500">
-        </div>
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">Crear Evento</button>
-        </div>
-        <div id="formMsg"></div>
-      </form>
-      <div class="event-list">
-        <h3>Eventos Creados</h3>
-        <div id="eventosCreados"></div>
       </div>
-    </div>
+    </section>
   </main>
+
+  <!-- Footer Component -->
   <div id="footer-container"></div>
+
+  <!-- Scripts -->
   <script type="module" src="../js/navbar.js"></script>
   <script type="module" src="../js/admin-eventos.js"></script>
 </body>
