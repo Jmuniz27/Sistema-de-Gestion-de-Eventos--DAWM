@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EventManager - Mis Notificaciones</title>
+  <meta name="description" content="Consulta tus notificaciones y mantente al dia con los eventos">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/landing.css">
+</head>
+
+<body class="has-navbar">
+  <!-- Navbar Component -->
+  <div id="navbar-container"></div>
+
+  <!-- Main Content -->
+  <main>
+    <!-- Notifications Section -->
+    <section class="events-section" id="client-notifications">
+      <div class="container">
+        <!-- Header -->
+        <h2 class="section-title">Mis Notificaciones</h2>
+        <p class="section-subtitle">Revisa los avisos que te hemos enviado recientemente</p>
+
+        <!-- Notifications Table -->
+        <div class="notifications-table-wrapper" aria-live="polite">
+          <table class="notifications-table" id="clientNotificationsTable">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Asunto</th>
+              </tr>
+            </thead>
+            <tbody id="clientNotificationsTableBody">
+              <tr>
+                <td class="table-message" colspan="2">Cargando notificaciones...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal para vista previa de notificacion -->
+  <div id="clientNotificationModal" class="modal" aria-hidden="true" inert role="dialog" aria-labelledby="clientNotificationModalTitle">
+    <div class="modal-overlay" data-modal-close="true"></div>
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="clientNotificationModalTitle">Notificacion</h3>
+        <button type="button" class="modal-close" data-modal-close="true" aria-label="Cerrar modal">&times;</button>
+      </div>
+      <div class="modal-body" id="clientNotificationModalBody">
+        <p class="table-message">Cargando informacion...</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" data-modal-close="true">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Component -->
+  <div id="footer-container"></div>
+
+  <!-- Scripts -->
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../js/state-manager.js"></script>
+  <script type="module" src="../../js/clientes/notificaciones.js"></script>
+  <script type="module" src="../../scripts/supabase-client.js"></script>
+  <script type="module" src="../../scripts/auth.js"></script>
+</body>
+</html>

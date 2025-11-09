@@ -1,20 +1,32 @@
 /**
- * Módulo: Notificaciones (Email y Push)
+ * ============================================
+ * MÓDULO: CRUD de Notificaciones
+ * ============================================
+ * Archivo: src/scripts/modules/notificaciones/notificaciones_crud.js
  * Responsable: ARMIJOS ROMERO ERICK DANILO
- *
+ * 
+ * Descripción: Operaciones de base de datos para la tabla Notificaciones
+ * 
  * Tablas: Notificaciones, Destinatarios, Plantillas
+ * 
+ * Funcionalidades:
+ * - create: Crear notificación
+ * - getAll: Obtener todas las notificaciones (con opciones de filtro)
+ * - getById: Obtener notificación por ID
+ * - getByEstado: Filtrar por estado
+ * - getByTipo: Filtrar por tipo de envío
+ * - getByCliente: Filtrar por cliente autenticado (NUEVO)
+ * - update: Actualizar notificación
+ * - delete: Eliminar notificación
+ * - incrementarIntentos: Incrementar contador de intentos de envío
+ * - marcarComoEnviado: Cambiar estado a "Enviado"
+ * 
+ * Fecha creación: Octubre 2024
+ * Última modificación: Noviembre 2024 (agregado getByCliente)
+ * ============================================
  */
 
 import { supabase } from '../../supabase-client.js'
-
-// TODO: Implementar envío de notificaciones
-// TODO: Integrar con servicios de email/push
-/**
- * ============================================
- * CRUD DE NOTIFICACIONES
- * ============================================
- * Operaciones de base de datos para la tabla Notificaciones
- */
 
 const NotificacionesCRUD = {
   
@@ -40,7 +52,7 @@ const NotificacionesCRUD = {
       const payload = {
         not_asunto: notificacionData.not_asunto ?? notificacionData.Not_Asunto ?? '',
         not_mensaje: notificacionData.not_mensaje ?? notificacionData.Not_Mensaje ?? '',
-        not_tipo: notificacionData.not_tipo ?? notificacionData.Not_TipoEnvio ?? notificacionData.Not_Tipo ?? 'Email',
+        not_tipo: notificacionData.not_tipo ?? notificacionData.Not_TipoEnvio ?? notificacionData.Not_Tipo ?? 'Push',
         id_plantillas_fk: notificacionData.id_plantillas_fk ?? notificacionData.id_Plantillas_Fk ?? null,
         not_fechaprogramada: notificacionData.not_fechaprogramada ?? notificacionData.Not_FechaProgramada ?? new Date().toISOString(),
         not_estado: notificacionData.not_estado ?? notificacionData.Not_Estado ?? 'Pendiente',
@@ -196,6 +208,90 @@ const NotificacionesCRUD = {
       return { data, error };
     } catch (err) {
       console.error('Error al obtener notificaciones por tipo:', err);
+      return { data: null, error: err };
+    }
+  },
+  
+  /**
+   * ============================================
+   * READ - LEER NOTIFICACIONES POR CLIENTE
+   * ============================================
+   * Obtiene notificaciones específicas de un cliente
+   * Incluye notificaciones directamente asignadas y aquellas
+   * que tienen al cliente como destinatario
+   * 
+   * @param {number} clienteId - ID del cliente
+   * @returns {Promise<Object>} Resultado de la operación {data, error}
+   */
+  async getByCliente(clienteId) {
+    try {
+      console.log('🔍 Consultando notificaciones del cliente ID:', clienteId);
+
+      const [destinatariosResult, directResult] = await Promise.all([
+        supabase
+          .from('destinatarios')
+          .select(`
+            id_destinatario,
+            dest_estado,
+            dest_fechaenvio,
+            dest_fechalectura,
+            notificaciones (*)
+          `)
+          .eq('id_clientes_fk', clienteId)
+          .order('not_fechaprogramada', { ascending: false, foreignTable: 'notificaciones' }),
+        supabase
+          .from('notificaciones')
+          .select('*')
+          .eq('id_cliente_fk', clienteId)
+          .order('not_fechaprogramada', { ascending: false })
+      ]);
+
+      if (destinatariosResult.error) {
+        console.error('Error al obtener destinatarios del cliente:', destinatariosResult.error);
+        return { data: null, error: destinatariosResult.error };
+      }
+
+      if (directResult.error) {
+        console.error('Error al obtener notificaciones directas del cliente:', directResult.error);
+        return { data: null, error: directResult.error };
+      }
+
+      const notificationsMap = new Map();
+
+      (destinatariosResult.data ?? []).forEach(row => {
+        const notif = row?.notificaciones;
+        if (!notif) return;
+
+        const notifId = notif.id_notificaciones ?? notif.id_Notificaciones;
+        notificationsMap.set(notifId, {
+          ...notif,
+          destinatario: {
+            id_destinatario: row.id_destinatario,
+            dest_estado: row.dest_estado,
+            dest_fechaenvio: row.dest_fechaenvio,
+            dest_fechalectura: row.dest_fechalectura
+          }
+        });
+      });
+
+      (directResult.data ?? []).forEach(notif => {
+        const notifId = notif.id_notificaciones ?? notif.id_Notificaciones;
+        if (!notificationsMap.has(notifId)) {
+          notificationsMap.set(notifId, notif);
+        }
+      });
+
+      const mergedNotifications = Array.from(notificationsMap.values()).sort((a, b) => {
+        const dateA = new Date(a.not_fechaprogramada ?? a.Not_FechaProgramada ?? 0).getTime();
+        const dateB = new Date(b.not_fechaprogramada ?? b.Not_FechaProgramada ?? 0).getTime();
+        return dateB - dateA;
+      });
+
+      console.log('📋 Notificaciones del cliente encontradas:', mergedNotifications.length);
+
+      return { data: mergedNotifications, error: null };
+    } catch (err) {
+      console.error('Error al obtener notificaciones del cliente:', err);
       return { data: null, error: err };
     }
   },
@@ -428,6 +524,172 @@ const NotificacionesCRUD = {
     } catch (err) {
       console.error('Error al eliminar notificaciones antiguas:', err);
       return { data: null, error: err };
+    }
+  },
+
+  /**
+   * ============================================
+   * PROCESAR NOTIFICACIONES PENDIENTES
+   * ============================================
+   * Procesa notificaciones pendientes y crea registros en Destinatarios.
+   * 
+   * Lógica:
+   * - Si id_cliente_fk existe: Crea 1 destinatario (notificación específica)
+   * - Si id_cliente_fk es null: Crea N destinatarios (notificación general a todos)
+   * 
+   * Esta función debe ejecutarse periódicamente (cron job o trigger).
+   * 
+   * @returns {Promise<Object>} Resultado del procesamiento
+   */
+  async procesarPendientes() {
+    try {
+      console.log('🚀 Procesando notificaciones pendientes...');
+      
+      // Obtener notificaciones pendientes que ya deben enviarse
+      const { data: notificaciones, error } = await supabase
+        .from('notificaciones')
+        .select('*')
+        .eq('not_estado', 'Pendiente')
+        .lte('not_fechaprogramada', new Date().toISOString())
+        .order('not_fechaprogramada', { ascending: true });
+
+      if (error) {
+        console.error('❌ Error al obtener pendientes:', error);
+        return { success: false, error };
+      }
+
+      if (!notificaciones || notificaciones.length === 0) {
+        console.log('✅ No hay notificaciones pendientes');
+        return { success: true, processed: 0 };
+      }
+
+      console.log(`📋 Procesando ${notificaciones.length} notificación(es)...`);
+
+      // Procesar cada una
+      const resultados = await Promise.allSettled(
+        notificaciones.map(n => this._procesarUna(n))
+      );
+
+      const exitosas = resultados.filter(r => r.status === 'fulfilled' && r.value.success).length;
+      
+      console.log(`✅ Completado: ${exitosas}/${notificaciones.length} exitosas`);
+
+      return {
+        success: true,
+        processed: notificaciones.length,
+        exitosas,
+        fallidas: notificaciones.length - exitosas
+      };
+
+    } catch (err) {
+      console.error('❌ Error en procesamiento:', err);
+      return { success: false, error: err };
+    }
+  },
+
+  /**
+   * ============================================
+   * PROCESAR UNA NOTIFICACIÓN
+   * ============================================
+   * Método interno para procesar una notificación individual.
+   * 
+   * @param {Object} notificacion - Notificación a procesar
+   * @returns {Promise<Object>} Resultado
+   * @private
+   */
+  async _procesarUna(notificacion) {
+    const notId = notificacion.id_notificaciones;
+    const clienteId = notificacion.id_cliente_fk;
+
+    try {
+      let destinatarios = [];
+
+      // CASO 1: Notificación específica (tiene id_cliente_fk)
+      if (clienteId) {
+        console.log(`📌 #${notId} → Cliente #${clienteId}`);
+        
+        const { data: cliente, error } = await supabase
+          .from('clientes')
+          .select('id_clientes, cli_email, cli_celular')
+          .eq('id_clientes', clienteId)
+          .single();
+
+        if (error || !cliente) {
+          throw new Error(`Cliente #${clienteId} no encontrado`);
+        }
+
+        destinatarios = [{
+          id_notificaciones_fk: notId,
+          id_clientes_fk: cliente.id_clientes,
+          dest_email: cliente.cli_email,
+          dest_telefono: cliente.cli_celular,
+          dest_estado: 'Pendiente'
+        }];
+      } 
+      // CASO 2: Notificación general (sin cliente específico)
+      else {
+        console.log(`📢 #${notId} → Todos los clientes`);
+        
+        const { data: clientes, error } = await supabase
+          .from('clientes')
+          .select('id_clientes, cli_email, cli_celular');
+
+        if (error) {
+          throw new Error('Error obteniendo clientes: ' + error.message);
+        }
+
+        if (!clientes || clientes.length === 0) {
+          throw new Error('No hay clientes en el sistema');
+        }
+
+        console.log(`   👥 ${clientes.length} cliente(s)`);
+
+        destinatarios = clientes.map(c => ({
+          id_notificaciones_fk: notId,
+          id_clientes_fk: c.id_clientes,
+          dest_email: c.cli_email,
+          dest_telefono: c.cli_celular,
+          dest_estado: 'Pendiente'
+        }));
+      }
+
+      // Insertar destinatarios
+      const { error: insertError } = await supabase
+        .from('destinatarios')
+        .insert(destinatarios);
+
+      if (insertError) {
+        throw new Error('Error insertando destinatarios: ' + insertError.message);
+      }
+
+      // Actualizar estado de notificación
+      await supabase
+        .from('notificaciones')
+        .update({
+          not_estado: 'Enviada',
+          not_fechaenvio: new Date().toISOString(),
+          not_intentosenvio: (notificacion.not_intentosenvio || 0) + 1
+        })
+        .eq('id_notificaciones', notId);
+
+      console.log(`   ✅ #${notId} procesada (${destinatarios.length} destinatario(s))`);
+
+      return { success: true, destinatariosCreados: destinatarios.length };
+
+    } catch (error) {
+      console.error(`   ❌ #${notId} falló:`, error.message);
+
+      // Registrar error
+      await supabase
+        .from('notificaciones')
+        .update({
+          not_estado: 'Fallida',
+          not_errormensaje: error.message,
+          not_intentosenvio: (notificacion.not_intentosenvio || 0) + 1
+        })
+        .eq('id_notificaciones', notId);
+
+      return { success: false, error: error.message };
     }
   }
 };

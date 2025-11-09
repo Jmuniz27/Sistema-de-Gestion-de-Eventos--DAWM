@@ -88,7 +88,9 @@ const EmailService = {
    */
   async send({ to, subject, html }) {
     try {
-      // Opción 1: Usar Supabase Edge Function (recomendado para producción)
+      console.log(`📧 Enviando email a ${to}...`);
+      
+      // Usar Supabase Edge Function para envío de emails
       const { data, error } = await supabase.functions.invoke('send-email', {
         body: {
           to,
@@ -98,76 +100,20 @@ const EmailService = {
       });
 
       if (error) {
-        console.error('Error al enviar email:', error);
+        console.error('❌ Error al enviar email:', error);
         return { success: false, error: error.message };
       }
 
+      console.log(`✅ Email enviado exitosamente a ${to}`);
       return { success: true, data };
-    } catch (err) {
-      console.error('Excepción al enviar email:', err);
       
-      // Fallback: Usar servicio alternativo (ej: EmailJS, Resend, etc)
-      return await this.sendViaFallback({ to, subject, html });
-    }
-  },
-
-  /**
-   * ============================================
-   * ENVÍO ALTERNATIVO VIA EMAILJS
-   * ============================================
-   * Método de respaldo para envío de emails usando EmailJS.
-   * EmailJS es gratuito (200 emails/mes) y fácil de configurar.
-   * 
-   * Pasos para configurar:
-   * 1. Registrarse en https://www.emailjs.com
-   * 2. Conectar servicio de email en Dashboard → Email Services
-   * 3. Crear template en Dashboard → Email Templates
-   * 4. Copiar Service ID, Template ID y Public Key
-   * 5. Reemplazar las constantes abajo con tus credenciales
-   * 
-   * Documentación: https://www.emailjs.com/docs/
-   * 
-   * @param {Object} params - Parámetros del email
-   * @param {string} params.to - Email del destinatario
-   * @param {string} params.subject - Asunto del email
-   * @param {string} params.html - Contenido HTML del email
-   * @returns {Promise<Object>} Resultado {success, error}
-   */
-  async sendViaFallback({ to, subject, html }) {
-    try {
-      // ⚠️ CONFIGURAR CON TUS CREDENCIALES DE EMAILJS
-      // Obtenerlas en https://dashboard.emailjs.com/
-      const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID';      // ← Cambiar aquí
-      const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID';    // ← Cambiar aquí
-      const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY';      // ← Cambiar aquí
-
-      const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          service_id: EMAILJS_SERVICE_ID,
-          template_id: EMAILJS_TEMPLATE_ID,
-          user_id: EMAILJS_PUBLIC_KEY,
-          template_params: {
-            to_email: to,
-            subject: subject,
-            message: html
-          }
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error(`EmailJS error: ${response.statusText}`);
-      }
-
-      return { success: true, data: await response.text() };
     } catch (err) {
-      console.error('Error en fallback de email:', err);
+      console.error('❌ Excepción al enviar email:', err);
       return { success: false, error: err.message };
     }
   },
+
+
 
   /**
    * ============================================
@@ -529,35 +475,44 @@ export const NotificationSender = {
    * OBTENER DESTINATARIOS
    * ============================================
    * Obtiene todos los clientes activos de la base de datos.
-   * Filtra solo clientes con estado "Activo".
+   * Para notificaciones de tipo Email, obtiene todos los clientes con email válido.
    * 
    * @param {string} notificationType - Tipo de notificación (Email/Push)
-   * @returns {Promise<Array>} Array de objetos cliente
+   * @returns {Promise<Array>} Array de objetos cliente con sus emails
    * 
    * @private
    */
   async getRecipients(notificationType) {
     try {
-      // Obtener todos los clientes sin filtrar por estado
-      // Si tu tabla tiene una columna de estado con otro nombre, cámbialo aquí
+      console.log('🔍 Obteniendo destinatarios de la base de datos...');
+      
+      // Obtener todos los clientes activos con email
       const { data, error } = await supabase
         .from('clientes')
-        .select('cli_email, cli_nombre, cli_apellido');
+        .select('id_clientes, cli_email, cli_nombre, cli_apellido')
+        .not('cli_email', 'is', null);
 
       if (error) {
-        console.error('Error al obtener destinatarios:', error);
+        console.error('❌ Error al obtener destinatarios:', error);
         return [];
       }
 
-      // Filtrar solo los que tienen email válido
+      // Filtrar solo los que tienen email válido (contiene @)
       const validRecipients = (data || []).filter(
-        cliente => cliente.cli_email && cliente.cli_email.includes('@')
+        cliente => cliente.cli_email && cliente.cli_email.trim().includes('@')
       );
 
-      console.log(`📧 ${validRecipients.length} destinatarios encontrados`);
+      console.log(`✅ ${validRecipients.length} destinatarios con email válido encontrados`);
+      
+      // Mostrar algunos ejemplos (primeros 3) para debug
+      if (validRecipients.length > 0) {
+        const ejemplos = validRecipients.slice(0, 3).map(c => c.cli_email).join(', ');
+        console.log(`📋 Ejemplos: ${ejemplos}${validRecipients.length > 3 ? '...' : ''}`);
+      }
+      
       return validRecipients;
     } catch (err) {
-      console.error('Excepción al obtener destinatarios:', err);
+      console.error('❌ Excepción al obtener destinatarios:', err);
       return [];
     }
   },

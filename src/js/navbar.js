@@ -92,11 +92,15 @@ function updateAuthLinks() {
   const isAuthenticated = stateManager.isAuthenticated();
   const currentUser = stateManager.getCurrentUser();
 
-  if (isAuthenticated && currentUser) {
-    // Try multiple possible property names for role
-    const roleLabel = currentUser.rol || '';
+  // Referencias a elementos de notificaciones
+  const adminNotificationsLink = document.querySelector('.navbar-item--admin-notifications');
+  const userNotificationsArea = document.querySelector('.navbar-item--user-notifications');
 
-    // Build the HTML including the user-info block so the role text is visible
+  if (isAuthenticated && currentUser) {
+    const roleLabel = currentUser.rol || '';
+    const normalizedRole = (roleLabel || '').toString().toLowerCase();
+    const isAdmin = normalizedRole === 'administrador' || normalizedRole === 'admin';
+
     let userActions = `
       <div class="user-info">
         <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" class="user-icon" aria-hidden="true">
@@ -106,42 +110,39 @@ function updateAuthLinks() {
       </div>
     `;
 
-    // Add role-specific links
-    if ((roleLabel || '').toString().toLowerCase() === 'administrador' || (roleLabel || '').toString().toLowerCase() === 'admin') {
+    if (isAdmin) {
       userActions += `
         <a href="/pages/admin-eventos.html" class="btn btn-outline btn-sm">Zona Admin</a>
       `;
+      if (adminNotificationsLink) adminNotificationsLink.style.display = 'block';
+      if (userNotificationsArea) userNotificationsArea.style.display = 'none';
     } else {
       userActions += `
         <a href="/pages/boletos/index.html" class="btn btn-outline btn-sm">Mis Entradas</a>
       `;
+      if (adminNotificationsLink) adminNotificationsLink.style.display = 'none';
+      if (userNotificationsArea) userNotificationsArea.style.display = 'block';
     }
 
-    // Add logout button
     userActions += `
       <button class="btn btn-secondary btn-sm" onclick="logout()">Cerrar Sesión</button>
     `;
 
     navbarActions.innerHTML = userActions;
 
-    // Mostrar/ocultar elementos admin-only según rol
-    const adminOnlyElements = document.querySelectorAll('[data-admin-only]');
-    const isAdmin = (roleLabel || '').toString().toLowerCase() === 'administrador' ||
-                    (roleLabel || '').toString().toLowerCase() === 'admin';
-
-    adminOnlyElements.forEach(el => {
+    document.querySelectorAll('[data-admin-only]').forEach(el => {
       el.style.display = isAdmin ? '' : 'none';
     });
   } else {
-    // Default: not authenticated
     navbarActions.innerHTML = `
       <a href="/pages/autenticacion/login.html" class="btn btn-outline btn-sm">Iniciar Sesión</a>
       <a href="/pages/autenticacion/crear_cuenta.html" class="btn btn-primary btn-sm">Registrarse</a>
     `;
 
-    // Ocultar todos los elementos admin-only si no está autenticado
-    const adminOnlyElements = document.querySelectorAll('[data-admin-only]');
-    adminOnlyElements.forEach(el => {
+    if (adminNotificationsLink) adminNotificationsLink.style.display = 'none';
+    if (userNotificationsArea) userNotificationsArea.style.display = 'none';
+
+    document.querySelectorAll('[data-admin-only]').forEach(el => {
       el.style.display = 'none';
     });
   }
