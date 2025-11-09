@@ -1,13 +1,64 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ver/Editar Factura - Sistema de Gestión de Eventos</title>
-    <link rel="stylesheet" href="../../styles/main.css">
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ver/Editar Factura - Sistema de Gestión de Eventos</title>
+  <link rel="stylesheet" href="../../styles/main.css">
 </head>
 <body>
-    <!-- TODO: Ver detalles de factura, permitir anulación, imprimir PDF -->
-    <script type="module" src="../../scripts/modules/facturacion.js"></script>
+  <main class="content narrow">
+    <h2>Editar Factura</h2>
+
+    <form id="formEditarFactura" class="form">
+      <div class="grid-2">
+        <label>
+          <span>Cliente (id)</span>
+          <input type="number" id="cliente" required />
+        </label>
+
+        <label>
+          <span>Serie</span>
+          <input type="text" id="serie" placeholder="001-001" />
+        </label>
+
+        <label>
+          <span>Método de pago (id)</span>
+          <input type="number" id="metodoPago" />
+        </label>
+
+        <label>
+          <span>Referencia de pago</span>
+          <input type="text" id="refPago" />
+        </label>
+
+        <label class="span-2">
+          <span>Observaciones</span>
+          <input type="text" id="observaciones" />
+        </label>
+
+        <label>
+          <span>Estado</span>
+          <select id="estado">
+            <option value="Emitida">Emitida</option>
+            <option value="Pagada">Pagada</option>
+            <option value="Pendiente">Pendiente</option>
+            <option value="Anulada">Anulada</option>
+          </select>
+        </label>
+      </div>
+
+      <h3>Detalles</h3>
+      <div id="detallesContainer" class="detalle-container"></div>
+      <button type="button" id="btnAgregarDetalle" class="btn-secondary">Agregar detalle</button>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Actualizar</button>
+        <button type="button" class="btn" onclick="location.href='./index.html'">Volver</button>
+      </div>
+    </form>
+  </main>
+	<!-- TODO: Ver detalles de factura, permitir anulación, imprimir PDF -->
+  <script type="module" src="../../scripts/modules/facturacion.js"></script>
 </body>
 </html>
