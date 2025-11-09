@@ -1,4 +1,3 @@
-
 import { crearFacturaConDetalles, actualizarFacturaYDetalles } from './servicios_facturacion.js'
 import { calcularTotalesFactura } from './factura_calculos.js'
 
@@ -25,6 +24,7 @@ export async function generarFactura(
       id_MetodoPago_Fk: metodoPagoId,
       Fac_ReferenciaPago: refPago,
       Fac_Observaciones: observaciones,
+	  // Aquí se insertan automáticamente los campos calculados:
       ...totales
     }
 

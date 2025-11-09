@@ -11,6 +11,7 @@ function paramId() {
 function renderDetalleItem(container, detalle = {}) {
   const row = document.createElement('div')
   row.className = 'detalle-item'
+  row.style.gridTemplateColumns = '2.5fr 1fr 1fr 1fr auto'
   row.innerHTML = `
     <input type="text" placeholder="Descripción" value="${detalle.DetFac_Descripcion ?? ''}" class="desc" />
     <input type="number" placeholder="Cantidad" value="${detalle.DetFac_Cantidad ?? 1}" class="cant" min="1" />
@@ -39,24 +40,45 @@ function recogerDetalles(container) {
 }
 
 // Index
-if (location.pathname.includes('index.html')) {
+if (location.pathname.endsWith('/index.html') || location.pathname.endsWith('/') ) {
   document.addEventListener('DOMContentLoaded', async () => {
     try {
-      const facturas = await obtenerFacturas()
+      let facturas = await obtenerFacturas()
+
+      const buscador = document.getElementById('buscadorCliente')
+      const cont = document.getElementById('listaFacturas')
+
+      const renderLista = (items) => {
+        cont.innerHTML = items.map(f => `
+          <div class="detalle-item grid-4">
+            <span>${f.Fac_Numero}</span>
+            <span>${f.id_Clientes_Fk}</span>
+            <span>$${Number(f.Fac_Total).toFixed(2)} ${f.Fac_Estado === 'Pagada' ? '<span class="badge badge-paid">Pagada</span>' : '<span class="badge badge-pending">'+f.Fac_Estado+'</span>'}</span>
+            <div style="display:flex; gap:8px;">
+              <button class="btn" onclick="location.href='./editar.html?id=${f.id_Factura}'">Editar</button>
+            </div>
+          </div>
+        `).join('')
+      }
+
+      // Resumen
       const totalIngresos = facturas.reduce((acc, f) => acc + Number(f.Fac_Total || 0), 0)
       document.getElementById('ingresosTotales').textContent = `$${totalIngresos.toFixed(2)}`
       document.getElementById('facturasPagadas').textContent = facturas.filter(f => f.Fac_Estado === 'Pagada').length
       document.getElementById('facturasPendientes').textContent = facturas.filter(f => f.Fac_Estado === 'Pendiente').length
 
-      const cont = document.getElementById('listaFacturas')
-      cont.innerHTML = facturas.map(f => `
-        <div class="detalle-item" style="grid-template-columns: 1fr 1fr 1fr auto;">
-          <span>${f.Fac_Numero}</span>
-          <span>${f.id_Clientes_Fk}</span>
-          <span>$${Number(f.Fac_Total).toFixed(2)}</span>
-          <button class="btn" onclick="location.href='editar.html?id=${f.id_Factura}'">Editar</button>
-        </div>
-      `).join('')
+      // Render inicial
+      renderLista(facturas)
+
+      // Filtro simple
+      buscador?.addEventListener('input', (e) => {
+        const q = e.target.value.toLowerCase().trim()
+        const filtered = facturas.filter(f =>
+          (f.Fac_Numero?.toLowerCase().includes(q)) ||
+          String(f.id_Clientes_Fk).includes(q)
+        )
+        renderLista(filtered)
+      })
     } catch (err) {
       alert('Acceso denegado o error al cargar facturas: ' + err.message)
     }
@@ -64,10 +86,11 @@ if (location.pathname.includes('index.html')) {
 }
 
 // Crear
-if (location.pathname.includes('crear.html')) {
+if (location.pathname.endsWith('/crear.html')) {
   document.addEventListener('DOMContentLoaded', () => {
     const cont = document.getElementById('detallesContainer')
     renderDetalleItem(cont)
+
     document.getElementById('btnAgregarDetalle').addEventListener('click', () => renderDetalleItem(cont))
 
     document.getElementById('formFactura').addEventListener('submit', async e => {
@@ -81,7 +104,7 @@ if (location.pathname.includes('crear.html')) {
       try {
         const idFactura = await generarFactura(clienteId, detalles, metodoPagoId, refPago, observaciones)
         alert(`Factura creada: ${idFactura}`)
-        location.href = 'index.html'
+        location.href = './index.html'
       } catch (err) {
         alert('No tienes permisos para crear facturas: ' + err.message)
       }
@@ -90,9 +113,10 @@ if (location.pathname.includes('crear.html')) {
 }
 
 // Editar
-if (location.pathname.includes('editar.html')) {
+if (location.pathname.endsWith('/editar.html')) {
   document.addEventListener('DOMContentLoaded', async () => {
     const id = paramId()
+    if (!id) { location.href = './index.html'; return; }
     try {
       const { factura, detalles } = await obtenerFacturaCompleta(id)
       document.getElementById('cliente').value = factura.id_Clientes_Fk
@@ -105,7 +129,6 @@ if (location.pathname.includes('editar.html')) {
       const cont = document.getElementById('detallesContainer')
       cont.innerHTML = ''
       detalles.forEach(d => renderDetalleItem(cont, d))
-
       document.getElementById('btnAgregarDetalle').addEventListener('click', () => renderDetalleItem(cont))
 
       document.getElementById('formEditarFactura').addEventListener('submit', async e => {
@@ -120,18 +143,17 @@ if (location.pathname.includes('editar.html')) {
           Fac_FechaPago: document.getElementById('estado').value === 'Pagada' ? new Date().toISOString() : null
         }
         const nuevosDetalles = recogerDetalles(cont)
-
         try {
           await actualizarFactura(id, nuevosDatos, nuevosDetalles)
           alert('Factura actualizada correctamente')
-          location.href = 'index.html'
+          location.href = './index.html'
         } catch (err) {
           alert('No tienes permisos para actualizar facturas: ' + err.message)
         }
       })
     } catch (err) {
       alert('Acceso denegado o error al cargar factura: ' + err.message)
-      location.href = 'index.html'
+      location.href = './index.html'
     }
   })
 }
