@@ -1,4 +1,21 @@
 import { defineConfig } from 'vite';
+import { glob } from 'glob';
+
+// Obtener todas las páginas HTML automáticamente
+const htmlFiles = glob.sync('src/**/*.html', {
+  ignore: ['**/node_modules/**', '**/dist/**'],
+  absolute: true
+});
+
+// Crear objeto de entrada para rollup
+const input = {};
+htmlFiles.forEach(file => {
+  // Convertir ruta absoluta a relativa desde src/
+  const relativePath = file.replace(/\\/g, '/').split('/src/')[1];
+  // Crear nombre de entrada basado en la ruta del archivo
+  const name = relativePath.replace(/\//g, '_').replace('.html', '');
+  input[name] = file;
+});
 
 export default defineConfig({
   // La raíz del proyecto es la carpeta src
@@ -17,5 +34,8 @@ export default defineConfig({
   build: {
     outDir: '../dist',     // salida final en la raíz del proyecto
     emptyOutDir: true,     // limpia la carpeta dist antes de construir
+    rollupOptions: {
+      input
+    }
   },
 });
