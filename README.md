@@ -143,16 +143,6 @@ Consejo: verifica que las rutas de producción (por ejemplo rutas base o `public
 
 ---
 
-## Trabajo pendiente (sugerencias de mejora rápida)
-
-- Consolidar estilos de componentes en `src/css/components.css` y evitar duplicación entre archivos CSS.
-- Extraer componentes repetidos (sidebars, tablas, modales) a `src/components/` y cargarlos con loaders JS (patrón ya usado para `navbar` y `footer`).
-- Ejecutar un barrido de archivos huérfanos (scripts o páginas no enlazadas) y limpiarlos o moverlos a `examples/`.
-
-Puedo automatizar algunas de estas acciones si lo deseas (extraer 1–3 componentes duplicados como hice con `sidebar` para `facturacion`).
-
----
-
 ## Documentación adicional
 
 - `SETUP.md` — guías de instalación extendidas
