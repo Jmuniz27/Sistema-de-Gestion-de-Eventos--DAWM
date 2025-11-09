@@ -44,7 +44,7 @@ Sistema modular que permite gestionar integralmente eventos, desde la creación 
 
 ## Estructura del Proyecto
 
-\`\`\`
+```text
 Sistema-de-Gestion-de-Eventos--DAWM/
 │
 ├── .gitignore                      # Archivos ignorados por Git
@@ -112,8 +112,7 @@ Sistema-de-Gestion-de-Eventos--DAWM/
     ├── capturas/
     ├── videos/
     └── guides/
-\`\`\`
-
+```
 ---
 
 ## Módulos del Sistema
