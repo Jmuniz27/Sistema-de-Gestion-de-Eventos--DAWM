@@ -469,6 +469,23 @@
   }
 
 /* ========================================
+   UTIL: stats row (cards layout used in facturación)
+   Reusable class to place small metric cards in a responsive row.
+   ======================================== */
+.stats-row {
+  display: flex;
+  gap: var(--space-4, 1rem);
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.stats-row .card {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
+/* ========================================
    PAGE LAYOUT WITH NAVBAR & FOOTER
    ======================================== */
 

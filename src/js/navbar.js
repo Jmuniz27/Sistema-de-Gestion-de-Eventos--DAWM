@@ -6,7 +6,6 @@ import navbarHTML from '../components/navbar.html?raw';
 import footerHTML from '../components/footer.html?raw';
 import stateManager from './state-manager.js';
 
-// Load Navbar Component
 function loadNavbar() {
   try {
     const navbarContainer = document.getElementById('navbar-container');
@@ -25,7 +24,6 @@ function loadNavbar() {
   }
 }
 
-// Initialize Navbar Functionality
 function initializeNavbar() {
   const navbarToggle = document.getElementById('navbarToggle');
   const navbarMenu = document.getElementById('navbarMenu');

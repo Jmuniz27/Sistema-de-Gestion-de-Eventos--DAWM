@@ -36,18 +36,24 @@
       - ../../scripts/utils.js (validaciones)
     -->
 
-    <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
 </head>
 <body>
-    <!-- TODO: Cargar navbar -->
 
-    <!-- TODO: Agregar formulario de creación de cliente -->
+  <!-- Navbar and sidebar (component loaders will inject HTML) -->
+  <div id="navbar-container"></div>
+
+  <!-- TODO: Agregar formulario de creación de cliente -->
 
     <!-- TODO: Sección para agregar múltiples direcciones (dinámico) -->
 
     <!-- TODO: Botones: Guardar, Cancelar -->
 
-    <script type="module" src="../../scripts/supabase-client.js"></script>
-    <script type="module" src="../../scripts/modules/clientes.js"></script>
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../js/state-manager.js"></script>
+  <script type="module" src="../../scripts/supabase-client.js"></script>
+  <script type="module" src="../../scripts/modules/clientes.js"></script>
 </body>
 </html>

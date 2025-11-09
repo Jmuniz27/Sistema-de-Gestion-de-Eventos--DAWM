@@ -29,18 +29,25 @@
       - ../../scripts/utils.js (validaciones)
     -->
 
-    <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
 </head>
-<body>
-    <!-- TODO: Cargar navbar -->
+</head>
+<body class="has-navbar">
+  <div id="navbar-container"></div>
 
-    <!-- TODO: Agregar selector de tabla -->
+  <!-- TODO: Agregar selector de tabla -->
 
-    <!-- TODO: Agregar formulario dinámico -->
+  <!-- TODO: Agregar formulario dinámico -->
 
-    <!-- TODO: Agregar botones de acción -->
+  <!-- TODO: Agregar botones de acción -->
 
-    <script type="module" src="../../scripts/supabase-client.js"></script>
-    <script type="module" src="../../scripts/modules/general.js"></script>
+  <div id="footer-container"></div>
+
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../js/state-manager.js"></script>
+  <script type="module" src="../../scripts/supabase-client.js"></script>
+  <script type="module" src="../../scripts/modules/general.js"></script>
 </body>
 </html>

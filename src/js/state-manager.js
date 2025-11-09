@@ -3,6 +3,8 @@
  * Maneja el estado del usuario autenticado y datos compartidos entre páginas
  */
 
+// Asegurar que el sidebar se cargue también en páginas que importan state-manager
+
 class StateManager {
   constructor() {
     this.listeners = {};

@@ -30,10 +30,13 @@
       - ../../scripts/utils.js (getUrlParam)
     -->
 
-    <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
 </head>
 <body>
-    <!-- TODO: Cargar navbar -->
+  <div id="navbar-container"></div>
+  <!-- TODO: Cargar navbar -->
 
     <!-- TODO: Agregar formulario de edición -->
 
@@ -43,7 +46,9 @@
 
     <!-- TODO: Modal de confirmación de eliminación -->
 
-    <script type="module" src="../../scripts/supabase-client.js"></script>
-    <script type="module" src="../../scripts/modules/clientes.js"></script>
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../js/state-manager.js"></script>
+  <script type="module" src="../../scripts/supabase-client.js"></script>
+  <script type="module" src="../../scripts/modules/clientes.js"></script>
 </body>
 </html>
