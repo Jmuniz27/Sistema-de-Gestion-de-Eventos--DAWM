@@ -1,68 +1,77 @@
 /**
  * ============================================
- * PÁGINA DE PROGRAMACIÓN DE NOTIFICACIONES
+ * FORMULARIO: ENVIAR/EDITAR NOTIFICACIONES
  * ============================================
- * Permite crear o editar notificaciones seleccionando una plantilla,
- * definiendo módulo, asunto y fecha de envío.
+ * Archivo: src/scripts/modules/notificaciones/enviar_page.js
+ * 
+ * PROPÓSITO:
+ * Formulario completo para crear NUEVAS notificaciones o editar las existentes.
+ * Permite seleccionar plantillas predefinidas y asignar clientes destinatarios.
+ * 
+ * CARACTERÍSTICAS:
+ * - Modo creación (sin parámetro) o edición (?notificacion=ID)
+ * - Selección de plantilla con autocompletado de asunto/mensaje
+ * - Fecha/hora de envío configurable
+ * - Asignación de clientes destinatarios (checkbox múltiple)
+ * - Vista previa del mensaje final
+ * - Validación de campos obligatorios
+ * 
+ * FLUJO CREACIÓN:
+ * 1. Carga plantillas disponibles
+ * 2. Usuario selecciona plantilla (opcional)
+ * 3. Completa asunto, mensaje, tipo, fecha
+ * 4. Selecciona clientes destinatarios
+ * 5. Envía → Crea notificación + registros en destinatarios
+ * 
+ * FLUJO EDICIÓN:
+ * 1. Detecta parámetro ?notificacion=ID
+ * 2. Carga datos existentes desde NotificacionesCRUD.getById()
+ * 3. Precarga formulario con valores actuales
+ * 4. Usuario modifica y guarda
+ * 5. Actualiza notificación + destinatarios
+ * 
+ * PÁGINA HTML:
+ * pages/notificaciones/enviar.html
+ * 
+ * DEPENDENCIAS:
+ * - NotificacionesCRUD.create() / .update()
+ * - PlantillasCRUD.getAll()
+ * ============================================
  */
 
-import { PlantillasCRUD } from './plantillas_crud.js';
-import { NotificacionesCRUD } from './notificaciones_crud.js';
+import { PlantillasCRUD, NotificacionesCRUD } from '../notificaciones.js';
 import { validateRequired } from '../../utils.js';
+import { splitTemplateName } from '../../../js/shared/plantillas-helpers.js';
 
 const BUTTON_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>';
 
-const getPlantillaId = (record = {}) => record?.id_Plantillas ?? record?.id_plantillas ?? null;
-const getPlantillaNombre = (record = {}) => record?.Pla_Nombre ?? record?.pla_nombre ?? 'Plantilla sin nombre';
-const getPlantillaTipo = (record = {}) => record?.Pla_Tipo ?? record?.pla_tipo ?? '';
-const getPlantillaModulo = (record = {}) => record?.Pla_Modulo ?? record?.pla_modulo ?? 'General';
-const getPlantillaAsunto = (record = {}) => record?.Pla_Asunto ?? record?.pla_asunto ?? '';
-const getPlantillaContenido = (record = {}) => record?.Pla_Contenido ?? record?.pla_contenido ?? '';
+// Helpers para plantillas
+const getField = (record, pascalKey, lowerKey, fallback = null) => record?.[pascalKey] ?? record?.[lowerKey] ?? fallback;
+const getPlantillaId = (r) => getField(r, 'id_Plantillas', 'id_plantillas');
+const getPlantillaNombre = (r) => splitTemplateName(getField(r, 'Pla_Nombre', 'pla_nombre', 'Plantilla sin nombre')).baseName;
+const getPlantillaTipo = (r) => getField(r, 'Pla_Tipo', 'pla_tipo', '');
+const getPlantillaModulo = (r) => getField(r, 'Pla_Modulo', 'pla_modulo', 'General');
+const getPlantillaAsunto = (r) => getField(r, 'Pla_Asunto', 'pla_asunto', '');
+const getPlantillaContenido = (r) => getField(r, 'Pla_Contenido', 'pla_contenido', '');
 
-/**
- * Convierte una fecha ISO a formato datetime-local preservando la hora exacta
- * Sin ajustes de zona horaria - muestra la hora tal cual está en la BD
- */
-const toLocalDateTimeValue = (isoString) => {
+// Helpers de fecha
+const formatDateForInput = (isoString) => {
   if (!isoString) return '';
-  const date = new Date(isoString);
-  if (Number.isNaN(date.getTime())) return '';
-  
-  // Obtener componentes de fecha/hora en hora local
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  const hours = String(date.getHours()).padStart(2, '0');
-  const minutes = String(date.getMinutes()).padStart(2, '0');
-  
-  return `${year}-${month}-${day}T${hours}:${minutes}`;
+  const d = new Date(isoString);
+  if (isNaN(d.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 };
 
-/**
- * Convierte el valor del input datetime-local a ISO string
- * Preserva la hora local sin conversión a UTC
- */
-const toISOStringFromInput = (inputValue) => {
+const formatDateToISO = (inputValue) => {
   if (!inputValue) return '';
-  
-  // El input viene en formato "YYYY-MM-DDTHH:mm"
-  // Lo convertimos a ISO pero manteniendo la hora local como UTC
-  const localDate = new Date(inputValue);
-  if (Number.isNaN(localDate.getTime())) return '';
-  
-  // Obtener componentes en hora local
-  const year = localDate.getFullYear();
-  const month = String(localDate.getMonth() + 1).padStart(2, '0');
-  const day = String(localDate.getDate()).padStart(2, '0');
-  const hours = String(localDate.getHours()).padStart(2, '0');
-  const minutes = String(localDate.getMinutes()).padStart(2, '0');
-  const seconds = String(localDate.getSeconds()).padStart(2, '0');
-  
-  // Retornar en formato ISO pero con la hora local (sin Z al final para evitar conversión UTC)
-  return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
+  const d = new Date(inputValue);
+  if (isNaN(d.getTime())) return '';
+  const pad = (n) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 };
 
-class NotificacionFormPage {
+class NotificationForm {
   constructor() {
     this.templates = [];
     this.selectedTemplate = null;
@@ -74,17 +83,17 @@ class NotificacionFormPage {
 
     this.cacheElements();
     this.bindEvents();
-    this.updateLabels();
+    this.updateUI();
     this.setInitialDate();
-    void this.init();
+    this.init();
   }
 
   cacheElements() {
-    this.elements = {
-      selectPlantilla: document.getElementById('selectPlantilla'),
-      selectCliente: document.getElementById('selectCliente'),
-      asuntoInput: document.getElementById('notificacionAsunto'),
-      fechaInput: document.getElementById('fechaProgramada'),
+    this.el = {
+      plantilla: document.getElementById('selectPlantilla'),
+      cliente: document.getElementById('selectCliente'),
+      asunto: document.getElementById('notificacionAsunto'),
+      fecha: document.getElementById('fechaProgramada'),
       previewNombre: document.getElementById('previewNombre'),
       previewModulo: document.getElementById('previewModulo'),
       previewTipo: document.getElementById('previewTipo'),
@@ -97,264 +106,166 @@ class NotificacionFormPage {
   }
 
   bindEvents() {
-    this.elements.selectPlantilla?.addEventListener('change', (event) => {
-      this.handleTemplateChange(event.target.value);
-    });
-
-    this.elements.asuntoInput?.addEventListener('input', () => {
-      this.updatePreview();
-    });
-
-    this.elements.submitBtn?.addEventListener('click', () => {
-      void this.handleSubmit();
-    });
+    this.el.plantilla?.addEventListener('change', (e) => this.handleTemplateChange(e.target.value));
+    this.el.asunto?.addEventListener('input', () => this.updatePreview());
+    this.el.submitBtn?.addEventListener('click', () => this.handleSubmit());
   }
 
-  updateLabels() {
-    if (this.isEditMode) {
-      if (this.elements.titulo) this.elements.titulo.textContent = 'Editar notificación';
-      if (this.elements.subtitulo) {
-        this.elements.subtitulo.textContent = 'Actualiza los detalles y reprograma el envío según sea necesario.';
-      }
-      this.setSubmitButton('Actualizar Notificación', false);
-    } else {
-      if (this.elements.titulo) this.elements.titulo.textContent = 'Enviar notificación';
-      if (this.elements.subtitulo) {
-        this.elements.subtitulo.textContent = 'Programa una notificación seleccionando la plantilla y los datos clave.';
-      }
-      this.setSubmitButton('Programar Envío', false);
-    }
+  updateUI() {
+    const texts = this.isEditMode 
+      ? { title: 'Editar notificación', subtitle: 'Actualiza los detalles y reprograma el envío.', btn: 'Actualizar Notificación' }
+      : { title: 'Enviar notificación', subtitle: 'Programa una notificación seleccionando plantilla y fecha.', btn: 'Programar Envío' };
+    
+    if (this.el.titulo) this.el.titulo.textContent = texts.title;
+    if (this.el.subtitulo) this.el.subtitulo.textContent = texts.subtitle;
+    this.setSubmitButton(texts.btn, false);
   }
 
   setInitialDate() {
-    if (!this.elements.fechaInput || this.isEditMode) return;
+    if (!this.el.fecha || this.isEditMode) return;
     const now = new Date();
-    
-    // Obtener componentes en hora local
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    
-    this.elements.fechaInput.value = `${year}-${month}-${day}T${hours}:${minutes}`;
+    const pad = (n) => String(n).padStart(2, '0');
+    this.el.fecha.value = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}T${pad(now.getHours())}:${pad(now.getMinutes())}`;
   }
 
   async init() {
-    await Promise.all([
-      this.loadTemplates(),
-      this.loadClientes()
-    ]);
-    if (this.isEditMode) {
-      await this.loadNotification();
-    }
+    await Promise.all([this.loadTemplates(), this.loadClientes()]);
+    if (this.isEditMode) await this.loadNotification();
     this.updatePreview();
   }
 
   async loadTemplates() {
-    if (!this.elements.selectPlantilla) return;
+    if (!this.el.plantilla) return;
 
-    this.elements.selectPlantilla.disabled = true;
-    this.elements.selectPlantilla.innerHTML = '<option value="">Cargando plantillas...</option>';
+    this.el.plantilla.disabled = true;
+    this.el.plantilla.innerHTML = '<option value="">Cargando plantillas...</option>';
 
     const { data, error } = await PlantillasCRUD.getActive();
     if (error) {
       console.error('Error al cargar plantillas:', error);
-      this.elements.selectPlantilla.innerHTML = '<option value="">No se pudieron cargar las plantillas</option>';
-      this.elements.selectPlantilla.disabled = false;
+      this.el.plantilla.innerHTML = '<option value="">Error al cargar plantillas</option>';
+      this.el.plantilla.disabled = false;
       return;
     }
 
     this.templates = Array.isArray(data) ? data : [];
     this.renderTemplateOptions();
-    this.elements.selectPlantilla.disabled = false;
+    this.el.plantilla.disabled = false;
   }
 
-  /**
-   * ============================================
-   * CARGAR CLIENTES PARA ASIGNACIÓN
-   * ============================================
-   * Obtiene la lista de clientes desde la base de datos
-   * para permitir asignar notificaciones específicas.
-   * 
-   * Lógica de asignación:
-   * - Si se selecciona un cliente: Notificación específica (id_cliente_fk guardado)
-   * - Si NO se selecciona: Notificación general (se envía a todos los clientes activos)
-   * 
-   * La tabla Destinatarios manejará el registro de envíos:
-   * - Notificación específica → 1 registro en Destinatarios
-   * - Notificación general → N registros en Destinatarios (uno por cliente)
-   */
   async loadClientes() {
-    if (!this.elements.selectCliente) return;
+    if (!this.el.cliente) return;
 
-    this.elements.selectCliente.disabled = true;
-    this.elements.selectCliente.innerHTML = '<option value="">Cargando clientes...</option>';
+    this.el.cliente.disabled = true;
+    this.el.cliente.innerHTML = '<option value="">Cargando clientes...</option>';
 
     try {
-      const supabaseModule = await import('../../supabase-client.js');
-      const supabase = supabaseModule.supabase;
-      
-      // Obtener todos los clientes ordenados por nombre
-      // No filtramos por estado aquí - el filtro se aplicará al momento de enviar
+      const { supabase } = await import('../../supabase-client.js');
       const { data, error } = await supabase
         .from('clientes')
         .select('id_clientes, cli_nombre, cli_apellido, cli_email')
         .order('cli_nombre', { ascending: true });
 
-      if (error) {
-        console.error('Error al cargar clientes:', error);
-        throw error;
-      }
+      if (error) throw error;
 
       const clientes = Array.isArray(data) ? data : [];
       this.renderClienteOptions(clientes);
-      this.elements.selectCliente.disabled = false;
+      this.el.cliente.disabled = false;
     } catch (error) {
       console.error('Error al cargar clientes:', error);
-      this.elements.selectCliente.innerHTML = '<option value="">Error al cargar clientes</option>';
-      this.elements.selectCliente.disabled = false;
+      this.el.cliente.innerHTML = '<option value="">Error al cargar clientes</option>';
+      this.el.cliente.disabled = false;
     }
   }
 
-  /**
-   * ============================================
-   * RENDERIZAR OPCIONES DE CLIENTES
-   * ============================================
-   * Genera el HTML de opciones para el select de clientes.
-   * 
-   * @param {Array} clientes - Lista de clientes desde la BD
-   * @param {number|null} selectedId - ID del cliente a pre-seleccionar (modo edición)
-   * 
-   * Opción por defecto (vacía):
-   * - Representa una notificación GENERAL
-   * - Se enviará a TODOS los clientes activos
-   * - No se guarda id_cliente_fk en la tabla notificaciones
-   * 
-   * Opción con cliente específico:
-   * - Notificación INDIVIDUAL
-   * - Se enviará SOLO a ese cliente
-   * - Se guarda id_cliente_fk en la tabla notificaciones
-   */
   renderClienteOptions(clientes, selectedId = null) {
-    if (!this.elements.selectCliente) return;
+    if (!this.el.cliente) return;
     
-    const options = clientes
-      .map((cliente) => {
-        // Normalizar nombres de columnas (soporta PascalCase y lowercase)
-        const id = cliente.id_Clientes ?? cliente.id_clientes;
-        const nombre = `${cliente.Cli_Nombre ?? cliente.cli_nombre} ${cliente.Cli_Apellido ?? cliente.cli_apellido}`;
-        const email = cliente.Cli_Email ?? cliente.cli_email;
-        const selected = selectedId !== null && String(selectedId) === String(id) ? 'selected' : '';
-        return `<option value="${id}" ${selected}>${nombre} (${email})</option>`;
-      })
-      .join('');
+    const options = clientes.map(c => {
+      const id = c.id_Clientes ?? c.id_clientes;
+      const nombre = `${c.Cli_Nombre ?? c.cli_nombre} ${c.Cli_Apellido ?? c.cli_apellido}`;
+      const email = c.Cli_Email ?? c.cli_email;
+      const selected = selectedId !== null && String(selectedId) === String(id) ? 'selected' : '';
+      return `<option value="${id}" ${selected}>${nombre} (${email})</option>`;
+    }).join('');
 
-    this.elements.selectCliente.innerHTML = `<option value="">📢 Notificación general (todos los clientes)</option>${options}`;
+    this.el.cliente.innerHTML = `<option value="">📢 Notificación general (todos los clientes)</option>${options}`;
   }
 
   renderTemplateOptions(selectedId = null) {
-    if (!this.elements.selectPlantilla) return;
+    if (!this.el.plantilla) return;
     const options = this.templates
-      .filter((template) => getPlantillaId(template) !== null)
-      .map((template) => {
-        const id = getPlantillaId(template);
-        const name = getPlantillaNombre(template);
-        const tipo = getPlantillaTipo(template);
+      .filter(t => getPlantillaId(t) !== null)
+      .map(t => {
+        const id = getPlantillaId(t);
+        const name = getPlantillaNombre(t);
+        const tipo = getPlantillaTipo(t);
         const tipoLabel = tipo ? ` (${tipo})` : '';
         const selected = selectedId !== null && String(selectedId) === String(id) ? 'selected' : '';
         return `<option value="${id}" ${selected}>${name}${tipoLabel}</option>`;
-      })
-      .join('');
+      }).join('');
 
-    this.elements.selectPlantilla.innerHTML = `<option value="">Selecciona una plantilla</option>${options}`;
+    this.el.plantilla.innerHTML = `<option value="">Selecciona una plantilla</option>${options}`;
   }
 
   findTemplateById(id) {
-    if (id === null || id === undefined || id === '') return null;
-    const normalized = String(id);
-    return this.templates.find((template) => String(getPlantillaId(template)) === normalized) ?? null;
+    if (!id) return null;
+    return this.templates.find(t => String(getPlantillaId(t)) === String(id)) ?? null;
   }
 
   handleTemplateChange(templateId) {
-    const template = this.findTemplateById(templateId);
-    this.selectedTemplate = template;
+    this.selectedTemplate = this.findTemplateById(templateId);
     this.previewMessageOverride = null;
     this.updatePreview();
   }
 
   updatePreview() {
-    const asuntoValue = this.elements.asuntoInput?.value.trim() || 'Sin asunto';
+    const asunto = this.el.asunto?.value.trim() || 'Sin asunto';
+    const nombre = this.selectedTemplate ? getPlantillaNombre(this.selectedTemplate) : 'Selecciona una plantilla';
+    const tipo = this.selectedTemplate ? (getPlantillaTipo(this.selectedTemplate) || '-') : '-';
+    const modulo = this.selectedTemplate ? getPlantillaModulo(this.selectedTemplate) : 'Sin módulo';
+    const contenido = this.previewMessageOverride ?? (this.selectedTemplate ? getPlantillaContenido(this.selectedTemplate) : 'Selecciona una plantilla.');
 
-    const templateName = this.selectedTemplate ? getPlantillaNombre(this.selectedTemplate) : 'Selecciona una plantilla';
-    const templateTipo = this.selectedTemplate ? (getPlantillaTipo(this.selectedTemplate) || '-') : '-';
-    const templateModulo = this.selectedTemplate ? getPlantillaModulo(this.selectedTemplate) : 'Sin módulo definido';
-    const templateContent = this.previewMessageOverride ?? (this.selectedTemplate ? getPlantillaContenido(this.selectedTemplate) : 'Selecciona una plantilla para ver el contenido.');
-
-    if (this.elements.previewNombre) this.elements.previewNombre.textContent = templateName;
-    if (this.elements.previewTipo) this.elements.previewTipo.textContent = templateTipo || '-';
-    if (this.elements.previewModulo) this.elements.previewModulo.textContent = templateModulo || '-';
-    if (this.elements.previewAsunto) this.elements.previewAsunto.textContent = asuntoValue;
-    if (this.elements.previewContenido) this.elements.previewContenido.textContent = templateContent || 'Selecciona una plantilla para ver el contenido.';
+    if (this.el.previewNombre) this.el.previewNombre.textContent = nombre;
+    if (this.el.previewTipo) this.el.previewTipo.textContent = tipo;
+    if (this.el.previewModulo) this.el.previewModulo.textContent = modulo;
+    if (this.el.previewAsunto) this.el.previewAsunto.textContent = asunto;
+    if (this.el.previewContenido) this.el.previewContenido.textContent = contenido;
   }
 
   async loadNotification() {
     const id = Number(this.notificationId);
-    if (Number.isNaN(id)) return;
+    if (isNaN(id)) return;
 
     const { data, error } = await NotificacionesCRUD.getById(id);
     
     if (error || !data) {
-      alert('No se pudo cargar la notificación seleccionada.');
+      alert('No se pudo cargar la notificación.');
       window.location.href = './notificaciones.html';
       return;
     }
 
-    // Cargar el módulo si existe en la notificación, sino usar el de la plantilla
-    const moduloGuardado = data.not_modulo ?? null;
-
-    if (this.elements.asuntoInput) {
-      this.elements.asuntoInput.value = data.not_asunto ?? '';
-    }
-
-    if (this.elements.fechaInput && data.not_fechaprogramada) {
-      this.elements.fechaInput.value = toLocalDateTimeValue(data.not_fechaprogramada);
-    }
-
-    // Cargar cliente si existe
-    if (this.elements.selectCliente && data.id_cliente_fk) {
-      this.elements.selectCliente.value = String(data.id_cliente_fk);
-    }
+    if (this.el.asunto) this.el.asunto.value = data.not_asunto ?? '';
+    if (this.el.fecha && data.not_fechaprogramada) this.el.fecha.value = formatDateForInput(data.not_fechaprogramada);
+    if (this.el.cliente && data.id_cliente_fk) this.el.cliente.value = String(data.id_cliente_fk);
 
     const plantillaId = data.id_plantillas_fk;
     if (plantillaId) {
       let template = this.findTemplateById(plantillaId);
       
       if (!template) {
-        // Si la plantilla no se encuentra en las activas, cargarla directamente desde BD
-        console.log(`⚠️ Plantilla #${plantillaId} no está activa, cargándola desde BD...`);
         const { data: plantillaData, error: plantillaError } = await PlantillasCRUD.getById(plantillaId);
         
         if (!plantillaError && plantillaData) {
-          // Agregar la plantilla inactiva a la lista temporal
           this.templates.push(plantillaData);
           template = plantillaData;
-          console.log('✅ Plantilla cargada:', plantillaData);
         } else {
-          // Último recurso: crear fallback con los datos de la notificación
-          console.warn('❌ No se pudo cargar la plantilla desde BD, usando fallback');
           template = {
-            id_Plantillas: plantillaId,
             id_plantillas: plantillaId,
-            Pla_Nombre: `Plantilla #${plantillaId} (Inactiva)`,
             pla_nombre: `Plantilla #${plantillaId} (Inactiva)`,
-            Pla_Tipo: data.not_tipo ?? '',
             pla_tipo: data.not_tipo ?? '',
-            Pla_Modulo: 'General',
             pla_modulo: 'General',
-            Pla_Asunto: data.not_asunto ?? '',
             pla_asunto: data.not_asunto ?? '',
-            Pla_Contenido: data.not_mensaje ?? '',
             pla_contenido: data.not_mensaje ?? ''
           };
           this.templates.push(template);
@@ -363,10 +274,7 @@ class NotificacionFormPage {
       
       this.selectedTemplate = template;
       this.renderTemplateOptions(plantillaId);
-
-      if (this.elements.selectPlantilla) {
-        this.elements.selectPlantilla.value = String(plantillaId);
-      }
+      if (this.el.plantilla) this.el.plantilla.value = String(plantillaId);
     }
 
     this.previewMessageOverride = data.not_mensaje ?? null;
@@ -374,42 +282,22 @@ class NotificacionFormPage {
   }
 
   async handleSubmit() {
-    const asuntoValue = this.elements.asuntoInput?.value ?? '';
-    const fechaValue = this.elements.fechaInput?.value ?? '';
+    const asunto = this.el.asunto?.value ?? '';
+    const fecha = this.el.fecha?.value ?? '';
 
-    if (!validateRequired(asuntoValue, 'Asunto')) return;
+    if (!validateRequired(asunto, 'Asunto')) return;
+    if (!fecha) { alert('Selecciona la fecha y hora de envío.'); return; }
+    if (!this.selectedTemplate) { alert('Selecciona una plantilla.'); return; }
 
-    if (!fechaValue) {
-      alert('Selecciona la fecha y hora de envío.');
-      return;
-    }
-
-    if (!this.selectedTemplate) {
-      alert('Selecciona una plantilla para continuar.');
-      return;
-    }
-
-    const fechaISO = toISOStringFromInput(fechaValue);
-    if (!fechaISO) {
-      alert('La fecha seleccionada no es válida.');
-      return;
-    }
+    const fechaISO = formatDateToISO(fecha);
+    if (!fechaISO) { alert('La fecha seleccionada no es válida.'); return; }
 
     const plantillaId = getPlantillaId(this.selectedTemplate);
-    if (!plantillaId) {
-      alert('La plantilla seleccionada no es válida.');
-      return;
-    }
+    if (!plantillaId) { alert('La plantilla seleccionada no es válida.'); return; }
 
-    // ============================================
-    // LÓGICA DE ASIGNACIÓN DE CLIENTE
-    // ============================================
-    // Obtener cliente seleccionado del dropdown
-    const clienteId = this.elements.selectCliente?.value ?? '';
-    
-    // Construir payload base de la notificación
+    const clienteId = this.el.cliente?.value ?? '';
     const payload = {
-      not_asunto: asuntoValue.trim(),
+      not_asunto: asunto.trim(),
       not_mensaje: getPlantillaContenido(this.selectedTemplate),
       not_tipo: getPlantillaTipo(this.selectedTemplate) || 'Push',
       id_plantillas_fk: plantillaId,
@@ -417,75 +305,40 @@ class NotificacionFormPage {
       not_estado: 'Pendiente'
     };
 
-    // ============================================
-    // ASIGNACIÓN CONDICIONAL DE CLIENTE
-    // ============================================
-    // CASO 1: Cliente específico seleccionado
-    // - Se guarda id_cliente_fk en notificaciones
-    // - Al procesar, se creará 1 registro en Destinatarios
-    // - Solo ese cliente recibirá la notificación
-    //
-    // CASO 2: Sin cliente (opción "general")
-    // - id_cliente_fk = null en notificaciones
-    // - Al procesar, se buscarán TODOS los clientes activos
-    // - Se crearán N registros en Destinatarios (uno por cliente)
-    // - Todos los clientes recibirán la notificación
-    if (clienteId && clienteId !== '') {
+    if (clienteId) {
       payload.id_cliente_fk = Number(clienteId);
       console.log('📌 Notificación ESPECÍFICA para cliente:', clienteId);
     } else {
-      console.log('📢 Notificación GENERAL (se enviará a todos los clientes activos)');
+      console.log('📢 Notificación GENERAL');
     }
 
     this.setSubmitButton(this.isEditMode ? 'Actualizando...' : 'Guardando...', true);
 
     try {
-      if (this.isEditMode) {
-        await this.updateNotification(payload);
-        alert('Notificación actualizada correctamente.');
-      } else {
-        await this.createNotification(payload);
-        alert('Notificación programada correctamente.');
-      }
+      const { error } = this.isEditMode 
+        ? await NotificacionesCRUD.update(Number(this.notificationId), payload)
+        : await NotificacionesCRUD.create(payload);
+
+      if (error) throw error;
+
+      alert(this.isEditMode ? 'Notificación actualizada.' : 'Notificación programada.');
       window.location.href = './notificaciones.html';
     } catch (error) {
-      console.error('Error al guardar la notificación:', error);
-      alert('Ocurrió un error al guardar la notificación. Inténtalo nuevamente.');
+      console.error('Error al guardar:', error);
+      alert('Error al guardar la notificación.');
     } finally {
-      this.updateLabels();
-    }
-  }
-
-  async createNotification(payload) {
-    const { error } = await NotificacionesCRUD.create(payload);
-    if (error) {
-      throw error;
-    }
-  }
-
-  async updateNotification(payload) {
-    const id = Number(this.notificationId);
-    if (Number.isNaN(id)) {
-      throw new Error('Identificador de notificación inválido.');
-    }
-
-    const { error } = await NotificacionesCRUD.update(id, payload);
-    if (error) {
-      throw error;
+      this.updateUI();
     }
   }
 
   setSubmitButton(label, disabled) {
-    if (!this.elements.submitBtn) return;
-    this.elements.submitBtn.innerHTML = `${BUTTON_ICON} ${label}`;
-    this.elements.submitBtn.disabled = Boolean(disabled);
+    if (!this.el.submitBtn) return;
+    this.el.submitBtn.innerHTML = `${BUTTON_ICON} ${label}`;
+    this.el.submitBtn.disabled = Boolean(disabled);
   }
 }
 
-const bootstrap = () => {
-  new NotificacionFormPage();
-};
-
+const bootstrap = () => new NotificationForm();
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', bootstrap);
 } else {
