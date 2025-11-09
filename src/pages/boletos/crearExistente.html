@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Boletos - Sistema de Gestión</title>
+
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="stylesheet" href="../../css/buttons.css">
+    <link rel="icon" type="image/png" href="../../img/logo.png">
+
+    <style>
+        .crear-boleto-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px #0002;
+            padding: 2rem;
+        }
+        .section-title { text-align: center; margin-bottom: 1.5rem; }
+        .evento-detalle { margin-bottom: 2rem; }
+        .evento-detalle h3 { margin: 0.5rem 0; }
+        .grid-boletos {
+            display: grid;
+            grid-template-columns: 1fr; /* solo una sección, ancho completo */
+            gap: 12px;
+            margin-top: 1rem;
+        }
+        .boleto-card {
+            background: #f7f9fc;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 6px #0001;
+        }
+        .boleto-card label {
+            display: block;
+            margin: 0.5rem 0;
+            font-weight: 500;
+        }
+        .full-width {
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .btn-container {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        .error-message {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 0.75rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+        .error-message.show {
+            display: block;
+        }
+    </style>
+</head>
+<body class="has-navbar">
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
+
+    <main>
+        <div class="crear-boleto-container">
+            <h2 class="section-title">Crear Boletos</h2>
+
+            <!-- Detalles del evento -->
+            <div class="evento-detalle" id="eventoDetalle">
+                <!-- Se llena con JS -->
+            </div>
+
+            <!-- Grid de boletos por sección -->
+            <div class="ubicaciones-container">
+                <h3>Selecciona tu sección, tipo y cantidad de boletos</h3>
+                <div id="boletosGrid" class="grid-boletos">
+                    <!-- Boletos disponibles se renderizan aquí -->
+                </div>
+            </div>
+
+            <!-- Mensaje de error -->
+            <div id="errorMessage" class="error-message">
+                ⚠️ Debes seleccionar al menos 1 boleto para continuar
+            </div>
+
+            <div class="btn-container">
+                <button id="btnConfirmar" class="btn btn-primary">Confirmar Selección</button>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+
+    <script type="module">
+        import { supabase } from '../../scripts/supabase-client.js';
+        import stateManager from '../../js/state-manager.js';
+
+        const evento = stateManager.getSelectedEvent();
+        const detalleDiv = document.getElementById('eventoDetalle');
+        const grid = document.getElementById('boletosGrid');
+        const btnConfirmar = document.getElementById('btnConfirmar');
+        const errorMessage = document.getElementById('errorMessage');
+
+        // Mostrar detalles mínimos del evento
+        function renderEventoDetalle(evento) {
+            if (!evento) {
+                detalleDiv.innerHTML = '<p>No hay evento seleccionado.</p>';
+                return;
+            }
+
+            detalleDiv.innerHTML = `
+                <h3>${evento.evt_nombre}</h3>
+                <img src="${evento.evt_imagenportada || 'https://via.placeholder.com/800x400?text=Cargando'}" 
+                     alt="Imagen del evento" style="width:100%;max-height:300px;object-fit:cover;border-radius:8px;margin-bottom:1rem;">
+                <p><strong>Fecha Inicio:</strong> ${new Date(evento.evt_fechainicio).toLocaleString()}</p>
+                <p><strong>Fecha Fin:</strong> ${new Date(evento.evt_fechafin).toLocaleString()}</p>
+                <p><strong>Dirección:</strong> ${evento.evt_direccion}</p>
+                <p><strong>Capacidad Disponible:</strong> ${evento.evt_capacidaddisponible.toLocaleString()}</p>
+                <p><strong>Precio Base General:</strong> $${evento.evt_preciobasegeneral.toFixed(2)}</p>
+            `;
+        }
+
+        // Cargar tipos de boleto y renderizar sección, tipo y cantidad
+        async function cargarBoletos() {
+            if (!evento) return;
+
+            // Consulta solo a tiposboleto
+            const { data: tipos, error: errorTipos } = await supabase
+                .from('tiposboleto')
+                .select('*');
+
+            if (errorTipos) {
+                console.error(errorTipos);
+                grid.innerHTML = '<p>Error cargando tipos de boleto.</p>';
+                return;
+            }
+
+            grid.innerHTML = '';
+
+            // Solo una tarjeta, ancho completo
+            const card = document.createElement('div');
+            card.className = 'boleto-card';
+            card.innerHTML = `
+                <label>
+                    <strong>Sección:</strong>
+                    <select class="seccion-boleto full-width">
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                        <option value="D">D</option>
+                        <option value="E">E</option>
+                        <option value="F">F</option>
+                    </select>
+                </label>
+                <label>
+                    <strong>Tipo de boleto:</strong>
+                    <select class="tipo-boleto-select full-width">
+                        ${tipos.map(t => `<option value="${t.id_tiposboleto}" data-precio="${evento.evt_preciobasegeneral}">${t.tipb_nombre}</option>`).join('')}
+                    </select>
+                </label>
+                <label>
+                    <strong>Cantidad:</strong>
+                    <input type="number" min="1" max="100" value="1" class="cantidad-boleto full-width">
+                </label>
+                <p><strong>Precio total:</strong> $<span class="precio-total">${evento.evt_preciobasegeneral.toFixed(2)}</span></p>
+            `;
+            grid.appendChild(card);
+
+            const selectTipo = card.querySelector('.tipo-boleto-select');
+            const inputCantidad = card.querySelector('.cantidad-boleto');
+            const precioTotalSpan = card.querySelector('.precio-total');
+
+            const actualizarPrecio = () => {
+                const precioUnitario = parseFloat(selectTipo.selectedOptions[0].dataset.precio);
+                const cantidad = parseInt(inputCantidad.value) || 0;
+                precioTotalSpan.textContent = (precioUnitario * cantidad).toFixed(2);
+                
+                // Ocultar mensaje de error cuando el usuario cambia la cantidad
+                if (cantidad > 0) {
+                    errorMessage.classList.remove('show');
+                }
+            };
+
+            selectTipo.addEventListener('change', actualizarPrecio);
+            inputCantidad.addEventListener('input', actualizarPrecio);
+        }
+
+        renderEventoDetalle(evento);
+        cargarBoletos();
+
+        // Guardar selección en stateManager y redirigir con VALIDACIÓN
+        btnConfirmar.addEventListener('click', () => {
+            const seccion = document.querySelector('.seccion-boleto').value;
+            const tipo = document.querySelector('.tipo-boleto-select').value;
+            const cantidad = parseInt(document.querySelector('.cantidad-boleto').value) || 0;
+
+            // ✅ VALIDACIÓN: Mínimo 1 boleto
+            if (cantidad < 1) {
+                errorMessage.classList.add('show');
+                // Scroll suave hacia el mensaje de error
+                errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return; // Detener la ejecución
+            }
+
+            // Ocultar mensaje de error si la validación pasa
+            errorMessage.classList.remove('show');
+
+            const precioUnitario = parseFloat(document.querySelector('.tipo-boleto-select').selectedOptions[0].dataset.precio);
+            const precioTotal = precioUnitario * cantidad;
+
+            const seleccion = { 
+                seccion, 
+                tipo, 
+                cantidad, 
+                precioTotal, 
+                eventoId: evento.id_eventos 
+            };
+            
+            stateManager.setSessionData('selectedTickets', seleccion);
+
+            console.log('Tickets seleccionados guardados:', seleccion);
+
+            // 🔥 Redirige a asignarExistente.html
+            window.location.href = './asignarExistente.html';
+        });
+    </script>
+
+    <script type="module" src="../../js/navbar.js"></script>
+</body>
+</html>

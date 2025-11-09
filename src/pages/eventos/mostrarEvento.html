@@ -71,17 +71,16 @@
 
         // Obtener evento seleccionado desde stateManager
         const evento = stateManager.getSelectedEvent();
-
-        // Mostrar en consola el contenido guardado
         console.log("Evento cargado desde stateManager:", evento);
 
+        // Mostrar información del evento
         if (evento) {
             document.getElementById('eventoNombre').textContent = evento.evt_nombre;
             document.getElementById('eventoDescripcion').textContent = evento.evt_descripcion || 'Sin descripción disponible';
             document.getElementById('eventoImagen').src = evento.evt_imagenportada || `https://via.placeholder.com/800x400?text=${encodeURIComponent(evento.evt_nombre)}`;
-            
+
             const formatDate = (dateStr) => dateStr ? new Date(dateStr).toLocaleString('es-EC', { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : 'N/A';
-            
+
             document.getElementById('eventoFechaInicio').textContent = formatDate(evento.evt_fechainicio);
             document.getElementById('eventoFechaFin').textContent = formatDate(evento.evt_fechafin);
             document.getElementById('eventoDireccion').textContent = evento.evt_direccion || 'N/A';
@@ -90,12 +89,25 @@
             document.getElementById('eventoPrecio').textContent = evento.evt_preciobasegeneral?.toFixed(2) || '0.00';
         }
 
+        // Evento click en Crear Boleto - OPCIÓN 2 (Solución Simple)
         document.getElementById('btnCrearBoleto').addEventListener('click', () => {
             if (!evento) {
                 alert('No hay evento seleccionado.');
                 return;
             }
-            window.location.href = '../boletos/crear.html';
+
+            // ✅ Verificar si existe usuario en localStorage (bandera simple)
+            const hayUsuario = localStorage.getItem('user') !== null;
+            
+            console.log("¿Hay usuario en sesión?", hayUsuario);
+
+            if (hayUsuario) {
+                // Hay sesión → redirigir a crearExistente.html
+                window.location.href = '../boletos/crearExistente.html';
+            } else {
+                // No hay sesión → redirigir a crear.html
+                window.location.href = '../boletos/crear.html';
+            }
         });
     </script>
 </body>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmar Boletos - Sistema de Gestión</title>
+
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
+    <link rel="icon" type="image/png" href="../../img/logo.png">
+
+    <style>
+        .asignar-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px #0002;
+            padding: 2rem;
+        }
+        .section-title { 
+            text-align: center; 
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+        }
+        .detalle-evento, .detalle-seleccion, .detalle-usuario {
+            margin-bottom: 2rem;
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid #4CAF50;
+        }
+        .detalle-evento h3, .detalle-seleccion h3, .detalle-usuario h3 {
+            margin: 0 0 1rem 0;
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+        .detalle-usuario p, .detalle-evento p, .detalle-seleccion p {
+            margin: 0.5rem 0;
+            font-size: 1rem;
+        }
+        .detalle-usuario strong, .detalle-evento strong, .detalle-seleccion strong {
+            color: #555;
+        }
+        .btn-container { 
+            text-align: center; 
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        .info-banner {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+        }
+        .info-banner p {
+            margin: 0;
+            color: #1976D2;
+        }
+        .warning-banner {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 2rem;
+        }
+        .warning-banner p {
+            margin: 0;
+            color: #856404;
+        }
+        .total-precio {
+            font-size: 1.5rem;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+        .error-message {
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .error-message.show {
+            display: block;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        .loading.show {
+            display: block;
+        }
+        /* Estilos para formulario editable */
+        .form-datos-usuario {
+            display: grid;
+            gap: 1rem;
+        }
+        .form-datos-usuario label {
+            display: block;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+            color: #555;
+        }
+        .form-datos-usuario input {
+            width: 100%;
+            padding: 0.6rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .form-datos-usuario input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.1);
+        }
+        .form-datos-usuario input[readonly] {
+            background-color: #f5f5f5;
+            cursor: not-allowed;
+        }
+        .campo-requerido {
+            color: #d32f2f;
+        }
+    </style>
+</head>
+<body class="has-navbar">
+    <div id="navbar-container"></div>
+
+    <main>
+        <div class="asignar-container">
+            <h2 class="section-title">Confirmar Compra de Boletos</h2>
+
+            <!-- Banner informativo -->
+            <div class="info-banner" id="infoBanner">
+                <p>✓ Completa o verifica tus datos antes de confirmar la compra</p>
+            </div>
+
+            <!-- Banner de advertencia (oculto por defecto) -->
+            <div class="warning-banner" id="warningBanner" style="display: none;">
+                <p>⚠️ Por favor completa todos los campos requeridos</p>
+            </div>
+
+            <!-- Mensaje de error -->
+            <div id="errorMessage" class="error-message"></div>
+
+            <!-- Formulario de datos del usuario -->
+            <div class="detalle-usuario">
+                <h3>👤 Información del Comprador</h3>
+                <form class="form-datos-usuario" id="formDatosUsuario">
+                    <div>
+                        <label for="clienteNombre">Nombre Completo <span class="campo-requerido">*</span></label>
+                        <input type="text" id="clienteNombre" required placeholder="Ej: Juan Pérez">
+                    </div>
+                    <div>
+                        <label for="clienteCorreo">Correo Electrónico <span class="campo-requerido">*</span></label>
+                        <input type="email" id="clienteCorreo" required placeholder="ejemplo@correo.com">
+                    </div>
+                    <div>
+                        <label for="clienteCedula">Cédula/Identificación <span class="campo-requerido">*</span></label>
+                        <input type="text" id="clienteCedula" required maxlength="10" pattern="\d*" placeholder="1234567890">
+                    </div>
+                    <div>
+                        <label for="clienteTelefono">Teléfono <span class="campo-requerido">*</span></label>
+                        <input type="text" id="clienteTelefono" required maxlength="10" pattern="\d*" placeholder="0987654321">
+                    </div>
+                </form>
+            </div>
+
+            <!-- Detalles del evento -->
+            <div class="detalle-evento" id="detalleEvento">
+                <h3>🎫 Detalles del Evento</h3>
+                <!-- Se llena con JS -->
+            </div>
+
+            <!-- Detalles de selección del usuario -->
+            <div class="detalle-seleccion" id="detalleSeleccion">
+                <h3>📋 Resumen de tu Selección</h3>
+                <!-- Se llena con JS -->
+            </div>
+
+            <!-- Loading -->
+            <div id="loadingMessage" class="loading">
+                <p>⏳ Procesando tu compra...</p>
+            </div>
+
+            <div class="btn-container">
+                <button type="button" id="btnCancelar" class="btn btn-secondary">Cancelar</button>
+                <button type="button" id="btnConfirmar" class="btn btn-primary">Confirmar Compra</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-container"></div>
+
+    <!-- Cargar la lógica desde archivo JS separado -->
+    <script type="module" src="./asignarExistente.js"></script>
+    <script type="module" src="../../js/navbar.js"></script>
+</body>
+</html>
