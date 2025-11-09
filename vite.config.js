@@ -17,22 +17,5 @@ export default defineConfig({
   build: {
     outDir: '../dist',     // salida final en la raíz del proyecto
     emptyOutDir: true,     // limpia la carpeta dist antes de construir
-
-    // 👉 Multipágina: definimos las entradas para cada módulo del sistema
-    rollupOptions: {
-      input: {
-        // Página principal (landing o dashboard)
-        main: './src/index.html',
-
-        // Páginas internas de cada módulo
-        clientes: './src/pages/clientes/index.html',
-        eventos: './src/pages/eventos/index.html',
-        facturacion: './src/pages/facturacion/index.html',
-        notificaciones: './src/pages/notificaciones/notificaciones.html',
-        autenticacion: './src/pages/autenticacion/login.html',
-        dashboard: './src/pages/modulo-general/dashboard.html',
-        adminEventos: './src/pages/admin-eventos.html',
-      },
-    },
   },
 });
