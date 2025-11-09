@@ -122,6 +122,32 @@ export async function getData() {
   return { data, error }
 }
 
+/**
+ * Obtener todos los estados de la tabla `estados_generales`
+ * Devuelve arreglo de filas con todos los campos de la tabla.
+ */
+export async function getEstadosGenerales() {
+  // Intentamos ordenar por nombre de estado si existe la columna `estg_nombre`
+  const { data, error } = await supabase
+    .from('estados_generales')
+    .select('*')
+    .order('estg_nombre', { ascending: true })
+
+  return { data, error }
+}
+
+/**
+ * Obtener lista de roles disponibles
+ */
+export async function getRoles() {
+  const { data, error } = await supabase
+    .from('roles')
+    .select('*')
+    .order('rol_nombre', { ascending: true })
+
+  return { data, error }
+}
+
 export async function getDataUsers() {
   const { data, error } = await supabase.from('usuarios').select('*')
   return { data, error }
@@ -145,6 +171,7 @@ export async function getUsersWithRolesAndPermissions() {
       ),
       estados_generales (*)
     `)
+    .order('id_usuario', { ascending: true })
   return { data, error }
 }
 
@@ -173,5 +200,68 @@ export async function deleteUser(userId) {
     .delete()
     .eq('id_usuario', userId)
   return { data, error }
+}
+
+/**
+ * Actualizar rol y estado de un usuario
+ * @param {number} userId - id_usuario a actualizar
+ * @param {number|null} roleId - id del rol (usuarios_roles.id_rol_fk). Si es null, no actualizar rol.
+ * @param {number|null} estadoId - id del estado (usuarios.id_estado_fk). Si es null, no actualizar estado.
+ * @returns {Object} { data: { role: {...}, estado: {...} }, error: { roleError, estadoError } }
+ */
+export async function updateUserRoleAndEstado(userId, roleId = null, estadoId = null) {
+  const result = { data: {}, error: {} }
+
+  // Primero gestionar el rol en la tabla usuarios_roles (si se proporcionó)
+  // Under the single-role assumption: try to update existing row; if none updated, insert one
+  if (roleId !== null) {
+    try {
+      const { data: roleUpdated, error: roleUpdateError } = await supabase
+        .from('usuarios_roles')
+        .update({ id_rol_fk: roleId })
+        .eq('id_usuario_fk', userId)
+        .select()
+
+      if (roleUpdateError) {
+        result.error.roleError = roleUpdateError
+      } else if (roleUpdated && roleUpdated.length > 0) {
+        // Updated existing role row
+        result.data.role = roleUpdated[0]
+      } else {
+        // No existing row updated -> insert a new one
+        const { data: roleInserted, error: roleInsertError } = await supabase
+          .from('usuarios_roles')
+          .insert([{ id_usuario_fk: userId, id_rol_fk: roleId }])
+          .select()
+
+        result.data.role = roleInserted ? roleInserted[0] : null
+        if (roleInsertError) result.error.roleError = roleInsertError
+      }
+    } catch (err) {
+      result.error.roleError = err
+    }
+  }
+
+  // Luego actualizar el estado en la tabla usuarios (si se proporcionó)
+  if (estadoId !== null) {
+    try {
+      const { data: estadoUpdated, error: estadoError } = await supabase
+        .from('usuarios')
+        .update({ id_estado_fk: estadoId })
+        .eq('id_usuario', userId)
+
+      result.data.estado = estadoUpdated
+      if (estadoError) result.error.estadoError = estadoError
+    } catch (err) {
+      result.error.estadoError = err
+    }
+  }
+
+  // Si no hubo errores, limpiar el objeto error
+  if (!result.error.roleError && !result.error.estadoError) {
+    result.error = null
+  }
+
+  return result
 }
 

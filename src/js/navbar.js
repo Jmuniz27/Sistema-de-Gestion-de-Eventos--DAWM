@@ -95,22 +95,36 @@ function updateAuthLinks() {
   const currentUser = stateManager.getCurrentUser();
 
   if (isAuthenticated && currentUser) {
-    const rol = currentUser.rol;
-    let linksHTML = '';
+    // Try multiple possible property names for role
+    const roleLabel = currentUser.rol || '';
 
-    if (rol === 'Administrador') {
-      linksHTML = `
+    // Build the HTML including the user-info block so the role text is visible
+    let userActions = `
+      <div class="user-info">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" class="user-icon" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+        </svg>
+        <span class="user-role" id="userRoleText">${roleLabel || (currentUser.usuario_nombre || currentUser.name || 'Usuario')}</span>
+      </div>
+    `;
+
+    // Add role-specific links
+    if ((roleLabel || '').toString().toLowerCase() === 'administrador' || (roleLabel || '').toString().toLowerCase() === 'admin') {
+      userActions += `
         <a href="../pages/admin-eventos.html" class="btn btn-outline btn-sm">Zona Admin</a>
-        <button class="btn btn-primary btn-sm" onclick="logout()">Cerrar Sesión</button>
       `;
     } else {
-      linksHTML = `
+      userActions += `
         <a href="../pages/boletos/index.html" class="btn btn-outline btn-sm">Mis Entradas</a>
-        <button class="btn btn-primary btn-sm" onclick="logout()">Cerrar Sesión</button>
       `;
     }
 
-    navbarActions.innerHTML = linksHTML;
+    // Add logout button
+    userActions += `
+      <button class="btn btn-secondary btn-sm" onclick="logout()">Cerrar Sesión</button>
+    `;
+
+    navbarActions.innerHTML = userActions;
   } else {
     // Default: not authenticated
     navbarActions.innerHTML = `
