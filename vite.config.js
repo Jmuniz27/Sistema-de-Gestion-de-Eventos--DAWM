@@ -28,8 +28,10 @@ export default defineConfig({
         clientes: './src/pages/clientes/index.html',
         eventos: './src/pages/eventos/index.html',
         facturacion: './src/pages/facturacion/index.html',
-        notificaciones: './src/pages/notificaciones/index.html',
-        autenticacion: './src/pages/autenticacion/index.html', // si existe
+        notificaciones: './src/pages/notificaciones/notificaciones.html',
+        autenticacion: './src/pages/autenticacion/login.html',
+        dashboard: './src/pages/modulo-general/dashboard.html',
+        adminEventos: './src/pages/admin-eventos.html',
       },
     },
   },

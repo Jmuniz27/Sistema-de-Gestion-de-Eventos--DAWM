@@ -125,12 +125,27 @@ function updateAuthLinks() {
     `;
 
     navbarActions.innerHTML = userActions;
+
+    // Mostrar/ocultar elementos admin-only según rol
+    const adminOnlyElements = document.querySelectorAll('[data-admin-only]');
+    const isAdmin = (roleLabel || '').toString().toLowerCase() === 'administrador' ||
+                    (roleLabel || '').toString().toLowerCase() === 'admin';
+
+    adminOnlyElements.forEach(el => {
+      el.style.display = isAdmin ? '' : 'none';
+    });
   } else {
     // Default: not authenticated
     navbarActions.innerHTML = `
       <a href="../pages/autenticacion/login.html" class="btn btn-outline btn-sm">Iniciar Sesión</a>
       <a href="../pages/autenticacion/crear_cuenta.html" class="btn btn-primary btn-sm">Registrarse</a>
     `;
+
+    // Ocultar todos los elementos admin-only si no está autenticado
+    const adminOnlyElements = document.querySelectorAll('[data-admin-only]');
+    adminOnlyElements.forEach(el => {
+      el.style.display = 'none';
+    });
   }
 }
 
