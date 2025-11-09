@@ -1,5 +1,23 @@
 import { generarFactura, actualizarFactura } from '../scripts/modules/factura_controlador.js'
 import { obtenerFacturas, obtenerFacturaCompleta } from '../scripts/modules/servicios_facturacion.js'
+import stateManager from './state-manager.js'
+
+// PROTECCIÓN DE RUTA: Solo administradores
+(function protegerRutaFacturacion() {
+  const usuario = stateManager.getCurrentUser()
+
+  if (!usuario) {
+    alert('Debe iniciar sesión para acceder al módulo de facturación.')
+    window.location.href = '/pages/autenticacion/login.html'
+    return
+  }
+
+  if (usuario.rol !== 'Administrador') {
+    alert('Acceso denegado. Solo administradores pueden gestionar facturas.')
+    window.location.href = '/'
+    return
+  }
+})()
 
 // Helpers
 function paramId() {
