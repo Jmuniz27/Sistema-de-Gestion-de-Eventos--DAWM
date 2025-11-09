@@ -4,14 +4,23 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ver/Editar Factura - Sistema de Gestión de Eventos</title>
-  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/landing.css">
   <link rel="icon" type="image/png" href="../../img/logo.png">
 </head>
-<body>
-  <main class="content narrow">
-    <h2>Editar Factura</h2>
+<body class="has-navbar">
+  <div id="navbar-container"></div>
+  <div id="navbar-notificaciones"></div>
+  <div id="sidebar-container"></div>
+  <main>
+    <section class="events-section">
+      <div class="container">
+        <h2 class="section-title">Editar Factura</h2>
+        <p class="section-subtitle">Modifica la información de la factura y sus detalles</p>
 
-    <form id="formEditarFactura" class="form">
+        <form id="formEditarFactura" class="form">
       <div class="grid-2">
         <label>
           <span>Cliente (id)</span>
@@ -58,8 +67,17 @@
         <button type="button" class="btn" onclick="location.href='./index.html'">Volver</button>
       </div>
     </form>
+      </div>
+    </section>
+    <!-- TODO: Ver detalles de factura, permitir anulación, imprimir PDF -->
   </main>
-	<!-- TODO: Ver detalles de factura, permitir anulación, imprimir PDF -->
+  <div id="footer-container"></div>
+
+  <!-- <script type="module" src="../../js/sidebar.js"></script> -->
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../js/state-manager.js"></script>
+  <script type="module" src="../../scripts/supabase-client.js"></script>
+  <script type="module" src="../../scripts/auth.js"></script>
   <script type="module" src="../../js/facturacion.js"></script>
 </body>
 </html>

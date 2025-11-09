@@ -33,18 +33,24 @@
       - ../../scripts/utils.js (getUrlParams, validaciones)
     -->
 
-    <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
 </head>
-<body>
-    <!-- TODO: Cargar navbar -->
+<body class="has-navbar">
+  <div id="navbar-container"></div>
 
-    <!-- TODO: Agregar formulario de edición -->
+  <!-- TODO: Agregar formulario de edición -->
 
-    <!-- TODO: Agregar botones de acción (guardar, cancelar, eliminar) -->
+  <!-- TODO: Agregar botones de acción (guardar, cancelar, eliminar) -->
 
-    <!-- TODO: Agregar modal de confirmación de eliminación -->
+  <!-- TODO: Agregar modal de confirmación de eliminación -->
 
-    <script type="module" src="../../scripts/supabase-client.js"></script>
-    <script type="module" src="../../scripts/modules/general.js"></script>
+  <div id="footer-container"></div>
+
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../js/state-manager.js"></script>
+  <script type="module" src="../../scripts/supabase-client.js"></script>
+  <script type="module" src="../../scripts/modules/general.js"></script>
 </body>
 </html>

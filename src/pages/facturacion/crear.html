@@ -4,15 +4,24 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Crear Factura - Sistema de Gestión de Eventos</title>
-  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/landing.css">
   <link rel="icon" type="image/png" href="../../img/logo.png">
 </head>
-<body>
-	<!-- TODO: Formulario con selección de cliente, boletos, cálculo automático de totales -->
-  <main class="content narrow">
-    <h2>Nueva Factura</h2>
+<body class="has-navbar">
+  <!-- Navbar Component -->
+  <div id="navbar-container"></div>
+  <div id="navbar-notificaciones"></div>
+  <!-- TODO: Formulario con selección de cliente, boletos, cálculo automático de totales -->
+  <main>
+    <section class="events-section">
+      <div class="container">
+        <h2 class="section-title">Nueva Factura</h2>
+        <p class="section-subtitle">Crea una factura y añade los detalles de venta</p>
 
-    <form id="formFactura" class="form">
+        <form id="formFactura" class="form">
       <div class="grid-2">
         <label>
           <span>Cliente (id)</span>
@@ -44,8 +53,15 @@
         <button type="button" class="btn" onclick="location.href='./index.html'">Cancelar</button>
       </div>
     </form>
+      </div>
+    </section>
   </main>
 
+  <div id="footer-container"></div>
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../js/state-manager.js"></script>
+  <script type="module" src="../../scripts/supabase-client.js"></script>
+  <script type="module" src="../../scripts/auth.js"></script>
   <script type="module" src="../../js/facturacion.js"></script>
 </body>
 </html>

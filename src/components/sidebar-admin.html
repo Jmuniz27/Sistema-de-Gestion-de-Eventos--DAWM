@@ -1,0 +1,18 @@
+<!--
+  Archivo: src/components/sidebar-admin.html
+  Propósito: Componente reutilizable de barra lateral para módulos administrativos
+-->
+<aside class="sidebar" id="sidebar-admin">
+  <h2>Sistema de Gestión de Eventos</h2>
+  <nav aria-label="Navegación del panel administrativo">
+    <ul>
+      <li><a href="/pages/modulo-general/dashboard.html">Dashboard</a></li>
+      <li><a href="/pages/clientes/index.html">Clientes</a></li>
+      <li><a href="/pages/eventos/index.html">Eventos</a></li>
+      <li class="active"><a href="/pages/facturacion/index.html">Facturación</a></li>
+      <li><a href="/pages/notificaciones/notificaciones.html">Notificaciones</a></li>
+      <li><a href="/pages/modulo-general/editar.html">Configuración</a></li>
+      <li><a href="#" onclick="window.logout ? window.logout() : null">Cerrar Sesión</a></li>
+    </ul>
+  </nav>
+</aside>

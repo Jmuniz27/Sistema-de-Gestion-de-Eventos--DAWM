@@ -5,68 +5,98 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Facturación - Sistema de Gestión de Eventos</title>
   <!-- Listado de facturas con detalles -->
-  <link rel="stylesheet" href="../../styles/main.css">
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
+  <link rel="stylesheet" href="../../css/landing.css">
   <link rel="icon" type="image/png" href="../../img/logo.png">
 </head>
-<body>
-  <aside class="sidebar">
-    <h2>Sistema de Gestión de Eventos</h2>
-    <nav>
-      <ul>
-        <li>Dashboard</li>
-        <li>Clientes</li>
-        <li>Eventos</li>
-        <li class="active">Facturación</li>
-        <li>Notificaciones</li>
-        <li>Configuración</li>
-        <li>Cerrar Sesión</li>
-      </ul>
-    </nav>
-  </aside>
+<body class="has-navbar">
+  <!-- Navbar Component -->
+  <div id="navbar-container"></div>
 
-  <main class="content">
-    <header class="header">
-      <div>
-        <h1>Facturación</h1>
-        <p>Gestiona facturas y pagos</p>
-      </div>
-      <button class="btn-primary" onclick="window.location.href='./crear.html'">Nueva Factura</button>
-    </header>
+  <!-- Secondary navbar used in notifications and other modules -->
+  <div id="navbar-notificaciones"></div>
 
-    <section class="stats" id="resumen">
-      <div class="card">
-        <span class="label">Ingresos totales</span>
-        <span id="ingresosTotales">$0.00</span>
-      </div>
-      <div class="card">
-        <span class="label">Facturas pagadas</span>
-        <span id="facturasPagadas">0</span>
-      </div>
-      <div class="card">
-        <span class="label">Pendientes</span>
-        <span id="facturasPendientes">0</span>
-      </div>
-    </section>
-
-    <section class="invoices">
-      <div class="section-header">
-        <h2>Facturas recientes</h2>
-        <div class="filters">
-          <input type="text" id="buscadorCliente" placeholder="Buscar por cliente o número..." />
+  <main>
+    <section class="events-section" id="facturacion-section">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <h2 class="section-title">Facturación</h2>
+            <p class="section-subtitle">Gestiona facturas y pagos</p>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="window.location.href='./crear.html'">Nueva Factura</button>
         </div>
-      </div>
-	  <!-- TODO: Tabla de facturas con búsqueda por cliente, fecha, monto -->
-      <div class="list-header detalle-item grid-4">
-        <strong>ID</strong>
-        <strong>Cliente</strong>
-        <strong>Monto</strong>
-        <strong>Acciones</strong>
-      </div>
+        <br>
+        <br>
+        <section class="stats stats-row" id="resumen">
+          <div class="card">
+            <span class="label">Ingresos totales</span>
+            <span id="ingresosTotales">$0.00</span>
+          </div>
+          <br>
+          <div class="card">
+            <span class="label">Facturas pagadas</span>
+            <span id="facturasPagadas">0</span>
+          </div>
+          <br>
+          <div class="card">
+            <span class="label">Pendientes</span>
+            <span id="facturasPendientes">0</span>
+          </div>
+        </section>
+        <br><br>
+        <section class="invoices">
+          <div class="section-header">
+            <h3 class="section-title">Facturas recientes</h3>
+            <div class="notifications-filters">
+              <div class="notifications-filters__field">
+                <label class="notifications-filters__label" for="buscadorCliente">Buscar</label>
+                <input
+                  type="search"
+                  id="buscadorCliente"
+                  class="notifications-filters__input"
+                  placeholder="Buscar por cliente o número..."
+                />
+              </div>
+              <div class="notifications-filters__actions">
+                <button type="button" id="facturasFiltersReset" class="btn btn-outline btn-sm">Limpiar filtros</button>
+              </div>
+            </div>
+          </div>
 
-      <div id="listaFacturas" class="list"></div>
+          <!-- Table wrapper styled like notifications to keep visual consistency -->
+          <div class="notifications-table-wrapper" aria-live="polite">
+            <table class="notifications-table" id="facturasTable">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Cliente</th>
+                  <th scope="col">Monto</th>
+                  <th scope="col">Estado</th>
+                  <th scope="col">Fecha</th>
+                  <th scope="col">Acciones</th>
+                </tr>
+              </thead>
+              <tbody id="facturasTableBody">
+                <tr><td class="table-message" colspan="6">Cargando facturas...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Legacy / script-driven list kept for compatibility with facturacion.js -->
+          <div id="listaFacturas" class="list" aria-hidden="true"></div>
+        </section>
+      </div>
     </section>
   </main>
 
+  <div id="footer-container"></div>
+
+  <!-- <script type="module" src="../../js/sidebar.js"></script> -->
+  <script type="module" src="../../js/navbar.js"></script>
+  <script type="module" src="../../js/state-manager.js"></script>
   <script type="module" src="../../js/facturacion.js"></script>
 </body>
 </html>
