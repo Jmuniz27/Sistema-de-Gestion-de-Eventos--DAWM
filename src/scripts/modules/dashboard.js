@@ -265,7 +265,7 @@ async function handleEventClick(eventId) {
     }
 
     stateManager.setSelectedEvent(evento);
-    window.location.href = `/pages/evento-detalle.html?id=${eventId}`;
+    window.location.href = `/pages/eventos/mostrarEvento.html?id=${eventId}`;
 
   } catch (error) {
     console.error('Error handling event click:', error);

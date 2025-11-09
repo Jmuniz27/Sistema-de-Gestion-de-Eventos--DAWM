@@ -61,8 +61,13 @@ async function handleLogin(event) {
     localStorage.setItem('user', JSON.stringify(userWithRol))
     stateManager.setCurrentUser(userWithRol)
     alert('Inicio de sesión exitoso.')
-    // Redirigir a la página principal o dashboard
-    window.location.href = '../index.html'
+
+    // Redirigir según el rol del usuario
+    if (rol === 'Administrador') {
+      window.location.href = '../modulo-general/dashboard.html'
+    } else {
+      window.location.href = '../../index.html'
+    }
   }
 }
 
