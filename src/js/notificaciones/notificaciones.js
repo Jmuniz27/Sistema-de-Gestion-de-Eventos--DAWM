@@ -1,65 +1,75 @@
 /**
- * Vista pública de notificaciones en landing.
- * Presenta los registros como filas de una tabla simple.
+ * ============================================
+ * VISTA: TABLA DE NOTIFICACIONES (ADMIN)
+ * ============================================
+ * Archivo: src/js/notificaciones/notificaciones.js
+ * 
+ * PROPÓSITO:
+ * Vista de administración que muestra TODAS las notificaciones del sistema
+ * en formato de tabla con opciones de filtrado y acciones CRUD.
+ * 
+ * CARACTERÍSTICAS:
+ * - Tabla con todas las notificaciones (últimas 20)
+ * - Filtros por: ID, Tipo (Email/Push), Estado
+ * - Acciones: Editar (si no enviada), Eliminar
+ * - Redirección a formulario de edición
+ * 
+ * PERMISOS:
+ * Solo para usuarios ADMINISTRADORES
+ * 
+ * PÁGINA HTML:
+ * pages/notificaciones/notificaciones.html
+ * 
+ * DIFERENCIA CON VISTA DE CLIENTE:
+ * - Esta muestra TODAS las notificaciones (Admin)
+ * - La otra muestra solo las del cliente específico (Cliente)
+ * ============================================
  */
 
-import { NotificacionesCRUD } from '../../scripts/modules/notificaciones/notificaciones_crud.js';
-import { normalizeNotificacion, normalizeEstado, formatDate as formatDateUtil } from '../../scripts/utils.js';
-import { escapeHtml, truncateText, setTableMessage as sharedSetTableMessage } from '../shared/table-helpers.js';
+import { NotificacionesCRUD } from '../../scripts/modules/notificaciones.js';
+import { normalizeNotificacion, normalizeEstado, formatDate } from '../../scripts/utils.js';
+import { escapeHtml, truncateText, setTableMessage } from '../shared/table-helpers.js';
 
-const TABLE_BODY_ID = 'notificationsTableBody';
-// Identificadores de los filtros declarados en la vista
-const FILTER_ID_INPUT_ID = 'notificationFilterId';
-const FILTER_TYPE_SELECT_ID = 'notificationFilterType';
-const FILTER_STATE_SELECT_ID = 'notificationFilterState';
-const FILTER_RESET_ID = 'notificationFiltersReset';
-// Número total de columnas para mantener colspan correcto en mensajes
-const TOTAL_COLUMNS = 8;
-// Ruta del editor (reutiliza enviar.html en modo edición)
-const EDIT_PAGE_PATH = './enviar.html';
-// Mantiene el formato de fecha consistente con la landing pública
-const DATE_FORMAT = {
-  year: 'numeric',
-  month: 'short',
-  day: 'numeric'
+const CONFIG = {
+  bodyId: 'notificationsTableBody',
+  filterIds: {
+    id: 'notificationFilterId',
+    type: 'notificationFilterType',
+    state: 'notificationFilterState',
+    reset: 'notificationFiltersReset'
+  },
+  totalColumns: 8,
+  editPath: './enviar.html',
+  dateFormat: { year: 'numeric', month: 'short', day: 'numeric' }
 };
 
-let tableBodyRef = null;
-// Cache de datos originales para aplicar filtros sin reconsultar
-let allNotifications = [];
+let tableBodyRef, allNotifications = [];
+const filterRefs = {};
+let filterDebounceTimer;
 
-// Referencias centralizadas de los controles de filtrado
-const filterRefs = {
-  idInput: null,
-  typeSelect: null,
-  stateSelect: null,
-  resetButton: null
+const STATUS_MAP = {
+  enviado: { label: 'Enviada', className: 'status-enviado' },
+  programado: { label: 'Programada', className: 'status-programado' },
+  fallido: { label: 'Fallida', className: 'status-fallido' },
+  cancelado: { label: 'Cancelada', className: 'status-cancelado' },
+  default: { label: 'Pendiente', className: 'status-pendiente' }
 };
-//Cuando el documento termina de iniciarse se ejecuta la funcion de inicializacion
-document.addEventListener('DOMContentLoaded', initializeNotificationsTable);
-//Funcion que inicializa la tabla de notificaciones
-async function initializeNotificationsTable() {
-    //Busca la talbla almacenada dentro de la variable tableBodyRef
-    tableBodyRef = document.getElementById(TABLE_BODY_ID);
-    //Si no se encuentra la tabla, se sale de la funcion
-    if (!tableBodyRef) return;
-    //Agrega un listener para el evento de click en la tabla
-    tableBodyRef.addEventListener('click', handleTableClick);
-    //Almacena en memoria las referencias a los controles de filtrado (inputs/selects) para reutilizarlas sin repetir búsquedas.
-    cacheFilterRefs();
-    //Configura los listeners para los controles de filtrado
-    setupFilterListeners();
-    //Carga las notificaciones desde la base de datos
-    await loadNotifications();
+
+document.addEventListener('DOMContentLoaded', init);
+
+async function init() {
+  tableBodyRef = document.getElementById(CONFIG.bodyId);
+  if (!tableBodyRef) return;
+
+  cacheFilterRefs();
+  setupFilterListeners();
+  tableBodyRef.addEventListener('click', handleTableClick);
+  await loadNotifications();
 }
 
-//Función que carga las notificaciones desde la base de datos
 async function loadNotifications() {
-  if (!tableBodyRef) return;
-  // Inicia con un mensaje de carga para evitar parpadeos
-  sharedSetTableMessage(tableBodyRef, 'Cargando notificaciones...', TOTAL_COLUMNS, 'loading');
+  setTableMessage(tableBodyRef, 'Cargando notificaciones...', CONFIG.totalColumns, 'loading');
 
-  //Obtenemos hasta 20notificaciones ordenadas por fechaprogramada
   const { data, error } = await NotificacionesCRUD.getAll({
     orderBy: 'not_fechaprogramada',
     ascending: false,
@@ -68,248 +78,124 @@ async function loadNotifications() {
 
   if (error) {
     console.error('Error fetching notifications:', error);
-    // Los errores se muestran en la tabla para mantener el layout
-    sharedSetTableMessage(
-      tableBodyRef,
-      'No se pudieron cargar las notificaciones. Inténtalo de nuevo más tarde.',
-      TOTAL_COLUMNS,
-      'error'
-    );
+    setTableMessage(tableBodyRef, 'No se pudieron cargar las notificaciones.', CONFIG.totalColumns, 'error');
     return;
   }
 
-  const notificaciones = (data ?? []).map(normalizeNotificacion);
-  allNotifications = notificaciones;
+  allNotifications = (data ?? []).map(normalizeNotificacion);
 
-  if (notificaciones.length === 0) {
-    // Mensaje vacío amigable cuando la tabla no tiene registros
-    sharedSetTableMessage(tableBodyRef, 'No hay notificaciones registradas.', TOTAL_COLUMNS, 'empty');
+  if (allNotifications.length === 0) {
+    setTableMessage(tableBodyRef, 'No hay notificaciones registradas.', CONFIG.totalColumns, 'empty');
     return;
   }
 
   applyFilters();
 }
 
-function renderTableRows(tbody, notificaciones) {
-  // Se compone todo el HTML en memoria para minimizar reflows
-  tbody.innerHTML = notificaciones
-    .map(notificacion => {
-      const statusMeta = getStatusMeta(notificacion.Not_Estado);
-      const programada = formatDateUtil(
-        notificacion.Not_FechaProgramada,
-        {
-          locale: 'es-EC',
-          format: DATE_FORMAT,
-          fallback: ''
-        }
-      ) || '-';
-      const enviada = formatDateUtil(
-        notificacion.Not_FechaEnvio,
-        {
-          locale: 'es-EC',
-          format: DATE_FORMAT,
-          fallback: ''
-        }
-      ) || '-';
-      const notificationId = notificacion.id_Notificaciones ?? '';
-      const normalizedState = normalizeEstado(notificacion.Not_Estado);
-      const isEditable = !['enviado', 'cancelado', 'fallido'].includes(normalizedState);
+function renderTableRows(notifications) {
+  tableBodyRef.innerHTML = notifications.map(n => {
+    const statusMeta = STATUS_MAP[normalizeEstado(n.Not_Estado)] || STATUS_MAP.default;
+    const programada = formatDate(n.Not_FechaProgramada, { locale: 'es-EC', format: CONFIG.dateFormat, fallback: '-' });
+    const enviada = formatDate(n.Not_FechaEnvio, { locale: 'es-EC', format: CONFIG.dateFormat, fallback: '-' });
+    const id = n.id_Notificaciones ?? '';
+    const normalizedState = normalizeEstado(n.Not_Estado);
+    const isEditable = !['enviado', 'cancelado', 'fallido'].includes(normalizedState);
 
-      return `
-        <tr>
-          <td class="notifications-table__id">${escapeHtml(
-            notificationId ? String(notificationId) : '-'
-          )}</td>
-          <td>
-            <div class="notifications-table__subject">
-              <span class="notifications-table__subject-title">${escapeHtml(
-                notificacion.Not_Asunto || 'Notificación sin asunto'
-              )}</span>
-              <span class="notifications-table__subject-message">${escapeHtml(
-                truncateText(notificacion.Not_Mensaje, 90)
-              )}</span>
-            </div>
-          </td>
-          <td><span class="notification-type">${escapeHtml(
-            notificacion.Not_TipoEnvio || 'Email'
-          )}</span></td>
-          <td><span class="notification-status ${statusMeta.className}">${
-            statusMeta.label
-          }</span></td>
-          <td>${programada}</td>
-          <td>${enviada}</td>
-          <td>${notificacion.Not_NumIntentos ?? 0}</td>
-          <td class="table-actions">
-            ${isEditable ? `
-              <button
-                type="button"
-                class="btn btn-outline btn-sm table-action table-action--edit"
-                data-action="edit"
-                data-id="${escapeHtml(notificationId ? String(notificationId) : '')}"
-              >Editar</button>
-            ` : ''}
-            <button
-              type="button"
-              class="btn btn-outline btn-sm table-action table-action--delete"
-              data-action="delete"
-              data-id="${escapeHtml(notificationId ? String(notificationId) : '')}"
-            >Eliminar</button>
-          </td>
-        </tr>
-      `;
-    })
-    .join('');
+    return `
+      <tr>
+        <td class="notifications-table__id">${escapeHtml(String(id) || '-')}</td>
+        <td>
+          <div class="notifications-table__subject">
+            <span class="notifications-table__subject-title">${escapeHtml(n.Not_Asunto || 'Sin asunto')}</span>
+            <span class="notifications-table__subject-message">${escapeHtml(truncateText(n.Not_Mensaje, 90))}</span>
+          </div>
+        </td>
+        <td><span class="notification-type">${escapeHtml(n.Not_TipoEnvio || 'Email')}</span></td>
+        <td><span class="notification-status ${statusMeta.className}">${statusMeta.label}</span></td>
+        <td>${programada}</td>
+        <td>${enviada}</td>
+        <td>${n.Not_NumIntentos ?? 0}</td>
+        <td class="table-actions">
+          ${isEditable ? `<button type="button" class="btn btn-outline btn-sm table-action table-action--edit" data-action="edit" data-id="${escapeHtml(String(id))}">Editar</button>` : ''}
+          <button type="button" class="btn btn-outline btn-sm table-action table-action--delete" data-action="delete" data-id="${escapeHtml(String(id))}">Eliminar</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
- 
-
 function cacheFilterRefs() {
-  // Guarda las referencias para evitar repetidas búsquedas en el DOM
-  filterRefs.idInput = document.getElementById(FILTER_ID_INPUT_ID);
-  filterRefs.typeSelect = document.getElementById(FILTER_TYPE_SELECT_ID);
-  filterRefs.stateSelect = document.getElementById(FILTER_STATE_SELECT_ID);
-  filterRefs.resetButton = document.getElementById(FILTER_RESET_ID);
+  Object.entries(CONFIG.filterIds).forEach(([key, id]) => {
+    filterRefs[key] = document.getElementById(id);
+  });
 }
 
 function setupFilterListeners() {
-  const { idInput, typeSelect, stateSelect, resetButton } = filterRefs;
-
-  if (idInput) {
-    // Uso debounce para no aplicar filtros en cada pulsación
-    idInput.addEventListener('input', debounceFilters);
-  }
-
-  if (typeSelect) {
-    typeSelect.addEventListener('change', applyFilters);
-  }
-
-  if (stateSelect) {
-    stateSelect.addEventListener('change', applyFilters);
-  }
-
-  if (resetButton) {
-    resetButton.addEventListener('click', resetFilters);
-  }
-}
-
-let filterDebounceTimer = null;
-function debounceFilters() {
-  // Evita múltiples renders mientras el usuario escribe el ID
-  window.clearTimeout(filterDebounceTimer);
-  filterDebounceTimer = window.setTimeout(applyFilters, 200);
+  if (filterRefs.id) filterRefs.id.addEventListener('input', () => {
+    clearTimeout(filterDebounceTimer);
+    filterDebounceTimer = setTimeout(applyFilters, 200);
+  });
+  if (filterRefs.type) filterRefs.type.addEventListener('change', applyFilters);
+  if (filterRefs.state) filterRefs.state.addEventListener('change', applyFilters);
+  if (filterRefs.reset) filterRefs.reset.addEventListener('click', resetFilters);
 }
 
 function applyFilters() {
-  if (!tableBodyRef) return;
-
-  // Trabaja sobre una copia para preservar la lista original
   let results = [...allNotifications];
-  const { idInput, typeSelect, stateSelect } = filterRefs;
 
-  const idQuery = idInput?.value.trim();
-  if (idQuery) {
-    const normalizedQuery = idQuery.toLowerCase();
-    results = results.filter(item =>
-      String(item.id_Notificaciones ?? '')
-        .toLowerCase()
-        .includes(normalizedQuery)
-    );
-  }
+  const idQuery = filterRefs.id?.value.trim().toLowerCase();
+  if (idQuery) results = results.filter(item => String(item.id_Notificaciones ?? '').toLowerCase().includes(idQuery));
 
-  const typeValue = typeSelect?.value ?? 'all';
-  if (typeValue !== 'all') {
-  // Se compara en minúsculas para que el filtro sea case-insensitive (solo Email/Push)
-    results = results.filter(item =>
-      (item.Not_TipoEnvio ?? 'Email').toLowerCase() === typeValue
-    );
-  }
+  const typeValue = filterRefs.type?.value ?? 'all';
+  if (typeValue !== 'all') results = results.filter(item => (item.Not_TipoEnvio ?? 'Email').toLowerCase() === typeValue);
 
-  const stateValue = stateSelect?.value ?? 'all';
-  if (stateValue !== 'all') {
-    // Reutiliza normalizeEstado para unificar estados antes de filtrar
-    results = results.filter(item => normalizeEstado(item.Not_Estado) === stateValue);
-  }
+  const stateValue = filterRefs.state?.value ?? 'all';
+  if (stateValue !== 'all') results = results.filter(item => normalizeEstado(item.Not_Estado) === stateValue);
 
   if (results.length === 0) {
-    sharedSetTableMessage(tableBodyRef, 'No hay notificaciones que coincidan con los filtros.', TOTAL_COLUMNS, 'empty');
+    setTableMessage(tableBodyRef, 'No hay notificaciones que coincidan con los filtros.', CONFIG.totalColumns, 'empty');
     return;
   }
 
-  renderTableRows(tableBodyRef, results);
+  renderTableRows(results);
 }
 
 function resetFilters() {
-  const { idInput, typeSelect, stateSelect } = filterRefs;
-
-  if (idInput) idInput.value = '';
-  if (typeSelect) typeSelect.value = 'all';
-  if (stateSelect) stateSelect.value = 'all';
-
+  if (filterRefs.id) filterRefs.id.value = '';
+  if (filterRefs.type) filterRefs.type.value = 'all';
+  if (filterRefs.state) filterRefs.state.value = 'all';
   applyFilters();
 }
 
 function handleTableClick(event) {
-  // Delegación de eventos para manejar botones de editar/eliminar
   const target = event.target.closest('.table-action');
-  if (!target || !tableBodyRef?.contains(target)) return;
+  if (!target) return;
 
   const { action, id } = target.dataset;
   if (!id) return;
 
   if (action === 'edit') {
-    handleEdit(id);
+    const url = new URL(CONFIG.editPath, window.location.href);
+    url.searchParams.set('notificacion', id);
+    window.location.href = url.toString();
   } else if (action === 'delete') {
-    handleDelete(id);
+    deleteNotification(id);
   }
 }
 
-function handleEdit(id) {
-  // Redirige al editor manteniendo el ID en la querystring
-  const url = new URL(EDIT_PAGE_PATH, window.location.href);
-  url.searchParams.set('notificacion', id);
-  window.location.href = url.toString();
-}
+async function deleteNotification(id) {
+  if (!confirm('¿Deseas eliminar esta notificación?')) return;
 
-async function handleDelete(id) {
-  // Confirma la acción antes de eliminar definitivamente
-  const confirmDelete = window.confirm('¿Deseas eliminar esta notificación?');
-  if (!confirmDelete) return;
+  setTableMessage(tableBodyRef, 'Eliminando notificación...', CONFIG.totalColumns, 'loading');
 
-  if (!tableBodyRef) return;
-
-  sharedSetTableMessage(tableBodyRef, 'Eliminando notificación...', TOTAL_COLUMNS, 'loading');
-
-  const targetId = Number.isNaN(Number(id)) ? id : Number(id);
+  const targetId = isNaN(Number(id)) ? id : Number(id);
   const { error } = await NotificacionesCRUD.delete(targetId);
 
   if (error) {
     console.error('Error deleting notification:', error);
-    sharedSetTableMessage(
-      tableBodyRef,
-      'No se pudo eliminar la notificación. Inténtalo nuevamente.',
-      TOTAL_COLUMNS,
-      'error'
-    );
+    setTableMessage(tableBodyRef, 'No se pudo eliminar la notificación.', CONFIG.totalColumns, 'error');
     return;
   }
 
   await loadNotifications();
 }
-
-function getStatusMeta(rawEstado) {
-  // Centraliza la traducción de estado para mantener CSS y texto alineados
-  const estado = normalizeEstado(rawEstado);
-  switch (estado) {
-    case 'enviado':
-      return { label: 'Enviada', className: 'status-enviado' };
-    case 'programado':
-      return { label: 'Programada', className: 'status-programado' };
-    case 'fallido':
-      return { label: 'Fallida', className: 'status-fallido' };
-    case 'cancelado':
-      return { label: 'Cancelada', className: 'status-cancelado' };
-    default:
-      return { label: 'Pendiente', className: 'status-pendiente' };
-  }
-}
-
