@@ -169,7 +169,7 @@
         renderEventoDetalle(evento);
         cargarBoletos();
 
-        // Guardar selección en stateManager y mostrar en consola
+        // Guardar selección en stateManager y redirigir
         btnConfirmar.addEventListener('click', () => {
             const seccion = document.querySelector('.seccion-boleto').value;
             const tipo = document.querySelector('.tipo-boleto-select').value;
@@ -181,10 +181,12 @@
             stateManager.setSessionData('selectedTickets', seleccion);
 
             console.log('Tickets seleccionados guardados:', seleccion);
+
+            // Redirige a boletos/asignar.html
+            window.location.href = '../boletos/asignar.html';
         });
     </script>
 
     <script type="module" src="../../js/navbar.js"></script>
 </body>
 </html>
-
