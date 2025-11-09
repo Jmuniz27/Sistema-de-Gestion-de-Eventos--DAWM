@@ -176,7 +176,13 @@ function highlightActivePage() {
 
   navbarLinks.forEach(link => {
     const linkPath = new URL(link.href).pathname;
-    if (currentPath === linkPath || (currentPath === '/' && linkPath === '/index.html')) {
+
+    // Normalizar rutas: tanto "/" como "/index.html" son la página principal
+    const normalizedCurrentPath = (currentPath === '/index.html') ? '/' : currentPath;
+    const normalizedLinkPath = (linkPath === '/index.html') ? '/' : linkPath;
+
+    // Marcar como activo si las rutas coinciden
+    if (normalizedCurrentPath === normalizedLinkPath) {
       link.classList.add('active');
     }
   });
