@@ -7,9 +7,40 @@ const supabase = createClient(
   process.env.SUPABASE_KEY || process.env.VITE_SUPABASE_ANON_KEY
 );
 
+const deleteUser = async (userId) => {
+  const { data, error } = await supabase
+    .from('usuarios')
+    .delete()
+    .eq('id_usuario', userId)
+  if (error) {
+    console.error('Error:', error);
+  } else {
+    console.log('Datos:', data);
+  }
+}
+
 const main = async () => {
   // Cambia 'boletos' por el nombre de tu tabla
-  const { data, error } = await supabase.from('eventos').select('*').limit(5);
+  /*
+    const { data, error } = await supabase
+      .from('usuarios')
+      .select(`
+        *,
+        usuarios_roles (
+          roles (
+            *,
+            roles_permisos (
+              permisos (*)
+            )
+          )
+        ),
+        estados_generales (*)
+      `)
+      .order('id_usuario', { ascending: true })
+  */
+  const { data, error } = await supabase
+    .from('usuarios_roles')
+    .select('*')
   if (error) {
     console.error('Error:', error);
   } else {
@@ -18,3 +49,4 @@ const main = async () => {
 };
 
 main();
+//deleteUser(12)

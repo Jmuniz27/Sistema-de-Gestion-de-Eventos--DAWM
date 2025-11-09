@@ -67,6 +67,9 @@ export async function login(email, password) {
   const isValid = await verifyPassword(password, users.usuario_password)
   if (!isValid) return { error: 'Contraseña incorrecta' }
 
+  // Verificar si la cuenta está activa (id_estado_fk = 1)
+  if (users.id_estado_fk !== 1) return { error: 'Cuenta inactiva. Contacta al administrador.' }
+
   return { data: users }
 }
 

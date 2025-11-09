@@ -14,6 +14,11 @@ import { supabase } from '../../supabase-client.js'
 import { getData, getDataUsers} from '../../auth.js'
 import { getUsersWithRolesAndPermissions, deleteUser } from '../../auth.js'
 
-const { data, error } = await getUsersWithRolesAndPermissions()
+const { data, error } = await getDataUsers()
 if (error) console.error(error)
 else console.log(data)
+/*
+const { data, error } = await deleteUser(19)
+if (error) console.error(error)
+else console.log(data)
+*/
