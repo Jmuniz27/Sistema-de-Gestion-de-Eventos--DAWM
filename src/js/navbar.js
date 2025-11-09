@@ -4,7 +4,6 @@
  */
 import navbarHTML from '../components/navbar.html?raw';
 import footerHTML from '../components/footer.html?raw';
-import notificationsNavbarHTML from '../components/navbar-notificaciones.html?raw';
 import stateManager from './state-manager.js';
 
 // Load Navbar Component
@@ -23,18 +22,6 @@ function loadNavbar() {
     loadFooter();
   } catch (error) {
     console.error('Error loading navbar:', error);
-  }
-}
-
-// Load Notifications Module Navbar when available
-function loadNotificacionesNavbar() {
-  try {
-    const moduleNavbarContainer = document.getElementById('navbar-notificaciones');
-    if (!moduleNavbarContainer) return;
-
-    moduleNavbarContainer.innerHTML = notificationsNavbarHTML;
-  } catch (error) {
-    console.error('Error loading notifications navbar:', error);
   }
 }
 
@@ -87,7 +74,6 @@ function initializeNavbar() {
     });
   });
 
-
   // Highlight active page
   highlightActivePage();
 
@@ -98,77 +84,53 @@ function initializeNavbar() {
   stateManager.subscribe('userChanged', () => {
     updateAuthLinks();
   });
-
 }
 
 // Update Authentication Links Based on User State
 function updateAuthLinks() {
-  const authButtonsGuest = document.getElementById('authButtonsGuest');
-  const authButtonsUser = document.getElementById('authButtonsUser');
-  const userRoleText = document.getElementById('userRoleText');
-  const btnZonaAdmin = document.getElementById('btnZonaAdmin');
-  const btnMisEntradas = document.getElementById('btnMisEntradas');
-  const btnCerrarSesion = document.getElementById('btnCerrarSesion');
-
-  if (!authButtonsGuest || !authButtonsUser) return;
+  const navbarActions = document.querySelector('.navbar-actions');
+  if (!navbarActions) return;
 
   const isAuthenticated = stateManager.isAuthenticated();
   const currentUser = stateManager.getCurrentUser();
 
   if (isAuthenticated && currentUser) {
-    const rol = currentUser.rol;
+    // Try multiple possible property names for role
+    const roleLabel = currentUser.rol || '';
 
-    // Mostrar sección de usuario autenticado
-    authButtonsGuest.style.display = 'none';
-    authButtonsUser.style.display = 'flex';
+    // Build the HTML including the user-info block so the role text is visible
+    let userActions = `
+      <div class="user-info">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" class="user-icon" aria-hidden="true">
+          <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+        </svg>
+        <span class="user-role" id="userRoleText">${roleLabel || (currentUser.usuario_nombre || currentUser.name || 'Usuario')}</span>
+      </div>
+    `;
 
-    // Actualizar texto del rol
-    if (userRoleText) {
-      userRoleText.textContent = rol === 'Administrador' ? 'Admin' : 'Usuario';
-    }
-
-    // Mostrar/ocultar elementos según rol
-    const adminOnlyElements = document.querySelectorAll('[data-admin-only]');
-    const userOnlyElements = document.querySelectorAll('[data-user-only]');
-
-    if (rol === 'Administrador') {
-      // Admin: mostrar todo
-      adminOnlyElements.forEach(el => {
-        el.style.display = '';
-      });
-      userOnlyElements.forEach(el => {
-        el.style.display = 'none';
-      });
-
-      if (btnZonaAdmin) btnZonaAdmin.style.display = '';
-      if (btnMisEntradas) btnMisEntradas.style.display = 'none';
+    // Add role-specific links
+    if ((roleLabel || '').toString().toLowerCase() === 'administrador' || (roleLabel || '').toString().toLowerCase() === 'admin') {
+      userActions += `
+        <a href="../pages/admin-eventos.html" class="btn btn-outline btn-sm">Zona Admin</a>
+      `;
     } else {
-      // Usuario normal: ocultar admin-only
-      adminOnlyElements.forEach(el => {
-        el.style.display = 'none';
-      });
-      userOnlyElements.forEach(el => {
-        el.style.display = '';
-      });
-
-      if (btnZonaAdmin) btnZonaAdmin.style.display = 'none';
-      if (btnMisEntradas) btnMisEntradas.style.display = '';
+      userActions += `
+        <a href="../pages/boletos/index.html" class="btn btn-outline btn-sm">Mis Entradas</a>
+      `;
     }
 
-    // Agregar evento de cerrar sesión
-    if (btnCerrarSesion) {
-      btnCerrarSesion.onclick = logout;
-    }
+    // Add logout button
+    userActions += `
+      <button class="btn btn-secondary btn-sm" onclick="logout()">Cerrar Sesión</button>
+    `;
+
+    navbarActions.innerHTML = userActions;
   } else {
-    // Usuario no autenticado
-    authButtonsGuest.style.display = 'flex';
-    authButtonsUser.style.display = 'none';
-
-    // Ocultar todos los elementos admin-only
-    const adminOnlyElements = document.querySelectorAll('[data-admin-only]');
-    adminOnlyElements.forEach(el => {
-      el.style.display = 'none';
-    });
+    // Default: not authenticated
+    navbarActions.innerHTML = `
+      <a href="../pages/autenticacion/login.html" class="btn btn-outline btn-sm">Iniciar Sesión</a>
+      <a href="../pages/autenticacion/crear_cuenta.html" class="btn btn-primary btn-sm">Registrarse</a>
+    `;
   }
 }
 
@@ -199,13 +161,8 @@ function highlightActivePage() {
 
   navbarLinks.forEach(link => {
     const linkPath = new URL(link.href).pathname;
-    const isActive = currentPath === linkPath || (currentPath === '/' && linkPath === '/index.html');
-    if (isActive) {
+    if (currentPath === linkPath || (currentPath === '/' && linkPath === '/index.html')) {
       link.classList.add('active');
-      link.setAttribute('aria-current', 'page');
-    } else {
-      link.classList.remove('active');
-      link.removeAttribute('aria-current');
     }
   });
 }
@@ -222,11 +179,7 @@ function loadFooter() {
 }
 
 // Initialize on DOM Content Loaded
-document.addEventListener('DOMContentLoaded', function() {
-  loadNavbar();
-  loadNotificacionesNavbar();
-  highlightActivePage();
-});
+document.addEventListener('DOMContentLoaded', loadNavbar);
 
 // Handle window resize
 let resizeTimer;
