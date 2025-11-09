@@ -82,6 +82,7 @@ class NotificacionFormPage {
   cacheElements() {
     this.elements = {
       selectPlantilla: document.getElementById('selectPlantilla'),
+      selectCliente: document.getElementById('selectCliente'),
       asuntoInput: document.getElementById('notificacionAsunto'),
       fechaInput: document.getElementById('fechaProgramada'),
       previewNombre: document.getElementById('previewNombre'),
@@ -140,7 +141,10 @@ class NotificacionFormPage {
   }
 
   async init() {
-    await this.loadTemplates();
+    await Promise.all([
+      this.loadTemplates(),
+      this.loadClientes()
+    ]);
     if (this.isEditMode) {
       await this.loadNotification();
     }
@@ -164,6 +168,89 @@ class NotificacionFormPage {
     this.templates = Array.isArray(data) ? data : [];
     this.renderTemplateOptions();
     this.elements.selectPlantilla.disabled = false;
+  }
+
+  /**
+   * ============================================
+   * CARGAR CLIENTES PARA ASIGNACIÓN
+   * ============================================
+   * Obtiene la lista de clientes desde la base de datos
+   * para permitir asignar notificaciones específicas.
+   * 
+   * Lógica de asignación:
+   * - Si se selecciona un cliente: Notificación específica (id_cliente_fk guardado)
+   * - Si NO se selecciona: Notificación general (se envía a todos los clientes activos)
+   * 
+   * La tabla Destinatarios manejará el registro de envíos:
+   * - Notificación específica → 1 registro en Destinatarios
+   * - Notificación general → N registros en Destinatarios (uno por cliente)
+   */
+  async loadClientes() {
+    if (!this.elements.selectCliente) return;
+
+    this.elements.selectCliente.disabled = true;
+    this.elements.selectCliente.innerHTML = '<option value="">Cargando clientes...</option>';
+
+    try {
+      const supabaseModule = await import('../../supabase-client.js');
+      const supabase = supabaseModule.supabase;
+      
+      // Obtener todos los clientes ordenados por nombre
+      // No filtramos por estado aquí - el filtro se aplicará al momento de enviar
+      const { data, error } = await supabase
+        .from('clientes')
+        .select('id_clientes, cli_nombre, cli_apellido, cli_email')
+        .order('cli_nombre', { ascending: true });
+
+      if (error) {
+        console.error('Error al cargar clientes:', error);
+        throw error;
+      }
+
+      const clientes = Array.isArray(data) ? data : [];
+      this.renderClienteOptions(clientes);
+      this.elements.selectCliente.disabled = false;
+    } catch (error) {
+      console.error('Error al cargar clientes:', error);
+      this.elements.selectCliente.innerHTML = '<option value="">Error al cargar clientes</option>';
+      this.elements.selectCliente.disabled = false;
+    }
+  }
+
+  /**
+   * ============================================
+   * RENDERIZAR OPCIONES DE CLIENTES
+   * ============================================
+   * Genera el HTML de opciones para el select de clientes.
+   * 
+   * @param {Array} clientes - Lista de clientes desde la BD
+   * @param {number|null} selectedId - ID del cliente a pre-seleccionar (modo edición)
+   * 
+   * Opción por defecto (vacía):
+   * - Representa una notificación GENERAL
+   * - Se enviará a TODOS los clientes activos
+   * - No se guarda id_cliente_fk en la tabla notificaciones
+   * 
+   * Opción con cliente específico:
+   * - Notificación INDIVIDUAL
+   * - Se enviará SOLO a ese cliente
+   * - Se guarda id_cliente_fk en la tabla notificaciones
+   */
+  renderClienteOptions(clientes, selectedId = null) {
+    if (!this.elements.selectCliente) return;
+    
+    const options = clientes
+      .map((cliente) => {
+        // Normalizar nombres de columnas (soporta PascalCase y lowercase)
+        const id = cliente.id_Clientes ?? cliente.id_clientes;
+        const nombre = `${cliente.Cli_Nombre ?? cliente.cli_nombre} ${cliente.Cli_Apellido ?? cliente.cli_apellido}`;
+        const email = cliente.Cli_Email ?? cliente.cli_email;
+        const selected = selectedId !== null && String(selectedId) === String(id) ? 'selected' : '';
+        return `<option value="${id}" ${selected}>${nombre} (${email})</option>`;
+      })
+      .join('');
+
+    this.elements.selectCliente.innerHTML = `<option value="">📢 Notificación general (todos los clientes)</option>${options}`;
   }
 
   renderTemplateOptions(selectedId = null) {
@@ -234,27 +321,48 @@ class NotificacionFormPage {
       this.elements.fechaInput.value = toLocalDateTimeValue(data.not_fechaprogramada);
     }
 
+    // Cargar cliente si existe
+    if (this.elements.selectCliente && data.id_cliente_fk) {
+      this.elements.selectCliente.value = String(data.id_cliente_fk);
+    }
+
     const plantillaId = data.id_plantillas_fk;
     if (plantillaId) {
-      const template = this.findTemplateById(plantillaId);
+      let template = this.findTemplateById(plantillaId);
       
       if (!template) {
-        // Si la plantilla no se encuentra en las activas, crear un fallback
-        const fallbackTemplate = {
-          id_Plantillas: plantillaId,
-          Pla_Nombre: `Plantilla #${plantillaId}`,
-          Pla_Tipo: data.not_tipo ?? '',
-          Pla_Modulo: 'General',
-          Pla_Asunto: data.not_asunto ?? '',
-          Pla_Contenido: data.not_mensaje ?? ''
-        };
-        this.templates.push(fallbackTemplate);
-        this.renderTemplateOptions(plantillaId);
-        this.selectedTemplate = fallbackTemplate;
-      } else {
-        this.selectedTemplate = template;
-        this.renderTemplateOptions(plantillaId);
+        // Si la plantilla no se encuentra en las activas, cargarla directamente desde BD
+        console.log(`⚠️ Plantilla #${plantillaId} no está activa, cargándola desde BD...`);
+        const { data: plantillaData, error: plantillaError } = await PlantillasCRUD.getById(plantillaId);
+        
+        if (!plantillaError && plantillaData) {
+          // Agregar la plantilla inactiva a la lista temporal
+          this.templates.push(plantillaData);
+          template = plantillaData;
+          console.log('✅ Plantilla cargada:', plantillaData);
+        } else {
+          // Último recurso: crear fallback con los datos de la notificación
+          console.warn('❌ No se pudo cargar la plantilla desde BD, usando fallback');
+          template = {
+            id_Plantillas: plantillaId,
+            id_plantillas: plantillaId,
+            Pla_Nombre: `Plantilla #${plantillaId} (Inactiva)`,
+            pla_nombre: `Plantilla #${plantillaId} (Inactiva)`,
+            Pla_Tipo: data.not_tipo ?? '',
+            pla_tipo: data.not_tipo ?? '',
+            Pla_Modulo: 'General',
+            pla_modulo: 'General',
+            Pla_Asunto: data.not_asunto ?? '',
+            pla_asunto: data.not_asunto ?? '',
+            Pla_Contenido: data.not_mensaje ?? '',
+            pla_contenido: data.not_mensaje ?? ''
+          };
+          this.templates.push(template);
+        }
       }
+      
+      this.selectedTemplate = template;
+      this.renderTemplateOptions(plantillaId);
 
       if (this.elements.selectPlantilla) {
         this.elements.selectPlantilla.value = String(plantillaId);
@@ -293,14 +401,41 @@ class NotificacionFormPage {
       return;
     }
 
+    // ============================================
+    // LÓGICA DE ASIGNACIÓN DE CLIENTE
+    // ============================================
+    // Obtener cliente seleccionado del dropdown
+    const clienteId = this.elements.selectCliente?.value ?? '';
+    
+    // Construir payload base de la notificación
     const payload = {
       not_asunto: asuntoValue.trim(),
       not_mensaje: getPlantillaContenido(this.selectedTemplate),
-      not_tipo: getPlantillaTipo(this.selectedTemplate) || 'Email',
+      not_tipo: getPlantillaTipo(this.selectedTemplate) || 'Push',
       id_plantillas_fk: plantillaId,
       not_fechaprogramada: fechaISO,
       not_estado: 'Pendiente'
     };
+
+    // ============================================
+    // ASIGNACIÓN CONDICIONAL DE CLIENTE
+    // ============================================
+    // CASO 1: Cliente específico seleccionado
+    // - Se guarda id_cliente_fk en notificaciones
+    // - Al procesar, se creará 1 registro en Destinatarios
+    // - Solo ese cliente recibirá la notificación
+    //
+    // CASO 2: Sin cliente (opción "general")
+    // - id_cliente_fk = null en notificaciones
+    // - Al procesar, se buscarán TODOS los clientes activos
+    // - Se crearán N registros en Destinatarios (uno por cliente)
+    // - Todos los clientes recibirán la notificación
+    if (clienteId && clienteId !== '') {
+      payload.id_cliente_fk = Number(clienteId);
+      console.log('📌 Notificación ESPECÍFICA para cliente:', clienteId);
+    } else {
+      console.log('📢 Notificación GENERAL (se enviará a todos los clientes activos)');
+    }
 
     this.setSubmitButton(this.isEditMode ? 'Actualizando...' : 'Guardando...', true);
 
