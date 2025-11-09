@@ -14,6 +14,6 @@ import { supabase } from '../../supabase-client.js'
 import { getData, getDataUsers} from '../../auth.js'
 import { getUsersWithRolesAndPermissions, deleteUser } from '../../auth.js'
 
-const { data, error } = await getDataUsers()
+const { data, error } = await getUsersWithRolesAndPermissions()
 if (error) console.error(error)
-else console.log(data) // Array de usuarios con objetos anidados de roles, permisos y estado
+else console.log(data)

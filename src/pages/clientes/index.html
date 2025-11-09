@@ -3,51 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clientes - Sistema de Gestión de Eventos</title>
+    <title>Usuarios - Sistema de Gestión de Eventos</title>
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../../css/variables.css">
+    <link rel="stylesheet" href="../../css/main.css">
+    <link rel="stylesheet" href="../../css/components.css">
 
     <!--
-      Archivo: src/pages/clientes/index.html
-      Propósito: Página de listado de clientes
-
-      Tablas relacionadas:
-      - Clientes (tabla principal)
-      - DireccionesCliente (tabla relacionada)
-      - TipoCliente (catálogo)
+      Archivo: src/pages/clientes/index.html (ahora página de Usuarios)
+      Propósito: Página de gestión de usuarios del sistema
 
       Funcionalidades:
-      - Listar todos los clientes con paginación
-      - Búsqueda por nombre, apellido, email, celular
-      - Filtros por tipo de cliente
-      - CRUD completo
-      - Ver direcciones de cada cliente (expandible)
+      - Listar todos los usuarios con paginación
+      - Búsqueda por nombre, apellido, email
+      - Filtros por rol y estado
+      - CRUD completo de usuarios
+      - Ver roles y permisos de cada usuario
       - Exportación: PDF, Excel, CSV, JSON, TXT
-      - Reportes: clientes por tipo, clientes activos/inactivos
-
-      Nomenclatura de columnas:
-      - Cli_Nombre, Cli_Apellido, Cli_Email, Cli_Celular
-      - id_Clientes (PK), id_TipoCliente_Fk (FK)
 
       Dependencias:
+      - ../../js/navbar.js
+      - ../../scripts/auth.js
       - ../../components/table.html
-      - ../../scripts/modules/clientes.js
     -->
-
-    <link rel="stylesheet" href="../../styles/main.css">
+    <link rel="stylesheet" href="../../css/usuarios.css">
 </head>
 <body>
-    <!-- TODO: Cargar navbar component -->
+    <!-- Navbar -->
+    <div id="navbar-container"></div>
 
-    <!-- TODO: Agregar header con título y botón "Nuevo Cliente" -->
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Gestión de Usuarios</h1>
+                    <p>Administra los usuarios del sistema, sus roles y permisos</p>
+                </div>
+                <div class="page-actions">
+                    <button class="btn btn-primary" id="btnCrearUsuario">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z"/>
+                        </svg>
+                        Nuevo Usuario
+                    </button>
+                </div>
+            </div>
 
-    <!-- TODO: Agregar filtros de búsqueda -->
+            <!-- Users Table -->
+            <section class="table-container" aria-labelledby="table-heading">
+                <h2 id="table-heading" class="sr-only">Lista de usuarios</h2>
+                <table class="data-table" id="usuariosTable" role="table" aria-label="Tabla de usuarios del sistema">
+                    <thead>
+                        <tr role="row">
+                            <th role="columnheader" scope="col">ID</th>
+                            <th role="columnheader" scope="col">Nombre</th>
+                            <th role="columnheader" scope="col">Apellido</th>
+                            <th role="columnheader" scope="col">Email</th>
+                            <th role="columnheader" scope="col">Rol</th>
+                            <th role="columnheader" scope="col">Estado</th>
+                            <th role="columnheader" scope="col">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usuariosTableBody" role="rowgroup">
+                        <!-- Los datos se cargarán dinámicamente con JavaScript -->
+                        <tr role="row">
+                            <td colspan="7" class="text-center" role="cell">
+                                <div class="loading-spinner" role="status" aria-live="polite">
+                                    <div class="spinner" aria-hidden="true"></div>
+                                    <p>Cargando usuarios...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </main>
 
-    <!-- TODO: Insertar tabla de clientes -->
+    <!-- Footer -->
+    <div id="footer-container"></div>
 
-    <!-- TODO: Agregar botones de exportación -->
 
-    <!-- TODO: Cargar footer component -->
-
+    <script type="module" src="../../js/navbar.js"></script>
     <script type="module" src="../../scripts/supabase-client.js"></script>
-    <script type="module" src="../../scripts/modules/clientes.js"></script>
+    <script type="module" src="../../scripts/auth.js"></script>
+    <script type="module" src="../../scripts/modules/usuarios.js"></script>
 </body>
 </html>

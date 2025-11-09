@@ -29,7 +29,7 @@ export async function register(email, password, userData = {}) {
       usuario_password: hashedPassword,
       usuario_nombre: userData.nombre || '',
       usuario_apellido: userData.apellido || '',
-      id_estado_fk: 5 // Estado pendiente (deben verificar correo)
+      id_estado_fk: 1
     }])
     .select('id_usuario') // Para obtener el id insertado
     .single()
@@ -123,7 +123,7 @@ export async function getData() {
 }
 
 export async function getDataUsers() {
-  const { data, error } = await supabase.from('roles').select('*')
+  const { data, error } = await supabase.from('usuarios').select('*')
   return { data, error }
 }
 
