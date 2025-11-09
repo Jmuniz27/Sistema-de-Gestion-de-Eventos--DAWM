@@ -478,3 +478,48 @@ body.has-navbar {
 body.has-footer {
   padding-bottom: var(--footer-height);
 }
+
+/* ========================================
+   USER INFO INDICATOR
+   ======================================== */
+
+.auth-buttons-guest,
+.auth-buttons-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-light);
+  padding: var(--space-2) var(--space-3);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.user-icon {
+  flex-shrink: 0;
+}
+
+.user-role {
+  white-space: nowrap;
+}
+
+/* Responsive para móviles */
+@media (max-width: 1023px) {
+  .auth-buttons-guest,
+  .auth-buttons-user {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: center;
+  }
+}

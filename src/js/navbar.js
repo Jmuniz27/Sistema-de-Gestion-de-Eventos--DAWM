@@ -103,35 +103,72 @@ function initializeNavbar() {
 
 // Update Authentication Links Based on User State
 function updateAuthLinks() {
-  const navbarActions = document.querySelector('.navbar-actions');
-  if (!navbarActions) return;
+  const authButtonsGuest = document.getElementById('authButtonsGuest');
+  const authButtonsUser = document.getElementById('authButtonsUser');
+  const userRoleText = document.getElementById('userRoleText');
+  const btnZonaAdmin = document.getElementById('btnZonaAdmin');
+  const btnMisEntradas = document.getElementById('btnMisEntradas');
+  const btnCerrarSesion = document.getElementById('btnCerrarSesion');
+
+  if (!authButtonsGuest || !authButtonsUser) return;
 
   const isAuthenticated = stateManager.isAuthenticated();
   const currentUser = stateManager.getCurrentUser();
 
   if (isAuthenticated && currentUser) {
     const rol = currentUser.rol;
-    let linksHTML = '';
 
-    if (rol === 'Administrador') {
-      linksHTML = `
-        <a href="../pages/admin-eventos.html" class="btn btn-outline btn-sm">Zona Admin</a>
-        <button class="btn btn-primary btn-sm" onclick="logout()">Cerrar Sesión</button>
-      `;
-    } else {
-      linksHTML = `
-        <a href="../pages/boletos/index.html" class="btn btn-outline btn-sm">Mis Entradas</a>
-        <button class="btn btn-primary btn-sm" onclick="logout()">Cerrar Sesión</button>
-      `;
+    // Mostrar sección de usuario autenticado
+    authButtonsGuest.style.display = 'none';
+    authButtonsUser.style.display = 'flex';
+
+    // Actualizar texto del rol
+    if (userRoleText) {
+      userRoleText.textContent = rol === 'Administrador' ? 'Admin' : 'Usuario';
     }
 
-    navbarActions.innerHTML = linksHTML;
+    // Mostrar/ocultar elementos según rol
+    const adminOnlyElements = document.querySelectorAll('[data-admin-only]');
+    const userOnlyElements = document.querySelectorAll('[data-user-only]');
+
+    if (rol === 'Administrador') {
+      // Admin: mostrar todo
+      adminOnlyElements.forEach(el => {
+        el.style.display = '';
+      });
+      userOnlyElements.forEach(el => {
+        el.style.display = 'none';
+      });
+
+      if (btnZonaAdmin) btnZonaAdmin.style.display = '';
+      if (btnMisEntradas) btnMisEntradas.style.display = 'none';
+    } else {
+      // Usuario normal: ocultar admin-only
+      adminOnlyElements.forEach(el => {
+        el.style.display = 'none';
+      });
+      userOnlyElements.forEach(el => {
+        el.style.display = '';
+      });
+
+      if (btnZonaAdmin) btnZonaAdmin.style.display = 'none';
+      if (btnMisEntradas) btnMisEntradas.style.display = '';
+    }
+
+    // Agregar evento de cerrar sesión
+    if (btnCerrarSesion) {
+      btnCerrarSesion.onclick = logout;
+    }
   } else {
-    // Default: not authenticated
-    navbarActions.innerHTML = `
-      <a href="../pages/autenticacion/login.html" class="btn btn-outline btn-sm">Iniciar Sesión</a>
-      <a href="../pages/autenticacion/crear_cuenta.html" class="btn btn-primary btn-sm">Registrarse</a>
-    `;
+    // Usuario no autenticado
+    authButtonsGuest.style.display = 'flex';
+    authButtonsUser.style.display = 'none';
+
+    // Ocultar todos los elementos admin-only
+    const adminOnlyElements = document.querySelectorAll('[data-admin-only]');
+    adminOnlyElements.forEach(el => {
+      el.style.display = 'none';
+    });
   }
 }
 

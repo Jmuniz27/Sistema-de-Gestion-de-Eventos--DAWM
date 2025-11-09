@@ -1,4 +1,22 @@
 import { supabase } from '../scripts/supabase-client.js';
+import stateManager from './state-manager.js';
+
+// PROTECCIÓN DE RUTA: Solo administradores
+(async function protegerRuta() {
+  const usuario = stateManager.getCurrentUser();
+
+  if (!usuario) {
+    alert('Debe iniciar sesión para acceder a esta página.');
+    window.location.href = '/pages/autenticacion/login.html';
+    return;
+  }
+
+  if (usuario.rol !== 'Administrador') {
+    alert('Acceso denegado. Solo administradores pueden crear eventos.');
+    window.location.href = '/';
+    return;
+  }
+})();
 
 const form = document.getElementById('eventoForm');
 const formMsg = document.getElementById('formMsg');

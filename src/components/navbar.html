@@ -33,16 +33,16 @@
     <!-- Navigation Menu -->
     <div class="navbar-menu" id="navbarMenu">
       <ul class="navbar-nav">
-        <li class="navbar-item">
-          <a href="/dashboard.html" class="navbar-link">
+        <li class="navbar-item admin-only" data-admin-only>
+          <a href="/pages/modulo-general/dashboard.html" class="navbar-link">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
             </svg>
             Dashboard
           </a>
         </li>
-        <li class="navbar-item">
-          <a href="/clientes.html" class="navbar-link">
+        <li class="navbar-item admin-only" data-admin-only>
+          <a href="/pages/clientes/index.html" class="navbar-link">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
             </svg>
@@ -50,7 +50,7 @@
           </a>
         </li>
         <li class="navbar-item">
-          <a href="/eventos.html" class="navbar-link">
+          <a href="/pages/eventos/index.html" class="navbar-link">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/>
             </svg>
@@ -58,7 +58,7 @@
           </a>
         </li>
         <li class="navbar-item">
-          <a href="/facturacion.html" class="navbar-link">
+          <a href="/pages/facturacion/index.html" class="navbar-link">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"/>
             </svg>
@@ -66,7 +66,7 @@
           </a>
         </li>
         <li class="navbar-item">
-    <a href="/pages/notificaciones/notificaciones.html" class="navbar-link">
+          <a href="/pages/notificaciones/notificaciones.html" class="navbar-link">
             <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
               <path d="M10 2a6 6 0 00-6 6v3.586l-.707.707A1 1 0 004 14h12a1 1 0 00.707-1.707L16 11.586V8a6 6 0 00-6-6zM10 18a3 3 0 01-3-3h6a3 3 0 01-3 3z"/>
             </svg>
@@ -76,9 +76,24 @@
       </ul>
 
       <!-- Auth Buttons -->
-      <div class="navbar-actions">
-        <a href="../pages/autenticacion/login.html" class="btn btn-outline btn-sm">Iniciar Sesión</a>
-        <a href="../pages/autenticacion/crear_cuenta.html" class="btn btn-primary btn-sm">Registrarse</a>
+      <div class="navbar-actions" id="navbarActions">
+        <!-- Usuario no autenticado -->
+        <div class="auth-buttons-guest" id="authButtonsGuest">
+          <a href="/pages/autenticacion/login.html" class="btn btn-outline btn-sm">Iniciar Sesión</a>
+          <a href="/pages/autenticacion/crear_cuenta.html" class="btn btn-primary btn-sm">Registrarse</a>
+        </div>
+        <!-- Usuario autenticado -->
+        <div class="auth-buttons-user" id="authButtonsUser" style="display: none;">
+          <div class="user-info">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor" class="user-icon">
+              <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+            </svg>
+            <span class="user-role" id="userRoleText">Usuario</span>
+          </div>
+          <a href="/pages/admin-eventos.html" class="btn btn-outline btn-sm admin-only" id="btnZonaAdmin" data-admin-only>Zona Admin</a>
+          <a href="#" class="btn btn-outline btn-sm user-only" id="btnMisEntradas" data-user-only style="display: none;">Mis Entradas</a>
+          <button class="btn btn-secondary btn-sm" id="btnCerrarSesion">Cerrar Sesión</button>
+        </div>
       </div>
     </div>
   </div>
