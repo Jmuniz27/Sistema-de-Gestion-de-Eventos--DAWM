@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../../css/components.css">
 
     <style>
-        .asignar-boleto-container {
+        .asignar-container {
             max-width: 900px;
             margin: 40px auto;
             background: #fff;
@@ -19,22 +19,48 @@
             padding: 2rem;
         }
         .section-title { text-align: center; margin-bottom: 1.5rem; }
-        .ticket-info {
-            margin-bottom: 1rem;
-        }
-        .ticket-info p {
-            margin: 0.4rem 0;
-        }
+        .evento-detalle, .seleccion-usuario, .informacion-adicional { margin-bottom: 2rem; }
+        .informacion-adicional label { display:block; margin:0.5rem 0; }
+        .btn-container { text-align: center; margin-top: 2rem; }
+        input.full-width, select.full-width { width: 100%; box-sizing: border-box; }
     </style>
 </head>
 <body class="has-navbar">
     <div id="navbar-container"></div>
 
     <main>
-        <div class="asignar-boleto-container">
-            <h2 class="section-title">Información de Boletos Seleccionados</h2>
-            <div id="ticketInfo" class="ticket-info">
-                <!-- Se llenará con JS -->
+        <div class="asignar-container">
+            <h2 class="section-title">Asignar Boletos</h2>
+
+            <!-- Información del evento -->
+            <div class="evento-detalle" id="eventoDetalle"></div>
+
+            <!-- Información de la selección del usuario -->
+            <div class="seleccion-usuario" id="seleccionUsuario"></div>
+
+            <!-- Información adicional para crear registro -->
+            <div class="informacion-adicional">
+                <h3>Información del Cliente</h3>
+                <label>
+                    Nombre del Cliente:
+                    <input type="text" id="nombreCliente" class="full-width">
+                </label>
+                <label>
+                    Correo del Cliente:
+                    <input type="email" id="correoCliente" class="full-width" placeholder="ejemplo@correo.com">
+                </label>
+                <label>
+                    Cédula:
+                    <input type="text" id="cedulaCliente" class="full-width" maxlength="10" inputmode="numeric">
+                </label>
+                <label>
+                    Teléfono:
+                    <input type="text" id="telefonoCliente" class="full-width" maxlength="10" inputmode="numeric">
+                </label>
+            </div>
+
+            <div class="btn-container">
+                <button id="btnGuardar" class="btn btn-primary">Guardar Boletos</button>
             </div>
         </div>
     </main>
@@ -44,24 +70,109 @@
     <script type="module">
         import stateManager from '../../js/state-manager.js';
 
-        // Obtener la selección guardada
-        const seleccion = stateManager.getSessionData('selectedTickets');
-        const ticketDiv = document.getElementById('ticketInfo');
+        const evento = stateManager.getSelectedEvent();
+        const seleccion = stateManager.getSessionData('selectedTickets') || {};
+        const eventoDiv = document.getElementById('eventoDetalle');
+        const seleccionDiv = document.getElementById('seleccionUsuario');
+        const btnGuardar = document.getElementById('btnGuardar');
 
-        if (!seleccion) {
-            ticketDiv.innerHTML = '<p>No se ha seleccionado ningún boleto.</p>';
+        // Mostrar información del evento
+        if(evento) {
+            eventoDiv.innerHTML = `
+                <h3>${evento.evt_nombre}</h3>
+                <p><strong>Fecha Inicio:</strong> ${new Date(evento.evt_fechainicio).toLocaleString()}</p>
+                <p><strong>Fecha Fin:</strong> ${new Date(evento.evt_fechafin).toLocaleString()}</p>
+                <p><strong>Dirección:</strong> ${evento.evt_direccion}</p>
+                <p><strong>Capacidad Disponible:</strong> ${evento.evt_capacidaddisponible}</p>
+                <p><strong>Precio Base:</strong> $${evento.evt_preciobasegeneral.toFixed(2)}</p>
+            `;
         } else {
-            ticketDiv.innerHTML = `
-                <p><strong>Evento ID:</strong> ${seleccion.eventoId}</p>
+            eventoDiv.innerHTML = '<p>No hay evento seleccionado.</p>';
+        }
+
+        // Mostrar información de la selección del usuario
+        if(seleccion) {
+            seleccionDiv.innerHTML = `
+                <h3>Selección del Usuario</h3>
                 <p><strong>Sección:</strong> ${seleccion.seccion}</p>
                 <p><strong>Tipo de Boleto:</strong> ${seleccion.tipo}</p>
                 <p><strong>Cantidad:</strong> ${seleccion.cantidad}</p>
                 <p><strong>Precio Total:</strong> $${seleccion.precioTotal.toFixed(2)}</p>
             `;
-            console.log('Información de boletos asignados:', seleccion);
         }
+
+        // Validaciones
+        function validarDatos(cliente) {
+            const regexNumeros = /^[0-9]{1,10}$/;
+            const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!cliente.nombre.trim()) {
+                alert('Por favor ingrese el nombre del cliente.');
+                return false;
+            }
+
+            if (!regexCorreo.test(cliente.correo)) {
+                alert('Ingrese un correo válido (con @).');
+                return false;
+            }
+
+            if (!regexNumeros.test(cliente.cedula)) {
+                alert('La cédula debe contener solo números (máximo 10 dígitos).');
+                return false;
+            }
+
+            if (!regexNumeros.test(cliente.telefono)) {
+                alert('El teléfono debe contener solo números (máximo 10 dígitos).');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Guardar todos los datos en stateManager y mostrar en consola
+        btnGuardar.addEventListener('click', () => {
+            const cliente = {
+                nombre: document.getElementById('nombreCliente').value,
+                correo: document.getElementById('correoCliente').value,
+                cedula: document.getElementById('cedulaCliente').value,
+                telefono: document.getElementById('telefonoCliente').value
+            };
+
+            if (!validarDatos(cliente)) return;
+
+            const fechaActual = new Date().toISOString();
+
+            const entradaAsignada = {
+                id_cliente_fk: cliente.cedula,
+                fecha_asignada: fechaActual
+            };
+
+            const boleto = {
+                eventoId: evento.id_eventos,
+                tipoBoletoId: seleccion.tipo,
+                entradaAsignadaId: cliente.cedula, 
+                seccion: seleccion.seccion,
+                cantidad: seleccion.cantidad,
+                precioUnitario: seleccion.precioTotal / seleccion.cantidad,
+                precioTotal: seleccion.precioTotal
+            };
+
+            const datosFinales = {
+                cliente,
+                entradaAsignada,
+                boleto
+            };
+
+            stateManager.setSessionData('datosFinales', datosFinales);
+            console.log('✅ Datos listos para guardar en BD:', datosFinales);
+            alert('Datos validados y guardados correctamente en memoria.');
+        });
     </script>
 
     <script type="module" src="../../js/navbar.js"></script>
 </body>
 </html>
+
+
+
+
