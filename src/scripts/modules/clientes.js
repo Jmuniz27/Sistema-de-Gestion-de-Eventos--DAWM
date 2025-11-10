@@ -1,4 +1,5 @@
 import { supabase } from "../supabase-client.js";
+import { jsPDF } from 'jspdf';
 
 /* === ELEMENTOS === */
 const adminsTable = document.getElementById("adminsTable");
@@ -270,3 +271,95 @@ loadUsuarios();
 loadClientes();
 loadRoles();
 loadEstados();
+
+/* === EXPORTAR USUARIOS A PDF === */
+async function exportUsersToPDF() {
+  const { data, error } = await supabase
+    .from("usuarios")
+    .select("id_usuario, usuario_nombre, usuario_apellido, usuario_email, usuarios_roles(roles(rol_nombre)), estados_generales(estg_nombre)")
+    .order('id_usuario', { ascending: true });
+
+  if (error) {
+    alert("Error al obtener datos: " + error.message);
+    return;
+  }
+
+  const doc = new jsPDF('l');
+  const fecha = new Date().toLocaleDateString('es-ES');
+  doc.setFontSize(16);
+  doc.text(`Lista de Usuarios - ${fecha}`, 20, 20);
+
+  let y = 40;
+  doc.setFontSize(12);
+  doc.text("ID", 20, y);
+  doc.text("Nombre", 35, y);
+  doc.text("Apellido", 70, y);
+  doc.text("Email", 110, y);
+  doc.text("Rol", 170, y);
+  doc.text("Estado", 210, y);
+
+  y += 10;
+
+  data.forEach(user => {
+    doc.text(user.id_usuario.toString(), 20, y);
+    doc.text(user.usuario_nombre, 35, y);
+    doc.text(user.usuario_apellido, 70, y);
+    doc.text(user.usuario_email, 110, y);
+    doc.text(user.usuarios_roles?.[0]?.roles?.rol_nombre || "Sin rol", 170, y);
+    doc.text(user.estados_generales?.estg_nombre || "Sin estado", 210, y);
+    y += 10;
+    if (y > 180) {  // Ajustar el límite para landscape
+      doc.addPage();
+      y = 20;
+    }
+  });
+
+  doc.save("usuarios.pdf");
+}
+
+/* === EXPORTAR CLIENTES A PDF === */
+async function exportClientsToPDF() {
+  const { data, error } = await supabase
+    .from("clientes")
+    .select("id_clientes, cli_nombre, cli_apellido, cli_email, cli_celular")
+    .order('id_clientes', { ascending: true });
+
+  if (error) {
+    alert("Error al obtener datos: " + error.message);
+    return;
+  }
+
+  const doc = new jsPDF('l');
+  const fecha = new Date().toLocaleDateString('es-ES');
+  doc.setFontSize(16);
+  doc.text(`Lista de Clientes - ${fecha}`, 20, 20);
+
+  let y = 40;
+  doc.setFontSize(12);
+  doc.text("ID", 20, y);
+  doc.text("Nombre", 35, y);
+  doc.text("Apellido", 80, y);
+  doc.text("Email", 130, y);
+  doc.text("Celular", 200, y);
+
+  y += 10;
+
+  data.forEach(client => {
+    doc.text(client.id_clientes.toString(), 20, y);
+    doc.text(client.cli_nombre, 35, y);
+    doc.text(client.cli_apellido, 80, y);
+    doc.text(client.cli_email, 130, y);
+    doc.text(client.cli_celular ?? "-", 200, y);
+    y += 10;
+    if (y > 180) {
+      doc.addPage();
+      y = 20;
+    }
+  });
+
+  doc.save("clientes.pdf");
+}
+
+/* === EVENT LISTENERS === */
+document.getElementById("exportUsuariosPdfBtn").addEventListener("click", exportUsersToPDF);
+document.getElementById("exportClientesPdfBtn").addEventListener("click", exportClientsToPDF);
