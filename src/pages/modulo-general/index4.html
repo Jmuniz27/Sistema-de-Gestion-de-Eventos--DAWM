@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistema de Gestión de Eventos - Facturación</title>
+
+  <!-- Importar sistema de diseño -->
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
+
+  <style>
+    /* Sidebar específica */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: var(--sidebar-width);
+      height: 100vh;
+      background-color: var(--color-primary-navy);
+      color: var(--color-text-light);
+      display: flex;
+      flex-direction: column;
+      padding: var(--space-6) var(--space-4);
+    }
+
+    .sidebar h2 {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-6);
+      text-align: center;
+    }
+
+    .sidebar nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+    }
+
+    .sidebar nav ul li {
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-base);
+      cursor: pointer;
+      transition: background-color var(--transition-fast);
+    }
+
+    .sidebar nav ul li:hover {
+      background-color: rgba(255,255,255,0.1);
+    }
+
+    .sidebar nav ul li.active {
+      background-color: rgba(255,255,255,0.2);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .sidebar nav ul li.sidebar-bottom {
+      margin-top: auto;
+    }
+
+    /* Contenido principal */
+    .content {
+      margin-left: var(--sidebar-width);
+      padding: var(--space-8);
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: var(--space-8);
+    }
+
+    .header h1 {
+      margin-bottom: var(--space-2);
+    }
+
+    .cards {
+      display: flex;
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+
+    .cards .card {
+      flex: 1;
+      text-align: center;
+    }
+
+    /* Tabla de facturas */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: var(--color-white);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-base);
+      overflow: hidden;
+    }
+
+    table th, table td {
+      padding: var(--space-4);
+      text-align: left;
+      border-bottom: 1px solid var(--color-gray-200);
+    }
+
+    table th {
+      background-color: var(--color-gray-100);
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .estado-pagada {
+      color: green;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .estado-pendiente {
+      color: red;
+      font-weight: var(--font-weight-semibold);
+    }
+
+    .search-bar {
+      margin-bottom: var(--space-4);
+      width: 100%;
+      max-width: 400px;
+      padding: var(--space-3) var(--space-4);
+      border: 1px solid var(--color-gray-300);
+      border-radius: var(--radius-base);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2>Sistema de Gestión de Eventos</h2>
+    <nav>
+      <ul>
+        <li>Dashboard</li>
+        <li>Eventos</li>
+        <li>Clientes</li>
+        <li class="active">Facturación</li>
+        <li>Notificaciones</li>
+        <li class="sidebar-bottom">Configuración</li>
+        <li class="sidebar-bottom">Cerrar Sesión</li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Contenido principal -->
+  <main class="content">
+    <div class="header">
+      <div>
+        <h1>Facturación</h1>
+        <p class="text-secondary">Gestiona facturas y pagos</p>
+      </div>
+      <button class="btn btn-primary" onclick="location.href='./crear.html'">Nueva Factura</button>
+    </div>
+
+    <!-- Cards resumen -->
+    <section class="cards">
+      <div class="card">
+        <span class="text-muted">Ingresos totales</span>
+        <h3 id="ingresosTotales">$0.00</h3>
+      </div>
+      <div class="card">
+        <span class="text-muted">Facturas pagadas</span>
+        <h3 id="facturasPagadas">0</h3>
+      </div>
+      <div class="card">
+        <span class="text-muted">Pendientes</span>
+        <h3 id="facturasPendientes">0</h3>
+      </div>
+    </section>
+
+    <!-- Facturas recientes -->
+    <section>
+      <h2 class="mb-4">Facturas recientes</h2>
+      <input type="text" id="buscadorCliente" class="search-bar" placeholder="Buscar por cliente o número..."/>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Monto</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="listaFacturas">
+          <!-- Render dinámico con JS -->
+        </tbody>
+      </table>
+
+      <!-- Estado vacío -->
+      <div class="empty-state d-none" id="emptyState">
+        <div class="empty-state-icon">📄</div>
+        <h2 class="empty-state-title">No hay facturas</h2>
+        <p class="empty-state-description">Crea una nueva factura para comenzar</p>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="../../js/facturacion.js"></script>
+</body>
+</html>

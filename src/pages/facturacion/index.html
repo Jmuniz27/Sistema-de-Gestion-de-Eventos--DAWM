@@ -1,71 +1,91 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Facturación - Sistema de Gestión de Eventos</title>
-  <!-- Listado de facturas con detalles -->
-  <link rel="stylesheet" href="../../styles/main.css">
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>Facturación - Sistema de Gestión de Eventos</title>
+	<!-- Listado de facturas con detalles -->
+	
+	<link rel="stylesheet" href="../../css/factura_2.css">
+
 </head>
-<body>
+<body >
   <aside class="sidebar">
-    <h2>Sistema de Gestión de Eventos</h2>
-    <nav>
-      <ul>
-        <li>Dashboard</li>
-        <li>Clientes</li>
-        <li>Eventos</li>
-        <li class="active">Facturación</li>
-        <li>Notificaciones</li>
-        <li>Configuración</li>
-        <li>Cerrar Sesión</li>
-      </ul>
-    </nav>
+    <h2>EventManager</h2>
+	<nav class = "menu-superior">
+		<ul>
+			<li><a href="#">Dashboard</a></li>
+			<li><a href="#">Eventos</a></li>
+			<li><a href="#">Clientes</a></li>
+			<li class="active"><a href="#">Facturación</a></li>
+			<li><a href="#">Notificaciones</a></li>
+		</ul>
+	</nav>
+	
+	<nav class ="menu_inferior">
+		<ul>
+			<li class="sidebar-bottom"><a href="#">Configuración</a></li>
+			<li class="sidebar-bottom"><a href="#">Cerrar Sesión</a></li>
+		</ul>
+	</nav>
+  
   </aside>
 
   <main class="content">
     <header class="header">
-      <div>
-        <h1>Facturación</h1>
-        <p>Gestiona facturas y pagos</p>
-      </div>
-      <button class="btn-primary" onclick="window.location.href='./crear.html'">Nueva Factura</button>
+		<div class="header-titles">
+			<h2>Sistema de Gestión de Eventos</h2><br>
+			<h1>Facturación<span>Gestiona facturas y pagos</span></h1>
+		</div>
+      <button class="btn btn-primary" onclick="location.href='./crear.html'">+ Nueva Factura</button>
     </header>
 
-    <section class="stats" id="resumen">
+    <section class="stats">
       <div class="card">
-        <span class="label">Ingresos totales</span>
-        <span id="ingresosTotales">$0.00</span>
-      </div>
-      <div class="card">
-        <span class="label">Facturas pagadas</span>
-        <span id="facturasPagadas">0</span>
-      </div>
-      <div class="card">
-        <span class="label">Pendientes</span>
-        <span id="facturasPendientes">0</span>
-      </div>
-    </section>
-
-    <section class="invoices">
-      <div class="section-header">
-        <h2>Facturas recientes</h2>
-        <div class="filters">
-          <input type="text" id="buscadorCliente" placeholder="Buscar por cliente o número..." />
+        <div class="text-center">
+          <span class="text-muted">Ingresos totales</span>
+          <h3 id="ingresosTotales">$0.00</h3>
         </div>
       </div>
-	  <!-- TODO: Tabla de facturas con búsqueda por cliente, fecha, monto -->
-      <div class="list-header detalle-item grid-4">
-        <strong>ID</strong>
-        <strong>Cliente</strong>
-        <strong>Monto</strong>
-        <strong>Acciones</strong>
+      <div class="card">
+        <div class="text-center">
+          <span class="text-muted">Facturas pagadas</span>
+          <h3 id="facturasPagadas">0</h3>
+        </div>
       </div>
-
-      <div id="listaFacturas" class="list"></div>
+      <div class="card">
+        <div class="text-center">
+          <span class="text-muted">Pendientes</span>
+          <h3 id="facturasPendientes">0</h3>
+        </div>
+      </div>
     </section>
+
+    <section>
+		<h2 class="mb-4">Facturas recientes</h2>
+		<input type="text" id="buscadorCliente" class="search-bar" placeholder="Buscar por cliente o número..."/>
+
+		<table>
+			<thead>
+				<tr>
+					<th>Fecha</th>
+					<th>Cliente</th>
+					<th>Monto</th>
+					<th>Estado</th>
+					<th>Acciones</th>
+				</tr>
+			</thead>
+        <tbody id="listaFacturas">
+			<tr>
+			</tr>
+          <!-- Render dinámico con JS -->
+        </tbody>
+      </table>
+
+
   </main>
 
   <script type="module" src="../../scripts/modules/facturacion.js"></script>
+
 </body>
 </html>

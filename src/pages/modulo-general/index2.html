@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Facturación - Sistema de Gestión de Eventos</title>
+
+  <!-- Importar primero variables, luego globales y componentes -->
+  <link rel="stylesheet" href="../../css/variables.css">
+  <link rel="stylesheet" href="../../css/main.css">
+  <link rel="stylesheet" href="../../css/components.css">
+</head>
+<body class="has-navbar has-footer">
+
+  <!-- Navbar reutilizable -->
+  <div id="navbar">
+	<aside class="sidebar">
+		<h2>Sistema de Gestión de Eventos</h2>
+		<nav>
+			<ul>
+				<li>Dashboard</li>
+				<li>Clientes</li>
+				<li>Eventos</li>
+				<li class="active">Facturación</li>
+				<li>Notificaciones</li>
+				<!-- Opciones inferiores -->
+				<li class="sidebar-bottom">Configuración</li>
+				<li class="sidebar-bottom">Cerrar Sesión</li>
+			</ul>
+		</nav>
+	</aside>
+  </div>
+
+  <main class="container py-8">
+    <header class="d-flex justify-between mb-6">
+      <div>
+        <h1>Facturación</h1>
+        <p class="text-secondary">Gestiona facturas y pagos</p>
+      </div>
+      <button class="btn btn-primary" onclick="location.href='./crear.html'">Nueva Factura</button>
+    </header>
+
+    <!-- Resumen con cards reutilizando main.css -->
+    <section class="row mb-8">
+      <div class="col">
+        <div class="card text-center">
+          <span class="text-muted">Ingresos totales</span>
+          <h3 id="ingresosTotales">$0.00</h3>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card text-center">
+          <span class="text-muted">Facturas pagadas</span>
+          <h3 id="facturasPagadas">0</h3>
+        </div>
+      </div>
+      <div class="col">
+        <div class="card text-center">
+          <span class="text-muted">Pendientes</span>
+          <h3 id="facturasPendientes">0</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabla de facturas -->
+    <section>
+      <h2 class="mb-4">Facturas recientes</h2>
+      <input type="text" id="buscadorCliente" class="form__field mb-4" placeholder="Buscar por cliente o número..."/>
+      
+      <div id="listaFacturas" class="d-flex flex-column gap-4">
+        <!-- Aquí se renderizan las facturas con JS -->
+      </div>
+
+      <!-- Estado vacío reutilizando landing.css -->
+      <div class="empty-state d-none" id="emptyState">
+        <div class="empty-state-icon">📄</div>
+        <h2 class="empty-state-title">No hay facturas</h2>
+        <p class="empty-state-description">Crea una nueva factura para comenzar</p>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer reutilizable -->
+  <div id="footer"></div>
+
+  <script type="module" src="../../js/facturacion.js"></script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sistema de Gestión de Eventos - Facturación</title>
+  <link rel="stylesheet" href="../../css/facturaP.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <h2>EventManager</h2>
+    <nav class="nav-main">
+      <ul>
+        <li><a href="#">Dashboard</a></li>
+        <li><a href="#">Clientes</a></li>
+        <li><a href="#">Eventos</a></li>
+        <li class="active"><a href="#">Facturación</a></li>
+        <li><a href="#">Notificaciones</a></li>
+      </ul>
+    </nav>
+
+    <nav class="nav-bottom">
+      <ul>
+        <li><a href="#">Configuración</a></li>
+        <li><a href="#">Cerrar Sesión</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="content">
+    <header class="header">
+      <div class="header-titles">
+        <h1>Sistema de Gestión de Eventos</h1>
+        <h2>Facturación <span>Gestiona facturas y pagos</span></h2>
+      </div>
+      <button id="btnNuevaFactura">Nueva Factura</button>
+    </header>
+
+    <section class="stats">
+      <div class="card">
+        <h3>Ingresos Totales</h3>
+        <p>$45,231</p>
+      </div>
+      <div class="card">
+        <h3>Facturas Pagadas</h3>
+        <p>156</p>
+      </div>
+      <div class="card">
+        <h3>Pendientes</h3>
+        <p>24</p>
+      </div>
+    </section>
+
+    <section class="invoices">
+      <h3>Facturas Recientes</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Fecha</th>
+            <th>Estado</th>
+            <th>Monto</th>
+            <th>Cliente</th>
+          </tr>
+        </thead>
+        <tbody id="tablaFacturas">
+          <tr>
+            <td>FAC-001-2025</td>
+            <td>10 Nov 2025</td>
+            <td class="status pagada">Pagada</td>
+            <td>$1,250</td>
+            <td>Tech Solutions</td>
+          </tr>
+          <tr>
+            <td>FAC-002-2025</td>
+            <td>09 Nov 2025</td>
+            <td class="status pendiente">Pendiente</td>
+            <td>$1,250</td>
+            <td>Tech Solutions</td>
+          </tr>
+          <tr>
+            <td>FAC-003-2025</td>
+            <td>08 Nov 2025</td>
+            <td class="status pagada">Pagada</td>
+            <td>$1,250</td>
+            <td>Tech Solutions</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById("btnNuevaFactura").addEventListener("click", () => {
+      alert("Funcionalidad para crear nueva factura en desarrollo...");
+    });
+  </script>
+  
+  <script type="module" src="../../scripts/modules/facturacion.js"></script>
+</body>
+</html>

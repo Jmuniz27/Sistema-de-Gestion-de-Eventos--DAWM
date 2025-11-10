@@ -34,6 +34,7 @@
   display: flex;
   align-items: center;
   z-index: var(--z-index-fixed);
+  margin-right: 20px;
 }
 
 .navbar-logo {
@@ -219,6 +220,106 @@
 }
 
 /* ========================================
+   NOTIFICACIONES MODULE NAVBAR
+   ======================================== */
+
+.navbar--secondary {
+  position: static;
+  height: auto;
+  background-color: var(--color-primary-navy);
+  box-shadow: var(--shadow-sm);
+  width: 100%;
+  padding: 0;
+}
+
+.navbar--secondary .navbar-container {
+  padding: var(--space-3) var(--space-4);
+  gap: var(--space-6);
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.navbar-brand--secondary {
+  gap: var(--space-3);
+  color: var(--color-text-light);
+}
+
+.navbar-secondary-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+.navbar-secondary-texts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navbar-secondary-label {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.navbar-secondary-title {
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-light);
+}
+
+.navbar-nav--secondary {
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.navbar-link--secondary {
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background-color: transparent;
+  color: var(--color-text-light);
+}
+
+.navbar-link--secondary svg {
+  width: 18px;
+  height: 18px;
+}
+
+.navbar-link--secondary:hover {
+  background-color: rgba(255, 255, 255, 0.16);
+  color: var(--color-text-light);
+}
+
+.navbar-link--secondary.active {
+  background-color: var(--color-white);
+  color: var(--color-primary-navy);
+  border-color: transparent;
+}
+
+@media (max-width: 767px) {
+  .navbar--secondary .navbar-container {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+
+  .navbar-nav--secondary {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .navbar-link--secondary {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ========================================
    FOOTER COMPONENT
    ======================================== */
 
@@ -270,6 +371,120 @@
   }
 }
 
+  /* ========================================
+     TEMPLATE EDITOR COMPONENT
+     ======================================== */
+
+  .template-editor .container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+
+  .template-editor__header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+
+  .template-editor__form {
+    background-color: var(--color-white);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-base);
+    padding: var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+
+  .template-editor__grid {
+    display: grid;
+    gap: var(--space-4);
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  }
+
+  .template-editor__field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .template-editor__field--full {
+    grid-column: 1 / -1;
+  }
+
+  .template-editor__field label {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-primary);
+  }
+
+  .template-editor__field input,
+  .template-editor__field select,
+  .template-editor__field textarea {
+    padding: var(--space-3);
+    border-radius: var(--radius-base);
+    border: 1px solid var(--color-gray-200);
+    font-size: var(--font-size-sm);
+    color: var(--color-text-primary);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .template-editor__field textarea {
+    min-height: 200px;
+    resize: vertical;
+  }
+
+  .template-editor__field input:focus,
+  .template-editor__field select:focus,
+  .template-editor__field textarea:focus {
+    outline: none;
+    border-color: var(--color-primary-blue);
+    box-shadow: 0 0 0 3px rgba(46, 74, 139, 0.15);
+  }
+
+  .template-editor__toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .template-editor__toggle label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .template-editor__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    justify-content: flex-start;
+  }
+
+  @media (max-width: 767px) {
+    .template-editor__form {
+      padding: var(--space-5);
+    }
+  }
+
+/* ========================================
+   UTIL: stats row (cards layout used in facturación)
+   Reusable class to place small metric cards in a responsive row.
+   ======================================== */
+.stats-row {
+  display: flex;
+  gap: var(--space-4, 1rem);
+  flex-wrap: wrap;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+.stats-row .card {
+  flex: 1 1 220px;
+  min-width: 200px;
+}
+
 /* ========================================
    PAGE LAYOUT WITH NAVBAR & FOOTER
    ======================================== */
@@ -280,4 +495,49 @@ body.has-navbar {
 
 body.has-footer {
   padding-bottom: var(--footer-height);
+}
+
+/* ========================================
+   USER INFO INDICATOR
+   ======================================== */
+
+.auth-buttons-guest,
+.auth-buttons-user {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text-light);
+  padding: var(--space-2) var(--space-3);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.user-icon {
+  flex-shrink: 0;
+}
+
+.user-role {
+  white-space: nowrap;
+}
+
+/* Responsive para móviles */
+@media (max-width: 1023px) {
+  .auth-buttons-guest,
+  .auth-buttons-user {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .user-info {
+    width: 100%;
+    justify-content: center;
+  }
 }
